@@ -1,0 +1,15 @@
+# Quarto build output and caches
+/_site/
+/.quarto/
+*_files/
+*_cache/
+*.quarto_ipynb
+
+# Editor and OS noise
+.DS_Store
+*.swp
+
+# Local environment
+.Rproj.user/
+__pycache__/
+*.pyc
