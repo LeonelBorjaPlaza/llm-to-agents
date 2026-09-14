@@ -1,0 +1,135 @@
+/* Shared styling for browser-based interactives (softmax lab, and later
+   the agent-loop stepper). Plain CSS, no preprocessor, no dependency. */
+
+.softmax-lab {
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+
+.softmax-lab .row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.softmax-lab .row label {
+  width: 6.5rem;
+  flex-shrink: 0;
+}
+
+.softmax-lab input[type="range"] {
+  flex: 1 1 auto;
+}
+
+.softmax-lab .value {
+  width: 3.2rem;
+  text-align: right;
+  font-variant: tabular-nums;
+}
+
+.softmax-lab table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  font-variant: tabular-nums;
+}
+
+.softmax-lab th,
+.softmax-lab td {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 0.25rem 0.5rem;
+  text-align: right;
+}
+
+.softmax-lab th:first-child,
+.softmax-lab td:first-child {
+  text-align: left;
+}
+
+.softmax-lab .bars {
+  margin-top: 0.75rem;
+}
+
+.softmax-lab .bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.softmax-lab .bar-track {
+  flex: 1 1 auto;
+  height: 1rem;
+  background: #f0f0f0;
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.softmax-lab .bar-fill-theory {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: #1a5fb4;
+  opacity: 0.55;
+}
+
+.softmax-lab .bar-fill-empirical {
+  position: absolute;
+  top: 0;
+  height: 3px;
+  bottom: 0;
+  left: 0;
+  border-right: 2px solid #c01c28;
+}
+
+.softmax-lab .controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.softmax-lab button {
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.softmax-lab .readout {
+  font-size: 0.85rem;
+  color: #444;
+  margin-top: 0.5rem;
+}
+
+.softmax-lab .seed-box {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.softmax-lab .seed-box input {
+  width: 5rem;
+}
+
+.softmax-fallback table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant: tabular-nums;
+}
+
+.softmax-fallback th,
+.softmax-fallback td {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 0.25rem 0.5rem;
+  text-align: right;
+}
+
+.softmax-fallback th:first-child,
+.softmax-fallback td:first-child {
+  text-align: left;
+}

@@ -1,0 +1,113 @@
+---
+title: "From LLMs to Agents"
+subtitle: "Vertical slice — logits/softmax, training/MLE, sampling/temperature"
+format:
+  revealjs:
+    css: _deck.scss
+    embed-resources: true
+    self-contained-math: true
+    slide-number: true
+    footer: "From LLMs to Agents — vertical slice, not the full deck"
+---
+
+## Logits and softmax
+
+The last layer of the network emits one real number — a **logit** $z_i$ —
+for every token in the vocabulary. Softmax turns those logits into a
+probability distribution:
+
+$$
+p_i = \frac{\exp(z_i / T)}{\sum_{j=1}^{V} \exp(z_j / T)}
+$$
+
+Softmax uses the **same probability mapping** as multinomial or
+conditional logit — the language model as a whole should not be described
+as a multinomial-logit model; only this final mapping shares that
+functional form. For fixed logits, the algebraic odds-ratio property
+associated with IIA survives; it carries no behavioral or welfare
+reading here. <span class="cite">[S-01] [S-02] [S-03] &middot; 3B1B ch.5, 22:22</span>
+<span class="timing">2.5 min &middot; cum. 2.5</span>
+
+::: {.notes}
+Running example for this and the next two slides: "Given the traffic
+data, the agency decided to ___ the bridge," with five candidate
+continuations — repair, monitor, replace, close, ignore — and logits
+(2.0, 1.0, 0.5, −0.5, −3.0). This is the same example used in
+`learn/softmax-sampling.qmd` and its live interactive.
+
+Say explicitly: the resemblance to multinomial logit is in the
+*arithmetic* of the mapping, not in the *econometrics* — $z_i$ is not a
+linear index in observed covariates, it is the output of a deep,
+context-dependent network. Full treatment, including where the analogy
+breaks down, is on the website module linked at the end of the next
+slide's section.
+
+Target: 2.5 minutes for this slide.
+:::
+
+## Training and maximum likelihood
+
+At each token position, the model defines a categorical probability
+distribution through softmax. Training maximizes the conditional
+likelihood of the observed next tokens across the corpus — equivalently,
+it minimizes negative log likelihood (cross-entropy):
+
+$$
+\mathcal{L}(\theta) = -\frac{1}{N}\sum_{t=1}^{N} \log p_\theta(x_t \mid x_{<t})
+$$
+
+This is maximum-likelihood training, but it is not a conventional
+econometric exercise aimed at identifying interpretable structural
+parameters or reporting classical standard errors.
+<span class="cite">[S-05] [S-06] &middot; Karpathy, 20:11</span>
+<span class="timing">2.5 min &middot; cum. 5.0</span>
+
+::: {.notes}
+Do not imply that uncertainty measures are mathematically impossible —
+only that this is not the kind of estimation exercise that reports them
+by default. Optimization mechanics (gradient descent, backpropagation)
+are intentionally out of scope for this vertical slice; they belong to a
+later module (`learn/training.qmd`, not yet built) and a later slide in
+the full deck.
+
+Target: 2.5 minutes for this slide. Cumulative so far: 5.0 minutes.
+:::
+
+## Sampling and temperature
+
+Temperature $T$ rescales every logit before the softmax normalization is
+applied.
+
+- **Argmax is deterministic and introduces no sampling variation; sampling
+  can produce different continuations from the same probability
+  distribution.**
+- As $T \to 0$: the distribution converges to argmax.
+- As $T \to \infty$: the distribution approaches uniform.
+
+**Lowering the temperature does not make an answer more truthful.** The
+training objective rewards plausible continuation, not verified truth —
+deterministic decoding can be just as confidently wrong as sampling.
+<span class="cite">[S-04] [S-07] &middot; 3B1B ch.5, 22:22 &middot; Karpathy, 26:01</span>
+<span class="timing">2.5 min &middot; cum. 7.5</span>
+
+{{< include ../_includes/_softmax-lab.qmd >}}
+
+**Go deeper:** the full softmax-and-sampling module, with the multinomial-logit
+analogy and its limits and a check-your-understanding section —
+`learn/softmax-sampling.qmd`.
+
+::: {.notes}
+The $T \to 0$ convergence to argmax assumes a unique highest logit; a
+tie splits the limiting mass among the tied candidates. This
+qualification is stated on the website module, not spoken live — say it
+only if asked.
+
+Close by naming the interactive: demonstrate one or two logit changes and
+one "Draw 100" click live if time allows, then point to the module for
+the full version with 1,000-draw convergence and the worked
+misconception discussion.
+
+Target: 2.5 minutes for this slide. Cumulative so far: 7.5 minutes. This
+is a three-slide vertical slice, not the 45-minute deck — the full route
+is planned but not yet built.
+:::

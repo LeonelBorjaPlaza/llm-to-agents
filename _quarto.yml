@@ -1,0 +1,33 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "learn/*.qmd"
+    - "slides/*.qmd"
+    - "!docs/"
+
+website:
+  title: "From LLMs to Agents"
+  description: >-
+    A conceptual course for PhD economists: what a large language model is,
+    how it is built, and how it begins to act.
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: slides/llms-to-agents.qmd
+        text: Slides
+      - href: learn/softmax-sampling.qmd
+        text: Learn
+      - href: resources.qmd
+        text: Resources
+
+format:
+  html:
+    theme: cosmo
+    css: assets/css/site.scss
+    toc: true
+
+execute:
+  freeze: auto

@@ -1,0 +1,94 @@
+<!--
+  Softmax and sampling laboratory: interactive markup.
+
+  Included identically by the website module and by the deck slide, so
+  there is exactly one implementation to keep correct. Hidden by default
+  (inline style) until assets/js/softmax-lab.js confirms JavaScript ran and
+  reveals it; if JavaScript is disabled, the browser instead renders the
+  <noscript> fallback below and this block never becomes visible.
+
+  No network dependency: prng.js and softmax-lab.js are project files,
+  loaded from the site's own assets directory.
+-->
+
+```{=html}
+<link rel="stylesheet" href="/assets/css/interactives.css">
+
+<div class="softmax-lab" data-softmax-lab style="display:none">
+  <p><strong>Prompt:</strong> "Given the traffic data, the agency decided
+  to ___ the bridge."</p>
+
+  <div class="row">
+    <label for="sm-logit-0">repair</label>
+    <input type="range" id="sm-logit-0" data-logit-slider min="-5" max="5" step="0.1" value="2.0">
+    <span class="value" data-logit-value>2.0</span>
+  </div>
+  <div class="row">
+    <label for="sm-logit-1">monitor</label>
+    <input type="range" id="sm-logit-1" data-logit-slider min="-5" max="5" step="0.1" value="1.0">
+    <span class="value" data-logit-value>1.0</span>
+  </div>
+  <div class="row">
+    <label for="sm-logit-2">replace</label>
+    <input type="range" id="sm-logit-2" data-logit-slider min="-5" max="5" step="0.1" value="0.5">
+    <span class="value" data-logit-value>0.5</span>
+  </div>
+  <div class="row">
+    <label for="sm-logit-3">close</label>
+    <input type="range" id="sm-logit-3" data-logit-slider min="-5" max="5" step="0.1" value="-0.5">
+    <span class="value" data-logit-value>-0.5</span>
+  </div>
+  <div class="row">
+    <label for="sm-logit-4">ignore</label>
+    <input type="range" id="sm-logit-4" data-logit-slider min="-5" max="5" step="0.1" value="-3.0">
+    <span class="value" data-logit-value>-3.0</span>
+  </div>
+
+  <div class="row">
+    <label for="sm-temp">temperature</label>
+    <input type="range" id="sm-temp" data-temp-slider min="0.1" max="2.0" step="0.05" value="1.0">
+    <span class="value" data-temp-value>1.00</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>token</th><th>z<sub>i</sub></th><th>z<sub>i</sub>/T</th>
+        <th>exp(&middot;)</th><th>p<sub>i</sub> (theory)</th><th>p<sub>i</sub> (empirical)</th>
+      </tr>
+    </thead>
+    <tbody data-table-body></tbody>
+  </table>
+
+  <div class="bars" data-bars></div>
+
+  <div class="controls">
+    <button type="button" data-draw="1">Draw 1</button>
+    <button type="button" data-draw="100">Draw 100</button>
+    <button type="button" data-draw="1000">Draw 1000</button>
+    <button type="button" data-reset>Reset</button>
+  </div>
+
+  <p class="readout" data-readout>No draws yet.</p>
+
+  <p class="seed-box">PRNG seed (edit and press Enter for a reproducible sequence):
+    <input type="text" data-seed value="42"></p>
+</div>
+
+<noscript><style>.softmax-lab { display: none !important; }</style></noscript>
+<script defer src="/assets/js/prng.js"></script>
+<script defer src="/assets/js/softmax-lab.js"></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-softmax-lab]").forEach(function (el) {
+      el.style.display = "";
+    });
+  });
+</script>
+```
+
+<noscript>
+
+{{< include ../_includes/_softmax-fallback.qmd >}}
+
+</noscript>

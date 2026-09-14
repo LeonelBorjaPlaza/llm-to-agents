@@ -1,0 +1,279 @@
+---
+title: "Softmax, Sampling, and Temperature"
+subtitle: "How a language model turns scores into a choice — and what that choice does and does not tell you"
+---
+
+::: {.callout-note}
+**Standalone module.** You do not need to have attended the talk to use
+this page. It assumes the probability, likelihood, and discrete-choice
+background typical of a PhD economics program, and no machine-learning
+background.
+:::
+
+## 1. The problem being solved
+
+At every position in its output, a language model must turn an unbounded,
+open-ended choice — "what word or token comes next?" — into something a
+computer can act on. Two requirements have to be met simultaneously:
+
+- the model needs a **complete probability distribution** over every
+  possible next token, not just a single best guess, because a single
+  guess cannot express how confident the model is, or represent the fact
+  that several continuations may be almost equally plausible;
+- that distribution has to be built from whatever internal scores the
+  network happens to produce — real numbers of arbitrary sign and scale,
+  with no built-in guarantee that they are nonnegative or sum to one.
+
+**Softmax is the fixed function that solves exactly this problem.** It
+takes any vector of real-valued scores and returns a valid probability
+distribution — every entry nonnegative, all entries summing to one — while
+preserving the ranking the scores implied. Everything else in this module
+is about what that function looks like, what it shares with a tool
+economists already use, and where that resemblance stops.
+
+## 2. A small next-token example
+
+Consider a language model partway through the sentence:
+
+> "Given the traffic data, the agency decided to \_\_\_ the bridge."
+
+A real vocabulary has on the order of $10^5$ possible next tokens. To keep
+the arithmetic visible, restrict attention to five plausible candidates:
+
+`repair`, `monitor`, `replace`, `close`, `ignore`
+
+The model's job at this position is to assign a probability to each of
+these five words (and, in the background, to every other token in the
+vocabulary) that reflects how plausible a continuation it would be, given
+everything in the context so far.
+
+## 3. Logits
+
+The last layer of the network does not output probabilities directly. It
+outputs one real number per vocabulary entry — a **logit**, conventionally
+written $z_i$ for candidate $i$. Logits can be positive, negative, large,
+or small; nothing about them individually is a probability, and nothing
+requires the full set to sum to any particular value.
+
+| Token | Logit $z_i$ |
+|---|---|
+| repair  |  2.0 |
+| monitor |  1.0 |
+| replace |  0.5 |
+| close   | −0.5 |
+| ignore  | −3.0 |
+
+These five numbers are the model's raw, unnormalized signal that `repair`
+is a strong candidate and `ignore` is a poor one — but they are not yet a
+distribution.
+
+## 4. The softmax equation
+
+Softmax turns a vector of logits $z = (z_1, \ldots, z_V)$ into a
+probability distribution over $V$ items:
+
+$$
+p_i = \frac{\exp(z_i / T)}{\sum_{j=1}^{V} \exp(z_j / T)}
+$$
+
+For now, set the temperature $T = 1$ (temperature is the subject of
+§7). Two properties are worth internalizing immediately:
+
+- **every $p_i > 0$.** Even the least likely token gets some probability
+  mass; softmax never rules a token out entirely — this is exactly why a
+  model can occasionally produce a token that looked implausible.
+- **softmax is invariant to a constant shift.** Adding the same constant
+  $c$ to every logit leaves every $p_i$ unchanged, because
+  $\exp(z_i + c) = \exp(c)\exp(z_i)$, and the $\exp(c)$ factor cancels
+  between the numerator and the denominator. Logits have no natural zero
+  point; only their *relative* values matter. [S-01]
+
+Applying this to the table in §3 (still at $T=1$) gives
+$p \approx (0.60, 0.22, 0.13, 0.05, 0.004)$ for
+(`repair`, `monitor`, `replace`, `close`, `ignore`) — nonnegative, summing
+to one, and ranked exactly as the logits were.
+
+## 5. The connection to multinomial logit
+
+If this equation looks familiar, it should. **Softmax uses the same
+probability mapping as multinomial or conditional logit models**: given a
+vector of scores, exponentiate and normalize. [S-02] The role $z_i$ plays
+here is the role a linear index $x_i'\beta$ plays in a conditional-logit
+choice model.
+
+One genuinely useful piece of discrete-choice intuition survives the
+transplant intact. For fixed logits, the ratio of any two probabilities
+depends only on those two logits:
+
+$$
+\frac{p_i}{p_j} = \exp\!\left(\frac{z_i - z_j}{T}\right)
+$$
+
+This is the familiar odds-ratio property associated with independence of
+irrelevant alternatives (IIA), and it holds here algebraically, exactly as
+it does in a standard conditional-logit model. [S-03]
+
+## 6. The limitations of that analogy
+
+The resemblance is real but narrow, and it is worth being precise about
+where it stops.
+
+**The language model as a whole is not a multinomial-logit model.** [S-02]
+Only the *final probability mapping* — logits to probabilities — shares
+multinomial logit's functional form. Everything upstream of that mapping
+(the transformer, its attention layers, its parameters) is what produces
+the logits $z_i$ in the first place, and none of that machinery is linear,
+low-dimensional, or estimated the way a discrete-choice model's index
+function is.
+
+**The algebraic property is not a behavioral one.** For fixed logits,
+softmax preserves the algebraic odds-ratio property associated with IIA.
+It should not be given a behavioral random-utility, structural, or welfare
+interpretation here, because the logits are context-dependent
+neural-network outputs rather than estimated utility indices with
+structural meaning. [S-03] Concretely:
+
+- $z_i$ is not a linear index in a small set of observed covariates with
+  coefficients you could report and interpret; it is the output of a deep
+  network with a context-dependent input, and it changes with every word
+  added to the prompt.
+- There is no independent structural model of "utility" being estimated
+  here, and no claim that a change in one alternative's attributes leaves
+  the *relative* odds of two unrelated alternatives fixed in any
+  economically meaningful sense — only the algebraic identity above holds,
+  and only for a fixed vector of logits.
+- The "choice set" is not a small number of labeled, economically
+  meaningful alternatives; it is on the order of $10^5$ vocabulary entries,
+  most of which are not meaningfully in competition with each other for a
+  given prompt.
+
+The honest summary: softmax borrows multinomial logit's *arithmetic*, not
+its *econometrics*.
+
+## 7. Temperature and sampling
+
+Temperature $T$ rescales every logit — dividing by $T$ — before the
+softmax normalization in §4 is applied. It changes how concentrated the
+resulting distribution is, without changing which token has the highest
+logit.
+
+- **Argmax is deterministic and introduces no sampling variation; sampling
+  can produce different continuations from the same probability
+  distribution.** These are two different ways of turning a distribution
+  into a single output token, and they answer different questions: argmax
+  asks "what is most likely?"; sampling asks "draw one token according to
+  these probabilities."
+- As $T \to 0$, softmax converges to argmax **when there is a unique
+  highest logit** — probability mass concentrates entirely on the top
+  candidate. (If two or more logits are exactly tied for the maximum, the
+  limiting distribution instead splits mass among the tied candidates;
+  with real-valued network outputs, exact ties are rare in practice.)
+- As $T \to \infty$, the distribution approaches uniform across all
+  candidates — every token becomes roughly equally likely regardless of
+  its logit.
+- Changing $T$ leaves the parameters $\theta$ of the model completely
+  untouched. The same trained model, given the same prompt, can produce
+  different continuations on different runs purely because of how its
+  output distribution is *sampled* — not because anything about the model
+  changed.
+
+## 8. The interactive
+
+The laboratory below uses the same five logits from §3. Move the sliders,
+change the temperature, and compare a single draw against 100 or 1,000
+draws. The empirical frequencies (red markers) should track the
+theoretical probabilities (blue bars) more and more closely as the number
+of draws grows — the same law-of-large-numbers behavior that governs any
+repeated random draw from a fixed distribution.
+
+{{< include ../_includes/_softmax-lab.qmd >}}
+
+## 9. A common misconception
+
+**It is tempting to think that lowering the temperature — making the model
+more "confident," more deterministic — makes its answers more truthful.
+It does not.**
+
+The training objective rewards plausible continuation rather than
+independent verification of truth. The parameters encode statistical
+regularities rather than a directly queryable source record. Without
+grounding or external checks, a plausible continuation can therefore be
+unsupported or false.
+
+Sampling affects *variability*, not truthfulness, and is not the root
+cause of unsupported claims. **Deterministic decoding — $T \to 0$, always
+taking the argmax — can also produce a confident, fluent, and false
+answer.** Nothing about §7's temperature mechanics touches whether a
+continuation is grounded in fact; temperature only controls how
+concentrated the distribution is over continuations the model considers
+plausible. [S-08]
+
+## 10. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>If you add the same constant $c$ to every logit, how does the
+probability distribution change?</summary>
+It does not change. Softmax is invariant to a constant shift applied to
+every logit (§4): the factor $\exp(c)$ introduced by the shift appears in
+every term of both the numerator and the denominator and cancels exactly.
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>As $T \to 0$ with a unique highest logit, what does the
+distribution converge to?</summary>
+A point mass on the single highest-logit token — the distribution
+converges to argmax (§7).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Why shouldn't you call $z_i$ "the utility of token $i$," the way
+you might call $x_i'\beta$ a utility index in a discrete-choice model?</summary>
+Because $z_i$ is the output of a deep, context-dependent neural network,
+not a linear index in a small set of observed covariates with estimable,
+interpretable coefficients. Treating it as a utility index imports a
+behavioral or welfare interpretation the model was never estimated to
+support (§6).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>True or false: lowering the temperature to make the model's
+answer more "confident" also makes that answer more likely to be
+true.</summary>
+False. Temperature controls how concentrated the output distribution is
+over continuations the model already considers plausible; it says nothing
+about whether the training objective ever checked those continuations
+against truth. Deterministic decoding can produce confident, unsupported
+answers just as readily as sampling can (§9).
+</details>
+:::
+
+## 11. Continue learning
+
+- **3Blue1Brown, *Transformers, the tech behind LLMs*** (video; ~5 min for
+  the relevant section, starting at 22:22, "Softmax with temperature";
+  full video is part of a longer series). Introductory/visual level. Best
+  explanation available of *why* softmax needs a normalizing sum and how
+  temperature reshapes it, with a direct animated derivation. Included
+  because it is the clearest visual counterpart to §4 and §7 above.
+  Limitation: does not discuss the multinomial-logit connection or its
+  limits (§5–§6 above) — that framing is this module's own contribution.
+  <https://www.3blue1brown.com/lessons/gpt>
+
+- **Andrej Karpathy, *Deep Dive into LLMs like ChatGPT*** (video; the
+  segment beginning at 26:01, "inference," runs roughly 5 minutes; the
+  full video is 3.5 hours). Introductory level, plain language. Shows
+  sampling in the context of a full autoregressive generation loop, which
+  this module deliberately does not build (see §7's cross-reference to a
+  later module on generation). Limitation: no equations — purely
+  conceptual; pair it with §4–§7 above for the mathematics.
+  <https://www.youtube.com/watch?v=7xTGNNLPyMI&t=1561s>
+
+See `resources.qmd` for the complete list of sources used in this part of
+the course, with full source-map entries.

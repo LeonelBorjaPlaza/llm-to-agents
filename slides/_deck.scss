@@ -1,0 +1,28 @@
+/* Presentation-resolution type scale for the Reveal.js deck. */
+
+/*-- scss:defaults --*/
+$presentation-font-size-root: 28px;
+$presentation-h1-font-size: 1.6em;
+$presentation-h2-font-size: 1.3em;
+$presentation-line-height: 1.35;
+
+/*-- scss:rules --*/
+.reveal .slide-number {
+  font-size: 0.5em;
+}
+
+.reveal .cite {
+  font-size: 0.45em;
+  color: #888;
+  position: absolute;
+  bottom: 0.3em;
+  left: 0.6em;
+}
+
+.reveal .timing {
+  font-size: 0.4em;
+  color: #aaa;
+  position: absolute;
+  bottom: 0.3em;
+  right: 0.6em;
+}
