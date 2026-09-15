@@ -1,0 +1,538 @@
+---
+title: "Using Models Well"
+subtitle: "Turning what the course has taught into working habits: task selection, context, tools, verification, and knowing when to stop"
+---
+
+*Prerequisites: none strictly, but this page assumes the mental model
+that `short-story.qmd` gives in ten minutes and that the lessons develop
+in full: a model predicts tokens from a finite context; training set its
+parameters; tools and loops around it can act on the world. Each claim
+below links to the page that establishes it.*
+
+## The central principle
+
+Good model use is not mainly about clever wording. It is about choosing
+an appropriate task; supplying the right evidence and context; specifying
+what success looks like; giving the system useful tools where the answer
+depends on the world; making important outputs observable and
+verifiable; and keeping a human responsible for the judgments that the
+checks cannot settle. Every one of those follows from a mechanism the
+course has already explained, and this page develops them as concrete
+decisions rather than as a slogan. [S-63]
+
+## 1. Start with task selection
+
+Before writing anything, decide what kind of task this is, because the
+kind determines what the model's output is worth on its own. Three
+categories cover most work.
+
+**Tasks where the output is useful as a draft or transformation.**
+Summarizing supplied material, restructuring text, explaining a concept,
+brainstorming options, drafting or rewriting, translating, extracting
+structured information from a document, and generating a bounded piece
+of code or a formula that can be checked. These are often useful places
+to begin because the output is directly reviewable or can be compared
+with the supplied material. The output is not automatically correct, and
+errors in a summary, a translation, an extraction, a formula, or a piece
+of code can be subtle; factual or technical claims in it may still
+require verification. The point of the category is that the output is
+useful as a draft or transformation, not that its mistakes are obvious.
+
+**Tasks that become strong with tools and verification.** Research that
+depends on current sources, calculations, code modification, data
+analysis, work across many files, checking a product or documentation
+fact, and multi-step repository work. What these share is that a tool
+can retrieve the evidence or make success observable: a search can fetch
+the source, a script can compute the number, a test can run. Without the
+tool, the model is asked to guess what could have been observed. With it,
+the loop `learn/agents.qmd` describes can close on evidence.
+
+**Tasks that should not be treated as an unreviewed final decision.**
+Consequential factual conclusions without source checking; high-stakes
+professional decisions; irreversible external actions; research-design
+judgments; causal interpretation; and any decision where the model lacks
+essential private or current information. The model can assist with all
+of these, often substantially, by organizing the evidence, surfacing
+considerations, or drafting the argument. What it cannot do is remove
+the need for a person or an external source to settle the answer,
+because nothing in the training objective verified truth
+(`learn/training.qmd` §7) and nothing in a fluent answer indicates that
+it was checked. [S-08]
+
+## 2. A prompt is a task specification
+
+There is no magic phrasing. What makes a request work is that it
+specifies a task the way you would specify it for a capable colleague who
+knows nothing about your situation. A useful specification says some or
+all of the following: the objective; the source of truth; the inputs;
+the relevant context; the constraints; the required output; the
+acceptance criteria; and what to do when evidence is missing or the
+request is ambiguous. Not every task needs every part. Precision comes
+from defining the task, not from length.
+
+Compare two versions of one request.
+
+> "Review this analysis and tell me if it is right."
+
+This gives the model no source of truth, no definition of "right", no
+list of what to check, and no instruction for the case where a claim
+cannot be established. The model can still produce a plausible-looking
+review even though the task was underspecified, and fluency does not
+establish that the review is correct.
+
+> "Review the analysis in `report.md`, treating the attached data file
+> as the source of truth. Identify assumptions the text relies on
+> without support. Recompute the three figures in Table 2 from the data
+> and report any mismatch. Return findings ordered by severity. Do not
+> fill gaps with invented evidence; if a conclusion cannot be
+> established from the supplied material, say so and stop there."
+
+This is four sentences longer and specifies everything the first version
+left open: what to inspect, what counts as truth, which numbers to
+recompute, what form the answer takes, and what to do at the boundary of
+the evidence. Anthropic's current guidance for its models makes the same
+point in its own terms: clear, explicit instructions, with the context
+and motivation behind them, produce more targeted responses. [S-57] The
+principle is older than any model, since it is how tasks are specified
+for people, and it is stable across providers in a way that phrasing
+tricks are not (§9).
+
+## 3. Context engineering
+
+A model step is shaped by its learned parameters and by the
+inference-time context supplied to that step. Surrounding software and
+tools can retrieve or observe external information and place the
+relevant results into later context. `learn/tokens-context.qmd` explains
+the window: finite, holding instructions, conversation, supplied files,
+tool results, and generated output together. [S-31] Managing what goes
+into it is the practical skill the industry has come to call **context
+engineering**, and the question it asks for every step is simple: what
+information actually needs to be in context now?
+
+The guiding principle is the smallest high-signal context that is
+sufficient for the next step. Supplying everything is not the safe
+default it appears to be. The window is finite, so material that is not
+needed displaces material that is. Irrelevant content competes with
+relevant content; one empirical study found that models used a relevant
+passage less well when it sat in the middle of a long input, and
+Anthropic's documentation states that as token count grows, accuracy and
+recall degrade, and that context should be treated as a finite resource.
+[S-32] [S-31] [S-34] Those are findings for particular models and dates
+rather than laws, but the direction is consistent: more is not
+automatically better. Repeated material occupies capacity twice, and
+additional input consumes context capacity and computation; depending on
+the product, API, pricing, and caching scheme, it can also increase
+latency or monetary cost (§11).
+
+Several practices follow. Separate durable project instructions, which
+apply to every task, from task-specific instructions, which apply to
+this one; keep the durable set short, since instructions that are always
+loaded compete with everything else. Load a file or a section when the
+step needs it rather than at the start of the session, a pattern
+Anthropic's engineering guidance calls **just-in-time** context: the
+system keeps lightweight references such as file paths or queries and
+loads the data at runtime with tools, so that what it discovers at each
+step informs the next, which the same guidance calls **progressive
+disclosure**. [S-61] Retrieve the relevant part of an archive rather
+than pasting the archive. Remove context that has become stale or is
+duplicated. When a long session becomes unwieldy, summarize its state
+into a compact form and continue from that, which is called
+**compaction** when the system does it automatically and a **handoff**
+when you do it deliberately (§8). [S-61] And when the existing history
+is more noise than signal, start a fresh session with a clean
+specification. These are general practices; how a particular product
+implements loading, compaction, or memory is product-specific and
+changes.
+
+## 4. The source-of-truth question
+
+Before asking for an answer, decide where the answer should come from.
+The candidates are the model's general knowledge from training; a
+document you supply; current web sources; a database; code you run; a
+spreadsheet; a repository; or a connected application. The choice is
+not a formality. A model's parameters encode statistical regularities
+from training text, not a queryable record of your document, your
+database, or last week's release notes, and a model asked a question
+whose answer lives elsewhere will produce a plausible continuation
+anyway. [S-08]
+
+Three examples fix the habit. If the question is "What does this
+contract say?", the contract is the source of truth, and it must be in
+context; the model's general knowledge of contracts is background, not
+evidence. If the question is "What is the current version of this
+software?", current documentation is the source of truth, and the answer
+should be fetched, not recalled, because the parameters were fixed at
+training time and the world was not. If the question is "Does this code
+produce the claimed number?", running the code or recomputing the number
+is the source of truth, and any answer that did not involve running or
+recomputing is a guess about what running it would show. Deciding the
+source first tells you what to put in context and whether a tool is
+needed, which is the next section.
+
+## 5. Give the model tools when the answer depends on the world
+
+A model can reason about what is in its context. A tool is needed when
+the task depends on something that is not there and cannot be there
+without an action: current information, private data, exact arithmetic
+beyond what should be trusted from token prediction, the contents of a
+file, the result of executing code, or a real effect on an external
+system. `learn/agents.qmd` §2 explains what a tool call is: the model
+generates a structured request, and surrounding software executes it and
+returns the result as evidence for the next step. [S-51]
+
+The pairing is usually obvious once the source of truth is named. A web
+search or fetch for current information; retrieval for a document
+collection; a Python or R execution tool for calculations; file-system
+tools for files; a test runner for code; a database query for what is
+actually stored. The principle that covers every case is short: do not
+ask a model to guess what a tool can observe. Where no tool is available
+for something the task depends on, the honest specification says so and
+tells the model to state the gap rather than fill it.
+
+## 6. Verification: evidence beats confidence
+
+A fluent answer is not evidence. A sentence saying "I checked" is still
+generated output; by itself it does not establish that the check was
+executed or what the check found. What counts is observable
+verification: something outside the model's generated text that a
+person, or a later step, can inspect. A calculation independently recomputed by a
+script; a test suite run, with its output shown; a rendered document
+opened; a quotation checked against the original; a database queried; an
+output validated against a schema; the version-control diff read; every
+claim reconciled against its cited source. Anthropic's current guidance
+for its coding tool states the working rule bluntly: have the model show
+evidence rather than asserting success, and if you cannot verify it, do
+not ship it. [S-60]
+
+The standing rule of this course applies to every such check: a passing
+check establishes only what that check tested. That limit divides
+verification into two kinds. **Mechanical verification** covers what a
+procedure can settle: arithmetic, syntax, whether a document renders,
+whether tests pass, whether a file exists, whether output matches a
+schema. It is cheap, repeatable, and should be built into any task that
+admits it. **Judgment** covers what no procedure settles: whether a
+research design identifies the effect it claims to, whether the evidence
+supports the conclusion, whether the specification itself was right,
+whether a piece of prose argues fairly. Automation can support judgment,
+by assembling the evidence and running every mechanical check first, but
+it does not eliminate it. A task that passes every automated check has
+passed every automated check, and the question of whether the right
+thing was built remains open until someone answers it.
+
+## 7. Long tasks: work in bounded units
+
+A request such as "do the entire project" asks for one very large,
+opaque task, and that makes the intermediate decisions harder to inspect,
+verify, and redirect before they affect later work; meanwhile the context
+fills with every file read and every command run along the way. The
+alternative is the pattern that agent systems
+already use internally, made explicit at the level of your own
+workflow: inspect the current state; plan the next bounded unit;
+execute it; run the checks; review the diff or output; record the
+decisions made; continue. Each pass through that sequence is a point
+where you can see what happened and redirect. Anthropic's guidance for
+its coding tool recommends the same separation of exploration and
+planning from implementation, and notes that planning pays most when
+the approach is uncertain or the change spans many files, and least when
+the change could be described in one sentence. [S-60]
+
+A good bounded unit has a clear deliverable, an explicit scope in files
+or sections, acceptance checks that can be run, and a stop condition.
+For file-based work, a checkpoint in version control at the end of each
+unit gives you a known-good state to compare against and return to;
+reviewing the diff between checkpoints is often the fastest way to see
+exactly what a unit changed. This is not a tutorial on version control,
+and the mechanism does not matter; what matters is that every unit ends
+in a state you have looked at.
+
+## 8. Handoffs and fresh sessions
+
+Long work outgrows a single session, and switching sessions or models is
+routine. A good handoff preserves the objective; the current state; the
+decisions already settled, so they are not relitigated; the files and
+the source of truth; the open issues; the next bounded task; and what
+must not be changed. It does not preserve the transcript. A compact
+state summary is usually better than the history it summarizes, because
+the history contains every dead end, every superseded draft, and every
+tool result that no longer matters.
+
+That is also why a fresh session can sometimes be preferable. There is
+nothing mystical in it: irrelevant accumulated context can interfere
+with the next task, and a compact handoff into a fresh context removes it
+and lets the next task be specified cleanly. Anthropic's current guidance
+for Claude Code, accessed 2026-09-15, gives a concrete trigger for that
+product: if the model has been corrected more than twice on the same
+issue in one session, the context is cluttered with failed approaches,
+and a clean session with a better initial prompt that incorporates what
+was learned almost always outperforms the long one. [S-60] That is one
+provider's rule of thumb for one tool, not a law of language models; the
+durable principle is only the one in the first sentence of this
+paragraph. A handoff can be as short as this:
+
+```
+Objective: <one sentence>
+State: <what exists now, which checks pass, which files are current>
+Settled: <decisions not to reopen, with one-line reasons>
+Source of truth: <files, data, documentation, with locations>
+Open: <known problems, unverified items>
+Next unit: <deliverable, scope, acceptance checks, stop condition>
+Do not change: <frozen files, constraints>
+```
+
+## 9. Prompting guidance is conditional, not folklore
+
+Prompting advice circulates as if it were a fixed craft. It is not. The
+official guidance of the major providers, read on the same day, differs
+on specific recommendations, and each provider's guidance is explicitly
+tied to particular models and dates. The examples below were verified
+against those documents on 2026-09-15 and will go stale; they are here
+to show the pattern, not to be memorized.
+
+On examples in prompts, three current documents give three different
+defaults. Anthropic's prompting-best-practices page, which covers its
+current Claude models and separates model-specific guidance from
+techniques it applies to all of them, lists examples among the
+techniques for all current models, calls them one of the most reliable
+ways to steer output format, tone, and structure, and suggests three to
+five. [S-57] Google's current Gemini prompt-design guidance recommends
+always including few-shot examples and states that prompts without them
+are likely to be less effective. [S-59] OpenAI's guidance is split by
+model family: its reasoning-models guide says those models often do not
+need few-shot examples and recommends writing prompts without examples
+first, while its general prompt-engineering page says its non-reasoning
+GPT models perform best with explicit instructions. [S-58] On
+step-by-step instructions, the same OpenAI reasoning-models guide says
+that prompting those models to think step by step is unnecessary because
+they reason internally, and Anthropic's page, in its section on
+extended thinking, says that when thinking is enabled a general
+instruction to think thoroughly often produces better reasoning than a
+hand-written step-by-step plan, while keeping manual step-by-step
+prompting as a fallback when thinking is off. [S-58] [S-57] On structure,
+Anthropic's page and OpenAI's general prompt-engineering page both
+recommend delimiting the parts of a prompt with XML tags or Markdown so
+that instructions, context, and inputs are unambiguous. [S-57] [S-58] On
+a specific mechanism, prefilling the start of the assistant's reply to
+force a format, Anthropic's page states that it is no longer supported on
+its models from Claude 4.6 onward and gives migration advice. [S-57] And
+OpenAI's prompt-engineering page recommends pinning production
+applications to specific model snapshots precisely because behavior
+changes between versions. [S-58]
+
+The conclusion is not that any of these is wrong. It is that
+model-specific guidance can conflict, so prompting advice is model-,
+task-, and date-dependent and should be treated that way: verify the
+current guidance for the model you are using rather than memorizing
+syntax tricks, try the simplest specification first, and add structure or
+examples when the output shows they are needed. What does not change between models or
+years is the content of §2: a clear objective, the relevant context, a
+named source of truth, and acceptance criteria that can be checked. Those
+are properties of the task, and they outlast every syntax trick.
+
+## 10. Model and effort selection
+
+Providers offer models of different sizes and, increasingly, settings
+that control how much computation a model spends before answering. The
+right choice depends on where the difficulty in the task lies, and the
+following is a heuristic rather than an empirical law. Judgment-heavy,
+ambiguous, multi-source, or technically difficult work, such as
+synthesis across many sources, difficult debugging, complex planning, or
+subtle technical writing, is a reasonable candidate for a stronger model
+or higher reasoning effort, especially when mistakes are costly. Bounded
+and mechanically checkable work, such as transformations, repetitive
+structured tasks, mechanical edits, checks, and simple classification or
+extraction, is a reasonable candidate for a faster or cheaper model,
+whose lower cost and latency are paid on every call. OpenAI's current
+guidance draws a similar line for its own model families: speed and cost
+favor one, accuracy and reliability on hard problems favor the other.
+[S-58] Evaluate the trade-off on the actual task when it matters; model
+capabilities and pricing change.
+
+No universal ranking by model name survives contact with a specific task,
+and any such ranking is out of date within months. The durable
+principle is to match model capability and inference effort to the
+difficulty and value of the decision, rather than always choosing either
+the strongest or the cheapest option.
+
+## 11. Token and cost efficiency
+
+In ordinary interactive use, you do not need to count tokens. A few
+habits cover most of the waste: do not supply the same long material
+repeatedly across turns; keep instructions to what the task needs; ask
+for bounded outputs rather than open-ended ones; and start fresh when the
+accumulated context no longer helps (§8). Efficiency here is a by-product
+of the context discipline in §3, not a separate goal.
+
+In API and agent workflows, cost and latency deserve attention, for
+structural reasons. The context may be sent with every call, and a tool
+loop makes many calls; long outputs accumulate into later inputs;
+stronger models and higher effort cost more per token. One mechanism
+that helps is **prompt caching**, in which a provider stores a repeated
+prefix of the input so that it is cheaper and faster to process on later
+calls. It should be understood precisely: Anthropic's documentation
+states that cached prompt prefixes still occupy the context window, and
+that caching changes what you pay for those tokens, not whether they
+count. [S-62] Caching lowers the bill for repeated material; it does not
+make the material free in the sense that matters for §3. And no
+efficiency measure is worth a wrong answer: when correctness and cost
+conflict, the section on verification wins.
+
+## 12. When to stop and ask
+
+A capable system should not always continue. There are situations in
+which the right next action is to stop and ask, and a task specification
+should name them: the source of truth is missing; the action has
+meaningful external consequences; two plausible interpretations of the
+request would lead to materially different work; required access is
+unavailable; a requested acceptance criterion cannot be checked; the
+evidence contradicts the conclusion that was requested. In each, an
+uncertainty should change the workflow, not merely the wording of the
+answer. A hedged answer to an ambiguous request still does the wrong
+work confidently; a question resolves the ambiguity before the work is
+done.
+
+The counterweight is that routine tasks should not become
+interruptive. Most small ambiguities do not matter: either reading leads
+to the same result, or the difference is cheap to fix on review. The
+practical test is whether the ambiguity materially affects correctness or
+consequences. If it does, stopping is cheaper than proceeding. If it does
+not, a stated assumption and a note in the result is enough.
+
+## 13. Privacy, permissions, and consequential actions
+
+Before giving a model or an agent access to sensitive files, private
+accounts, external communication, production systems, or destructive
+commands, decide what access the task actually needs. `learn/agents.qmd`
+§10 explains where boundaries live: in the software around the model,
+which decides what executes automatically, what waits for approval, and
+what is refused, regardless of what the model generates. [S-54] The
+principle is least necessary access, with review for consequential
+actions. Local, reversible, observable actions are often easier to permit
+than irreversible or externally consequential ones, but risk also depends
+on what data and systems an action can access: reading can be
+consequential when the source is sensitive, confidential, or restricted.
+Actions that send, publish, delete, pay, change production systems, or
+expose sensitive information commonly warrant explicit review at the
+point of execution. The same holds for what you place in context:
+sensitive material should be supplied only when the service, account,
+organizational policy, and data-handling terms permit that use. This is
+not a security manual, only the habit of asking, before each task, what
+the system is being allowed to touch.
+
+## 14. A compact operating checklist
+
+The sections above reduce to a short set of questions, which is meant to
+be read before a task rather than after.
+
+{{< include ../_includes/_operating-checklist.qmd >}}
+
+## 15. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>You ask a model, from general knowledge, what the current
+default context-window size of a particular product is. It answers
+confidently with a number. What is wrong with this workflow?</summary>
+The source of truth for a current product fact is current documentation,
+not the model's parameters, which were fixed at training time. The
+answer is a plausible continuation, and its confidence is not evidence.
+The task needed a fetch of the documentation, or an explicit statement
+that the model cannot know (§4–§5).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>To be safe, you paste your entire project archive into the
+context before asking a question about one function. Why might this
+produce a worse answer than supplying the one relevant file?</summary>
+The window is finite, and unneeded material competes with needed
+material; the empirical and vendor evidence cited in §3 points the same
+way. Supplying the relevant file, or letting a tool retrieve it, gives a
+smaller, higher-signal context for the same question (§3).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>An agent reports: "I have fixed the bug and verified that the
+tests pass." What have you learned, and what should you look at?</summary>
+You have learned that the model generated that sentence. Look at the
+test output the run actually produced, and at the diff. If no test was
+run through a tool, nothing was verified. If it was, the passing tests
+establish what those tests check, and whether the fix is right in the
+sense you meant remains your judgment (§6).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>You use the cheapest, fastest model to decide whether a
+research design supports a causal claim, to save cost. What is the
+mismatch?</summary>
+The bottleneck in that task is judgment and synthesis, and the cost of
+error is high, which makes it a candidate for stronger or higher-effort
+assistance plus human review, not for the cheapest option. Cost saving
+belongs on the bounded, mechanically checkable parts of a workflow. And
+whatever model is used, this is a task that stays under human judgment;
+the model's role is to organize the evidence (§1, §10).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>You want an agent to migrate a large codebase. Which is the
+better first request: "migrate the whole codebase" or "migrate the three
+files in `src/io/`, run the test suite, and stop; report what changed"?
+</summary>
+The second. It has a deliverable, an explicit scope, an acceptance check,
+and a stop condition, so you can review the diff and the test output
+before the next unit. The first is one opaque pass whose early mistakes
+shape everything after them (§7).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>After the third correction on the same point, the assistant is
+still getting it wrong. Should you correct it a fourth time?</summary>
+That is a reasonable point to consider a fresh session or a handoff,
+especially if the accumulated history now contains several failed
+approaches competing with the task. The exact number is a heuristic, not
+a fixed threshold. The durable principle is to start fresh, with a
+specification that includes what you learned from the failures, when
+accumulated context is adding more noise than useful state (§8).
+</details>
+:::
+
+## 16. Continue learning
+
+- **Anthropic, *Effective context engineering for AI agents***
+  (engineering article, published 2025-09-29, accessed 2026-09-15).
+  Practitioner level. The clearest statement of context as a finite
+  resource, with definitions of just-in-time retrieval, compaction, and
+  structured note-taking used in §3. Limitation: one provider's guidance
+  about its own models; the mechanisms it names are implemented
+  differently elsewhere.
+  <https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents>
+
+- **Anthropic, *Best practices for Claude Code*** (documentation page,
+  accessed 2026-09-15). Practitioner level. Especially good on
+  verification as the thing that lets a session run unattended, on
+  separating exploration from implementation, and on when to clear
+  context. Limitation: product-specific; the habits transfer, the
+  commands do not.
+  <https://code.claude.com/docs/en/best-practices>
+
+- **The three providers' current prompting guidance** (Anthropic's
+  *Prompting best practices*; OpenAI's *Prompt engineering* and
+  *Reasoning best practices*; Google's *Prompt design strategies*; all
+  accessed 2026-09-15). Practitioner level. Read the one for the model
+  you use, and read it again when the model changes. Limitation: each is
+  tied to its provider's current models and revised without notice, which
+  is the point of §9.
+  <https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices>,
+  <https://developers.openai.com/api/docs/guides/prompt-engineering>,
+  <https://ai.google.dev/gemini-api/docs/prompting-strategies>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

@@ -156,6 +156,40 @@ with skills*, *Configure permissions*.**
 example in `learn/agents.qmd` §8, §10, and §11, after the generic
 mechanism is established.
 
+**S29 — Anthropic, *Prompting best practices* (Claude API
+documentation).**
+<https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices>,
+**accessed 2026-09-15**. New in the practical-use batch. Model-specific;
+used only in `learn/using-models-well.qmd` §2 and §9 to show that
+guidance differs by provider, model, and date.
+
+**S30 — OpenAI, *Prompt engineering* and *Reasoning best practices*
+(API documentation).**
+<https://developers.openai.com/api/docs/guides/prompt-engineering>,
+<https://developers.openai.com/api/docs/guides/reasoning-best-practices>
+(the platform.openai.com URLs redirect here), **accessed 2026-09-15**.
+New in the practical-use batch. Used in §9 and §10 of the same page for
+the reasoning-versus-GPT distinction, the examples and step-by-step
+guidance, and snapshot pinning.
+
+**S31 — Google, *Prompt design strategies* (Gemini API documentation).**
+<https://ai.google.dev/gemini-api/docs/prompting-strategies>, **accessed
+2026-09-15**. New in the practical-use batch. Used in §9 for the
+few-shot default, contrasted with S29 and S30.
+
+**S32 — Anthropic, *Best practices for Claude Code* (documentation).**
+<https://code.claude.com/docs/en/best-practices>, **accessed
+2026-09-15**. New in the practical-use batch. Used for verification as
+evidence, plan-before-implement, and fresh-session guidance in
+`learn/using-models-well.qmd` §6–§8; the habits are cited, not the
+commands.
+
+The practical-use batch also re-verified two pages already in this list:
+S20 (the context-engineering article) for the definitions of
+just-in-time context, progressive disclosure, compaction, and structured
+note-taking (S-61), and S17 (the context-windows page) for the sentence
+on prompt caching (S-62), both on 2026-09-15.
+
 ## Claim-by-claim
 
 | ID | Claim (short) | Source | Locator | Support | Confidence | Caveat |
@@ -216,6 +250,13 @@ mechanism is established.
 | S-54 | Tiered permissions: reads need no approval in the working directory; shell commands and file edits require approval; deny rules; plan mode reads only | S28 (permissions) | "Permission system"; "Permission modes" | direct | high | **Product-specific, accessed 2026-09-15 (PR9)** |
 | S-55 | Post-training definition and family taxonomy; RLHF is one route, not the family | — (course synthesis; CC3) | synthesis of S-46–S-49 | inference | high | Each member sourced individually |
 | S-56 | Agent = software repeatedly invoking a model with updated state, executing its tool requests under permissions; not a distinct architecture | — (course synthesis) | synthesis of S-50, S-51 | inference | high | Vocabulary stated as non-fixed |
+| S-57 | Anthropic prompting guidance: clear/explicit instructions; context and motivation; examples reliable for format; XML tags; general over prescriptive step instructions; remove over-prompting; prefill unsupported from Claude 4.6 | S29 | Named sections | direct | high | **Model-specific, accessed 2026-09-15 (PR9)** |
+| S-58 | OpenAI: reasoning vs. GPT prompting differs; "think step by step" unnecessary for reasoning models; try without examples first; delimiters; pin to snapshots; speed/cost vs. accuracy/reliability | S30 | Quoted sections | direct | high | **Model-specific, accessed 2026-09-15 (PR9)** |
+| S-59 | Google: clear instructions; always include few-shot examples; iterate | S31 | Quoted sections | direct | high | **Product-specific, accessed 2026-09-15 (PR9)** |
+| S-60 | Claude Code best practices: give a runnable check; show evidence, not assertions; "if you can't verify it, don't ship it"; explore/plan/implement; concise CLAUDE.md; clear between tasks; fresh session after repeated corrections | S32 | Named sections | direct | high | **Product-specific, accessed 2026-09-15 (PR9).** Habits cited, not commands |
+| S-61 | Definitions: just-in-time context, progressive disclosure, compaction, structured note-taking | S20 | Named sections | direct | high | **Accessed 2026-09-15 (PR9).** Companion to S-34 |
+| S-62 | Cached prompt prefixes still occupy the context window; caching changes cost, not counting | S17 | "Manage context with compaction" | direct | high | **Product-specific, accessed 2026-09-15 (PR9).** Companion to S-31 |
+| S-63 | Operating discipline for model use: task classification, specification, source of truth, minimal context, tools, observable verification, bounded units, handoffs, conditional prompting advice, model/effort matching, stop-and-ask, least access | — (course synthesis) | synthesis of S-08, S-31, S-32, S-34, S-50, S-51, S-54–S-56, S-57–S-62 | inference | high | No universal prompting rule asserted |
 
 ## Open verification debt (carried forward from the implementation plan)
 
@@ -261,7 +302,13 @@ mechanism is established.
   DeepSeek-R1 introduction); S-50–S-54 are vendor engineering guidance
   and product documentation, all access-dated 2026-09-15 and labeled
   product-specific in the lessons. No other sources were consulted.
-- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, S-45, S-55, and S-56 are marked `inference`
+- **Resolved, not open (practical-use batch, 2026-09-15):** S-57–S-62 are
+  current vendor documentation and guidance, all accessed 2026-09-15 and
+  labeled model- or product-specific in `learn/using-models-well.qmd`,
+  which states that they will go stale. `short-story.qmd` adds no claim
+  rows; it reuses S-05, S-07, S-08, S-12, S-14, S-19, S-22, S-28, S-29,
+  S-31, S-43, S-51, S-55, and S-56.
+- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, S-45, S-55, S-56, and S-63 are marked `inference`
   because they are this course's own editorial framing, naming convention,
   or field characterization — not a direct claim made by a video or paper.
   This is intentional and should not be "fixed" by attributing them to a

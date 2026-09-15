@@ -1,0 +1,178 @@
+---
+title: "The Short Story"
+subtitle: "From the text you type to a system that uses tools and carries out work, in about ten minutes"
+---
+
+*This page is the whole course in one pass. It gives you a single mental
+model and points to the lesson that develops each step. Read it first,
+or read it instead of attending the talk; nothing here assumes anything
+else on the site.*
+
+## 1. You type text
+
+Everything starts with a sentence, and a neural network cannot operate on
+a sentence, only on numbers. So the text is cut into pieces called
+tokens, drawn from a fixed vocabulary that was decided before training.
+A token may be a whole word, a fragment of one, punctuation, or another
+piece defined by the tokenizer; in many commonly used subword
+tokenizers, a preceding space can affect the token. Each token is
+replaced by its index in the vocabulary, a
+plain integer that means nothing except "this entry", and each index
+selects a row from a learned table of numbers. Your sentence has become
+a short list of vectors, one per token, and that list is what the model
+receives. [S-28] [S-29] `learn/how-created.qmd` traces one sentence
+through these steps; `learn/tokens-context.qmd` explains why the
+vocabulary is made of fragments and what follows from that.
+
+## 2. The vectors enter a neural network
+
+A neural network is a function with adjustable numbers inside it, called
+parameters. Its smallest piece takes a list of numbers, forms a weighted
+sum, applies a fixed nonlinear function, and passes the result on; many
+such pieces, arranged in layers, can represent relationships that no
+weighted sum alone could. Nobody wrote the parameters' values by hand.
+Training adjusted them: repeatedly, a loss measured how wrong the output
+was, backpropagation computed gradients of that loss, and an optimizer
+used those gradients to update the trainable parameters. [S-12] [S-14]
+`learn/neural-networks.qmd`
+works one such piece through by hand, including one full training step.
+
+## 3. The transformer lets each position use its context
+
+The vector for a token starts the same wherever the token appears. What
+makes the model useful is that the network updates each position's
+vector using the other positions. The mechanism that does this is
+self-attention: it lets each position combine information from the
+positions it is permitted to use, and in the causal decoder models
+emphasized here those are itself and earlier positions, never future
+ones. Attention is one of two computations inside a repeating
+transformer block; the other works on each position separately. A model
+stacks many such blocks. [S-19] [S-22] `learn/why-transformers.qmd`
+explains why transformer architectures became prevalent and what they
+changed relative to recurrent sequence processing;
+`learn/transformers-attention.qmd` shows the arithmetic on a three-token
+example.
+
+## 4. Out comes a score for every possible next token
+
+After the last block, the vector at the final position is turned into one
+raw score for every entry in the vocabulary. A fixed function called
+softmax turns those scores into a probability distribution over the
+vocabulary, and a setting called temperature controls how concentrated
+that distribution is. A decoding rule then selects the next token, either
+deterministically or stochastically. That token becomes part of the
+context for the next generation step, and the process repeats;
+implementations commonly reuse cached intermediate key and value
+representations from earlier positions rather than recomputing all
+earlier attention inputs from scratch. A paragraph of output is this step
+repeated, one token at a time. [S-05] [S-07] [S-43]
+`learn/softmax-sampling.qmd` gives the equation, an interactive, and the
+reason temperature changes variety but not truth.
+
+## 5. Why the probabilities are any good
+
+The probabilities are worth something because of how the parameters were
+set. During pretraining, the model was shown enormous amounts of text
+and, at each training target, asked to predict the next token. The text
+itself supplied the answer. Each time, a loss measured how little probability
+the model had given the actual next token; a procedure called
+backpropagation computed how the loss would change with a small change
+in each parameter; and an optimizer nudged the parameters accordingly.
+Repeated on a scale hard to picture, this is why the model captures
+statistical structure in text: grammar, meaning, facts that recur,
+conventions of argument. What it was never asked to do is check whether
+the text was true. [S-05] [S-08] `learn/training.qmd` sets out the
+objective, the loss, and the loop, and what they do and do not teach.
+
+## 6. Why it behaves like an assistant
+
+Pretraining alone does not specifically optimize a model to behave as a
+conversational assistant. To shape how it answers requests, follows
+instructions, and behaves within limits, its parameters are changed
+further in post-training: by showing
+it examples of good responses, by teaching it which of two responses
+people or other models prefer, and by rewarding it for outcomes that can
+be checked. These methods vary between providers and change over time,
+and they all have one thing in common: they update the parameters. The
+instructions a product places in front of your conversation are not
+post-training; they are text in the context, and they change nothing in
+the model. [S-55] [S-31] `learn/posttraining.qmd` describes the family of
+methods and keeps its members straight.
+
+## 7. Context steers a call without changing the model
+
+Once training ends, the parameters are fixed. The request-specific
+information the model conditions on is supplied through its
+inference-time context: your prompt, the conversation so far, documents
+that were retrieved, results returned by tools, instructions, and files
+that were supplied. All of it is tokens in one finite sequence, and the
+model conditions on it for this call. Decoding settings and surrounding
+product logic can also affect the resulting output without changing the
+parameters. If a product persists information across sessions, that
+persistence is maintained outside the model and can be supplied again on
+later calls; it does not by itself update model parameters. [S-31]
+`learn/tokens-context.qmd`
+explains what the window holds, what competes for it, and why more is
+not automatically better.
+
+## 8. Tools turn words into actions
+
+A model call produces output. By itself it does not read a file, run a
+program, search the web, or send anything. What makes those possible is
+that the software around the model describes available tools in the
+context, and the model can generate a structured request to use one. The
+request is checked against permission rules, the action is executed, and
+the result is placed back into the context for a later model step, where
+it becomes evidence the model can use. The model generated the
+structured request; surrounding system infrastructure, which may be the
+developer's software or the provider's, executed or routed the external
+action. [S-51] `learn/agents.qmd` walks through one tool call and one
+whole task.
+
+## 9. Repeat the loop, and you have an agent
+
+Put the pieces in a loop: an objective and the current context go to the
+model; the model produces a request or a response; a request is checked
+and executed; the observation updates the context; the model is called
+again; the loop continues, asks you, or stops. Software that runs this
+loop, with tools, state, permissions, and checks around it, is the
+minimal mechanism behind what this course calls an agentic system. The
+word "agent" has no universally fixed boundary, and a system with a
+mostly predefined path is often better called a workflow. Nothing new
+appears inside the model at this stage. The same network,
+the same parameters, the same next-token prediction, are being invoked
+repeatedly by software that carries the state between calls. [S-56]
+
+```
+text → tokens → vectors → transformer → scores → probabilities → token
+                                   ▲                              │
+                                   │       appended to context    │
+                                   └──────────────────────────────┘
+
+objective + context → model step → tool request → execution → evidence
+        ▲                                                         │
+        └──────────── context and state updated ──────────────────┘
+```
+
+## 10. The mental model
+
+A language model is a learned next-token predictor. Pretraining set its
+parameters to capture the structure of text; post-training changed them
+further so that it behaves as an assistant. Once trained, the parameters
+are fixed, and everything specific to a given request reaches the model
+through its context. Software around the model can give it tools and
+persistent state, and can call it repeatedly, and that loop of model
+step, action, and evidence is what turns a predictor into a system that
+carries out work.
+
+Four consequences follow for anyone who uses such a system. Fluency is
+not evidence: the output is a plausible continuation, whether or not
+anything was checked. Tool use is not automatically verification: a tool
+was used only if a request was executed, and it verified only what it
+was asked to verify. A passing check proves only what that check tested.
+And models and tools can assist judgment, by organizing evidence, testing
+alternatives, and checking mechanical claims, but on judgment-heavy
+questions the system's output does not itself establish that the
+conclusion is warranted; evidence, review, and human accountability
+remain necessary. `learn/using-models-well.qmd` turns these into working
+habits.

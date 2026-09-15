@@ -35,6 +35,9 @@ rather than reproduces.
 
 ## Available now
 
+- [**The short story**](short-story.qmd) — the whole course in about ten
+  minutes: one mental model from the text you type to a system that uses
+  tools, with a link into the lesson that develops each step. Start here.
 - [**From text to numbers**](learn/how-created.qmd) — what has to happen
   before a language model can learn from text: tokens, token IDs,
   embedding vectors, and next-token targets, traced through one sentence.
@@ -66,6 +69,10 @@ rather than reproduces.
   actually is, the workflow-versus-agent distinction, the agent loop,
   state and memory, reusable procedures, verification, and permissions,
   with a coding agent as the running example.
+- [**Using models well**](learn/using-models-well.qmd) — the practical
+  guide: task selection, task specification, context, source of truth,
+  tools, verification, bounded units, handoffs, model selection, and an
+  operating checklist, each tied to a mechanism taught earlier.
 - [**Deep dive: tokens, embeddings, and the context window**](learn/tokens-context.qmd)
   — optional; why models use subword units, what the embedding table does
   and does not encode, and what a finite context window implies in

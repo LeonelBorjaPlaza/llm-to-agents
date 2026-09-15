@@ -729,3 +729,108 @@ text was not supervised as a faithful description; the pretraining
 attribution softened to "many broad capabilities are established during
 pretraining"; the reasoning-model misconception scoped to the DeepSeek
 case; the reward schematic explicitly attached to the classic route.
+
+## Task: practical guide and short story (2026-09-15, Batch 4)
+
+### Scope
+
+Created `learn/using-models-well.qmd`, `short-story.qmd`, and the shared
+include `_includes/_operating-checklist.qmd` (an ordered list inside a
+`.operating-checklist` div, unstyled for now, so it can be given a print
+style or reused later without changing the lesson). No frozen lesson was
+edited; no contradiction requiring one was found.
+
+### Research performed (bounded)
+
+Read on 2026-09-15: Anthropic's *Prompting best practices* (saved to disk
+and searched for the examples, XML, thinking, prefill, and over-prompting
+passages), OpenAI's *Prompt engineering* and *Reasoning best practices*
+(the platform.openai.com URLs redirect to developers.openai.com), Google's
+*Prompt design strategies*, Anthropic's *Best practices for Claude Code*,
+and a targeted re-read of the context-engineering article for four
+definitions. The prompt-caching sentence was taken from the
+context-windows page already fetched in Batch 1. No prompt-engineering
+blogs, social-media material, or listicles were consulted.
+
+### Product-specific advice included, all access-dated 2026-09-15
+
+- Examples in prompts: Anthropic (reliable for format), Google (always
+  include), OpenAI reasoning models (try without first).
+- Step-by-step instructions: OpenAI (unnecessary for reasoning models);
+  Anthropic (general instruction preferred over prescriptive steps).
+- Delimiters: Anthropic and OpenAI both recommend XML or Markdown
+  structure.
+- Prefill: Anthropic documents it as unsupported from Claude 4.6 onward.
+- Snapshot pinning: OpenAI.
+- Model-family choice: OpenAI's speed/cost versus accuracy/reliability
+  framing.
+- Claude Code: evidence over assertion, plan-before-implement,
+  fresh session after repeated corrections, concise CLAUDE.md.
+- Prompt caching: cached prefixes still count toward the window.
+
+### Advice deliberately excluded
+
+- Any universal claim about how much performance degrades with context
+  length; the page cites the one empirical study and the vendor
+  statements already in the course and says they are for particular
+  models and dates.
+- Any ranking of models by name.
+- Specific "magic phrase" recommendations, role-play framings, and
+  emphasis tricks; the Anthropic page's own note that emphasizing many
+  lines makes none stand out was read as a reason not to teach emphasis
+  as a technique.
+- Percentage cost savings from caching or from any efficiency measure.
+- Claude Code commands, permission modes, and subagent features beyond
+  the habits they implement; the practical pages that follow will cover
+  the product.
+
+### Correction pass on the practical page (2026-09-15, Batch 4, before commit)
+
+Eleven precision corrections to `learn/using-models-well.qmd`, none
+structural: §1 no longer claims draft-task errors are cheap to see; §2
+drops "plausible is what the output distribution is trained to be"; §3
+replaces the "exactly three kinds of information" taxonomy with the
+parameters/context/tools distinction from earlier lessons and qualifies
+token cost; §6 drops the "no separate channel" sentence and keeps the
+generated-assertion-versus-evidence principle; §7 no longer says
+intermediate results are never seen; §8 attributes the "more than twice"
+trigger explicitly to Claude Code's current guidance and states the
+durable principle separately; §9 scopes every provider statement to the
+document and model family that supports it (Anthropic's page covers its
+current models and separates model-specific from general techniques, its
+"general over prescriptive" advice sits under extended thinking with
+manual chain-of-thought as the fallback; OpenAI's advice is split
+between its reasoning-models guide and its general page, which says
+non-reasoning GPT models perform best with explicit instructions;
+Google's few-shot default is its current Gemini guidance); §10 is
+restated as a heuristic with "evaluate on the actual task" and the
+delegation sentence removed; §13 is risk-based, noting that reads can be
+consequential and replacing the storage-only sentence; the causal-design
+check answer now says "candidate for stronger or higher-effort assistance
+plus human review". Claim rows S-57 and S-58 were refined to carry the
+same scope. The OpenAI prompt-engineering page and the saved Anthropic
+page were re-read on 2026-09-15 before editing §9; no provider claim had
+to be dropped, and none contradicted the earlier reading.
+
+### Final correction pass before commit (2026-09-15, Batch 4)
+
+Ten precision corrections to `short-story.qmd`, none structural: token
+wording made architecture-neutral; the parameter count removed and the
+training sentence aligned with the training lesson (loss, gradients,
+optimizer); attention described as combining information from permitted
+positions (itself and earlier ones) and the why-transformers link
+softened to prevalence rather than "won out"; the generation sentence no
+longer implies recomputation from scratch, with a short cached key/value
+note (S-43) and a decoding rule described as deterministic or
+stochastic; "at each training target"; "pretraining alone does not
+specifically optimize a model to behave as a conversational assistant";
+context described as the request-specific information conditioned on,
+with decoding settings and product logic noted and persistence stated
+non-universally; the tool boundary restated in the agents lesson's
+terms with provider infrastructure covered; "agent" scoped to this
+course's usage; and the closing responsibility paragraph rewritten so
+that models and tools assist judgment while evidence, review, and human
+accountability remain necessary. One quiz answer in
+`learn/using-models-well.qmd` (§15, repeated corrections) now presents
+the "more than twice" threshold as a heuristic. Rendered body of the
+short story measures roughly 1,500 words of main-content text plus the diagram, an 8–10 minute read.

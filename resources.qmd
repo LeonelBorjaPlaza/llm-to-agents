@@ -292,6 +292,56 @@ used so far, not a preview of the eventual full list.
   <https://code.claude.com/docs/en/skills>,
   <https://code.claude.com/docs/en/permissions>
 
+### Anthropic, *Prompting best practices* (Claude API documentation)
+
+- **Format:** documentation page, accessed 2026-09-15
+- **Level:** practitioner
+- **What it explains particularly well:** one provider's current,
+  model-specific prompting guidance, organized by model, including
+  where behavior differs between model generations; used in
+  `learn/using-models-well.qmd` §9 to show that advice is
+  model-dependent
+- **Limitation:** revised with each model release; read it for the
+  model you use, on the day you use it
+- **Link:** <https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices>
+
+### OpenAI, *Prompt engineering* and *Reasoning best practices* (API documentation)
+
+- **Format:** two documentation pages, accessed 2026-09-15
+- **Level:** practitioner
+- **What it explains particularly well:** that prompting reasoning
+  models differs from prompting other models, with concrete
+  recommendations (brief instructions, no step-by-step prompting, try
+  without examples first) and a rationale for choosing between model
+  families
+- **Limitation:** tied to OpenAI's current model families; the pages
+  themselves recommend pinning to specific model snapshots
+- **Links:** <https://developers.openai.com/api/docs/guides/prompt-engineering>,
+  <https://developers.openai.com/api/docs/guides/reasoning-best-practices>
+
+### Google, *Prompt design strategies* (Gemini API documentation)
+
+- **Format:** documentation page, accessed 2026-09-15
+- **Level:** practitioner
+- **What it explains particularly well:** a third provider's default on
+  examples in prompts, which differs from the other two and makes the
+  point of `learn/using-models-well.qmd` §9 concrete
+- **Limitation:** product-specific and revised over time
+- **Link:** <https://ai.google.dev/gemini-api/docs/prompting-strategies>
+
+### Anthropic, *Best practices for Claude Code* (documentation)
+
+- **Format:** documentation page, accessed 2026-09-15
+- **Level:** practitioner
+- **What it explains particularly well:** verification as what lets an
+  agent session close its own loop, exploration and planning before
+  implementation, keeping durable instructions short, and when to start
+  a fresh session; the source for several habits in
+  `learn/using-models-well.qmd`
+- **Limitation:** product-specific; the habits transfer, the commands
+  do not
+- **Link:** <https://code.claude.com/docs/en/best-practices>
+
 ### Anthropic, *Context windows* (Claude API documentation)
 
 - **Format:** documentation page, accessed 2026-09-15

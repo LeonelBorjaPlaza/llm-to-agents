@@ -16,6 +16,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: short-story.qmd
+        text: The Short Story
       - href: slides/llms-to-agents.qmd
         text: Slides
       - text: Learn
@@ -36,6 +38,8 @@ website:
             text: Post-training
           - href: learn/agents.qmd
             text: From Assistant to Agent
+          - href: learn/using-models-well.qmd
+            text: Using Models Well
           - href: learn/tokens-context.qmd
             text: "Deep dive: Tokens, Embeddings, and the Context Window"
       - href: resources.qmd

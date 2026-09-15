@@ -1,0 +1,24 @@
+::: {.operating-checklist}
+1. **What exactly is the task, and what does a finished result look like?**
+   If you cannot say what "done" means, the system cannot either.
+2. **What kind of task is it?** A draft or transformation the output
+   itself provides; a task that needs tools and checks; or a judgment that
+   must stay with a person.
+3. **Where should the answer come from?** The model's general knowledge,
+   a supplied document, a current source, a database, running code. Name
+   the source of truth before asking.
+4. **Does the context contain what this step needs, and little else?**
+   Add the missing evidence; remove the stale, duplicated, or irrelevant.
+5. **Is a tool needed where a guess would otherwise be made?** Current
+   facts, private data, exact arithmetic, file contents, real actions.
+6. **What output do you need, in what form, and how long?**
+7. **How will the result be checked, and what will that check actually
+   establish?** A passing check proves only what it tested.
+8. **What should make the system stop and ask** rather than proceed?
+   Missing sources, materially different interpretations, consequential
+   actions, criteria that cannot be checked.
+9. **Is the unit of work small enough to review?** If not, bound it.
+10. **Are consequential actions permissioned, and is access no wider than
+    the task requires?**
+11. **What still requires your judgment**, whatever the checks say?
+:::
