@@ -5,6 +5,11 @@ directions: every [S-nn] cited in a .qmd file must have a row in the CSV,
 and every row in the CSV must be cited by at least one .qmd file. Either
 direction failing means the source map and the content have drifted apart.
 
+Content globs deliberately include every root-level .qmd file (via "*.qmd"),
+not just index.qmd by name, so a new public root page (resources.qmd, a
+future glossary.qmd, etc.) is automatically covered without needing this
+script edited again.
+
 Usage: python3 scripts/check_sources.py
 Exit code 0 if both directions reconcile; 1 otherwise.
 """
@@ -14,7 +19,7 @@ import re
 import sys
 
 CLAIM_PATTERN = re.compile(r"\[S-(\d+)\]")
-CONTENT_GLOBS = ["learn/*.qmd", "slides/*.qmd", "index.qmd"]
+CONTENT_GLOBS = ["*.qmd", "learn/*.qmd", "slides/*.qmd"]
 
 
 def find_cited_ids():

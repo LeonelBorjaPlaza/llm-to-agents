@@ -1,0 +1,242 @@
+---
+title: "Why Transformers"
+subtitle: "The sequence-processing problem self-attention changed, and why the architecture spread"
+---
+
+*Prerequisites: none beyond ordinary reasoning about sequences and counting
+steps; `learn/neural-networks.qmd`'s vocabulary (units, layers, parameters)
+is useful background but not assumed.*
+
+This lesson explains **why** the transformer architecture takes the shape
+it does and why it became the dominant architecture for large language
+models. It does not explain **how** self-attention computes its weights;
+that is a separate lesson.
+
+## 1. The problem being solved
+
+Before transformers, **recurrent** networks were among the established
+approaches to sequence modeling (a sentence, a time series), with long
+short-term memory (LSTM) networks and other gated variants especially
+prominent. Convolutional sequence models were another important approach.
+[S-21] Recurrence is the clearest case of the sequential dependency the
+transformer removed, so it is the one worked through here.
+
+A recurrent network reads the sequence one position at a time, carrying
+forward a running summary — a "hidden state" — from each step to the next.
+Two consequences follow:
+
+- **relating two distant positions takes many steps.** If position 8 in a
+  sequence needs information from position 2, that information has to be
+  carried forward through every position in between, one step at a time;
+- **the computation is one-step-at-a-time.** The summary at step $t$,
+  $h_t$, depends on $h_{t-1}$, so $h_t$ cannot be computed until $h_{t-1}$
+  is available.
+
+Computer-science writing summarizes "how many steps does this take, as the
+input grows?" with a shorthand called **big-O notation**: $O(n)$ means the
+number of steps grows in direct proportion to the input size $n$; $O(1)$
+means it stays constant, however large $n$ gets. This lesson uses that
+shorthand alongside a plain-language restatement each time.
+
+## 2. Recurrence and its sequential dependency
+
+Consider a toy sequence of $n = 8$ tokens, where correctly resolving what
+"it" (at position 8) refers to requires relating it back to an antecedent
+at position 2. A recurrent network computes the running summary $h_t$
+from the previous summary $h_{t-1}$ and the input at step $t$:
+
+> "Recurrent models typically factor computation along the symbol
+> positions of the input and output sequences... This inherently
+> sequential nature precludes parallelization within training examples,
+> which becomes critical at longer sequence lengths." [S-16]
+
+For the $n=8$ example: relating position 2 to position 8 takes
+**6 sequential steps** ($2 \to 3$, $3 \to 4$, and so on to $7 \to 8$). The
+longest path in the sequence, from position 1 to position 8, takes
+**7 sequential steps**. Processing all eight positions once requires
+**8 sequential steps** in total, one per position. These figures are this
+course's own concrete instantiation of the general pattern Vaswani et
+al.'s Table 1 states for recurrent layers: the number of sequential
+operations and the longest path between two positions both grow in direct
+proportion to sequence length — $O(n)$. [S-16]
+`scripts/check_transformer_path_lengths.py` confirms the toy figures and
+the general growth pattern across several sequence lengths.
+
+## 3. What self-attention changed
+
+Self-attention lets a position read directly from other positions in a
+single layer, rather than relaying information through the positions in
+between. Which positions are permitted depends on the setting. In an
+**encoder** (bidirectional self-attention), every position may attend to
+every other position. In the **decoder** used by an autoregressive
+language model, a position can attend to itself and earlier positions,
+but not future positions. During training, this causal masking prevents
+each position from using later tokens, preserving the next-token
+prediction problem. [S-22]
+
+Either way, for the $n=8$ example, position 8 can attend directly to
+position 2, in one step, regardless of the six positions between them.
+Table 1 states this generally: a self-attention layer connects any two
+permitted positions using a number of sequential operations, and a
+longest path, that both stay constant no matter how long the sequence
+is — $O(1)$ in both cases, unlike recurrence's $O(n)$. [S-17]
+
+This is a **connectivity** property of one attention layer — what a
+position is *able* to read directly. It is not a guarantee that training
+actually learns to use that connection correctly for a given task.
+
+## 4. Two consequences
+
+**Parallel computation during training.** Because a recurrent layer's
+step $t$ needs step $t-1$'s completed summary (§2), a recurrent network's
+positions cannot be computed side by side within one training example. A
+self-attention layer has no such dependency between positions within a
+layer: given the full input, every position's computation can proceed at
+the same time. The paper notes that its dot-product attention "can be
+implemented using highly optimized matrix multiplication code," and that
+removing recurrence "allows for significantly more parallelization."
+[S-23]
+
+**Shorter computational paths.** The longest path between any two
+permitted positions — how many sequential steps information must cross to
+connect them — drops from growing with sequence length (recurrence) to
+staying constant (self-attention). The paper's stated reason this matters:
+"The shorter these paths between any combination of positions in the
+input and output sequences, the easier it is to learn long-range
+dependencies." [S-17] Easier to learn, not automatic — and whether a
+transformer or a recurrent network is better on a given task remains
+task- and setting-dependent.
+
+## 5. Why transformers became prevalent
+
+No single property or paper caused transformers to become the dominant
+architecture for large language models. The explanation has layers.
+
+1. **Architecture.** Reduced sequential dependence and constant path
+   length, as above. [S-16] [S-17]
+2. **Empirical success of the original design.** The paper reported
+   translation results that were superior in quality to the recurrent and
+   convolutional models it compared against, while being more
+   parallelizable and requiring significantly less time to train. [S-21]
+3. **Pretraining and transfer.** Transformer models pretrained on large
+   amounts of unlabeled text became reusable across many downstream tasks:
+   BERT reported that its pretrained model "can be fine-tuned with just one
+   additional output layer to create state-of-the-art models for a wide
+   range of tasks." [S-24]
+4. **Scaling and in-context behavior.** Later transformer language models
+   improved systematically with scale: one study reported that loss
+   "scales as a power-law with model size, dataset size, and the amount of
+   compute used for training," across a wide range. [S-25] GPT-3, a
+   175-billion-parameter autoregressive transformer, was applied "without
+   any gradient updates or fine-tuning," with tasks and a few
+   demonstrations specified purely in the input text, and showed that
+   scaling up "greatly improves task-agnostic, few-shot performance."
+   [S-26]
+
+These developments together
+help explain why transformers became the dominant architecture for large
+language models: prevalence emerged from the combination of architectural
+advantages and subsequent empirical success, not from any one of them.
+[S-20]
+
+## 6. Cost and limitations
+
+Self-attention is not free. Table 1 also states that its arithmetic cost
+per layer grows with the *square* of sequence length — written
+$O(n^2 \cdot d)$, where $n$ is sequence length and $d$ is the length of
+the vector representing each position. [S-17] In plain language: holding
+$d$ fixed, doubling the length of the input roughly quadruples that
+component of the arithmetic. This is a real and frequently-cited
+limitation once $n$ grows large. Two things this claim is *not*: it is a
+statement about how much arithmetic is required, not about how much
+computer memory any particular implementation needs to hold while doing
+that arithmetic; and it is not a lower bound for every possible
+attention-like method (Table 1's "Self-Attention (restricted)" row uses a
+fixed-size neighborhood to reduce the cost). The growing-with-the-square
+cost has motivated a range of alternatives — attention restricted to
+nearby or selected positions, variants with a gentler growth rate, and
+different architectures altogether — as an active area of research.
+[S-18]
+
+## 7. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>For a recurrent network processing a sequence of length $n$, how
+does the longest path between the two most distant positions grow as $n$
+grows, and why?</summary>
+It grows in direct proportion to $n$ — for the toy $n=8$ example, 7
+sequential steps between positions 1 and 8. Information must pass through
+every intervening position's running summary, one step at a time, because
+each step's computation depends on the previous step finishing first (§2).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Why can a self-attention layer's positions be computed side by
+side during training, when a recurrent layer's cannot?</summary>
+A recurrent layer's step $t$ depends on step $t-1$'s completed summary,
+so steps must run in order. A self-attention layer has no such
+dependency between positions within the layer — given the full input,
+every position's computation can start at the same time (§4).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>True or false: a one-layer self-attention network is guaranteed
+to correctly resolve any long-range dependency in its input.</summary>
+False. A constant-length path means a position *can* read any permitted
+earlier position in one step; it does not guarantee the network has
+learned to use that connection correctly for a given task (§3).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Is standard self-attention's square-in-sequence-length cost a
+claim about computer memory, or about arithmetic?</summary>
+Arithmetic. It is the number of computational operations per layer, not a
+statement about how much memory any specific implementation needs to use
+to perform that computation (§6).
+</details>
+:::
+
+## 8. Continue learning
+
+- **Vaswani et al., *Attention Is All You Need*** (paper; Sections 1 and 4
+  are the relevant sections for this lesson, a few pages). Technical
+  level. The original source for every growth-rate figure in this lesson,
+  including Table 1's full comparison across layer types. Limitation:
+  written for a machine-translation encoder-decoder setting, not a modern
+  decoder-only language model — the architectural comparison in this
+  lesson still holds, but read the paper's own framing with that context
+  in mind. <https://arxiv.org/abs/1706.03762>
+
+- **Devlin et al., *BERT: Pre-training of Deep Bidirectional Transformers
+  for Language Understanding*** (paper; the abstract and introduction are
+  enough for §5's point). Technical level. The source for the
+  pretraining-and-transfer layer of §5. Limitation: an encoder model, not
+  an autoregressive language model. <https://arxiv.org/abs/1810.04805>
+
+- **Kaplan et al., *Scaling Laws for Neural Language Models*** (paper;
+  the abstract states the result used in §5). Technical level. Limitation:
+  an empirical regularity over the studied range and setup, not a law.
+  <https://arxiv.org/abs/2001.08361>
+
+- **Brown et al., *Language Models are Few-Shot Learners*** (paper; the
+  abstract states the results used in §5). Technical level. Limitation:
+  reports observed task performance from in-context demonstrations; it
+  does not explain the mechanism. <https://arxiv.org/abs/2005.14165>
+
+- **3Blue1Brown, *Transformers, the tech behind LLMs*** (video; the
+  segment starting at 3:03, "inside a transformer," runs a few minutes;
+  full video is part of a longer series). Introductory/visual level. Shows
+  a transformer block's overall shape visually, as background for the
+  architectural claims made throughout this lesson. Limitation: does not
+  derive the path-length or complexity arguments in §2–§6 above.
+  <https://www.3blue1brown.com/lessons/gpt>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

@@ -241,3 +241,306 @@ commit `5870d53`, per the approved plan.
   network dependency" when JavaScript can construct its own requests at
   runtime; any future automated check in this repository should keep
   scanning full file contents, not just tag attributes.
+
+## Redesign batch: review checkpoint, corrections, two new lessons
+
+- Date: 2026-09-14
+- Requested by: external review, approved implementation plan (bounded batch)
+- Implemented with: Sonnet
+- Starting state: Stage 1 checkpoint commit `c98c7dd`
+
+### Objective
+
+Checkpoint the Stage 1 prototype honestly; retarget the design to a
+35–40 minute talk with no required live equation or demonstration and the
+website as the primary product; fix a real error in `CLAUDE.md`; build two
+new complete, standalone, numerically-verified lessons; write a local
+prose-editing Skill; and save the remaining design as planning documents.
+Leave everything past the checkpoint uncommitted.
+
+### Files created
+
+- `docs/reviews/stage1-first-learner-review.md`
+- `learn/neural-networks.qmd` (311 lines)
+- `learn/why-transformers.qmd` (218 lines)
+- `scripts/check_neuron_example.py`
+- `scripts/check_transformer_path_lengths.py`
+- `.claude/skills/reader-first-course-editor/SKILL.md`
+- `docs/live-talk-storyboard.md`
+- `docs/site-architecture.md`
+- `docs/milestone-timeline.md`
+- `docs/practical-guide-spec.md`
+
+### Files changed
+
+- `CLAUDE.md` — duration 45→35–40 min; product-hierarchy strengthened
+  toward site-primary; superseded-design note added; **fixed CC3**
+  (removed "product-level system instructions" from the post-training
+  list — it incorrectly classified inference-time context as a
+  post-training method); added CC5 (backprop vs. optimizer), PR8 (logit
+  terminology), PR9 (prompting qualifications), PR10 (historical claims),
+  a vocabulary-hierarchy note, and a standing no-production-commentary
+  rule.
+- `docs/decisions.md` — nine new dated rows recording the checkpoint, the
+  duration/design change, the CC3 fix, the S-01…S-08 audit result, the
+  FlashAttention and R1/R1-Zero deferrals, and the Vaswani et al.
+  verification.
+- `learn/softmax-sampling.qmd` — pre-softmax scores introduced before the
+  term "logit" (§3, rewritten in place, no section renumbering needed);
+  logit/statistics-logit distinction added; softmax- and
+  temperature-naming etymologies added; toy-vocabulary labeling; the
+  multinomial-logit connection marked as an optional bridge; two
+  production-commentary asides removed from §11. Applied the reader-first
+  Skill's review procedure as a separate pass afterward — no further
+  prose or meaning changes were found necessary; the pass's checks
+  (`check_sources.py`, `check_softmax_reference.py`) both passed.
+- `index.qmd`, `resources.qmd`, `_quarto.yml`, `README.md` — duration and
+  module-count updates; navbar's `Learn` link became a three-entry
+  dropdown; a new annotated Vaswani et al. entry in `resources.qmd`; the
+  three existing slides reframed as a historical prototype, left
+  unedited.
+- `sources/claims.csv`, `sources/source-map.md` — twelve new claim rows
+  (S-09…S-20); new gap G2 recorded; S-16/S-17/S-19's new Vaswani et al.
+  locators marked **verified against the live paper**, distinct from the
+  still-open, reused S1/S2 timestamps (gap G1, unchanged).
+- `scripts/check_sources.py` — content globs widened from a hardcoded
+  `index.qmd` to `*.qmd`, so any root-level page is covered automatically.
+- `scripts/verify.sh` — two new steps added, renumbered 1/7…7/7.
+
+### Commands run
+
+```
+git add <checkpoint files> && git commit   # Stage 1 checkpoint, before this batch
+WebFetch https://arxiv.org/abs/1706.03762  # abstract only, insufficient
+WebFetch https://arxiv.org/pdf/1706.03762  # binary; read via the PDF-aware Read tool instead
+Read <fetched PDF>, pages 1-6              # confirmed Table 1, Section 1 and 3.1 text directly
+quarto render                               # multiple times, during drafting
+python3 scripts/check_neuron_example.py     # caught two real rounding errors, see below
+python3 scripts/check_transformer_path_lengths.py  # caught one regex/line-wrap bug, see below
+bash scripts/verify.sh
+git status --short / git diff --stat
+```
+
+### Problems encountered and corrected during this batch
+
+1. **A file I drafted (`docs/reviews/stage1-first-learner-review.md`) was
+   reported as textually corrupted before it was ever written to disk** —
+   the write was rejected before landing, confirmed by direct inspection
+   (file absent). Rewrote it with plain ASCII punctuation only and less
+   self-referential framing, then read it back in full to confirm no
+   truncated fragments remained, per instruction.
+2. **`learn/neural-networks.qmd`'s worked example had two real rounding
+   errors**, caught by `scripts/check_neuron_example.py` on first run: the
+   original loss was written as `≈ 1.4632`; the precise value is
+   `1.463282`, which rounds to `1.4633`. The updated-parameters loss's
+   intermediate `ŷ_new` was written as `0.323231`; the precise value is
+   `0.323248`. Both were off by less than the script's tolerance (so the
+   check technically passed either way), but were fixed to the exact
+   values rather than left to rely on tolerance, since this page's whole
+   point is numerical precision.
+3. **`scripts/check_transformer_path_lengths.py`'s first run failed** on
+   a line-wrap artifact, not a content error: the regex expected a literal
+   space between "to" and "position 2," but the source `.qmd` wraps its
+   markdown at that exact point. Fixed by making the regex whitespace-
+   tolerant (`\s+`).
+4. **Two internal cross-reference numbers in `learn/why-transformers.qmd`
+   were wrong**: one pointed to "§8's misconception" when the
+   misconception section is actually §10; one attributed "block
+   structure" to §8 in a resource annotation when no section by that
+   description exists in that file. Both fixed on a full re-read before
+   moving on.
+
+### The one licensed new-source verification
+
+Per the approved plan's "or unresolved gaps" clause, fetched the live
+Vaswani et al. paper (arXiv:1706.03762) before writing any claim citing
+its Section 1, Section 3.1, or Section 4/Table 1 — these locators were
+never cited anywhere in this repository before this batch. The abstract-
+only fetch was insufficient; fetched the PDF directly and read it with the
+PDF-aware `Read` tool. Confirmed Table 1's exact figures (Self-Attention:
+$O(n^2d)$ complexity, $O(1)$ sequential operations, $O(1)$ maximum path
+length; Recurrent: $O(nd^2)$, $O(n)$, $O(n)$) and Section 1's exact
+sentence on recurrence precluding "parallelization within training
+examples." No other source was re-verified in this batch — the reused
+S1/S2 timestamps remain under the existing, unchanged gap G1.
+
+### Checks and results
+
+| # | Check | Result |
+|---|---|---|
+| 1 | `quarto render` | **PASS** — 6 files render cleanly (was 4 before this batch) |
+| 2 | Internal links (`check_links.py`) | **PASS** — 177 internal links/anchors checked across 7 rendered HTML files (was 88/5) |
+| 3 | Source-claim reconciliation (`check_sources.py`) | **PASS** — 20 claim IDs (S-01…S-20) reconcile exactly, both directions; content globs now cover every root `.qmd` page, not just `index.qmd` |
+| 4 | Softmax numerical reference | **PASS** — unaffected by the §3 rewrite |
+| 5 | Neuron/backprop numerical example (new) | **PASS** — after the two rounding fixes above |
+| 6 | Transformer path-length numerical example (new) | **PASS** — after the regex fix above; confirms $O(n)$ vs. $O(1)$ growth across $n\in\{4,8,16,64\}$ |
+| 7 | Offline presentation check | **FAIL — unchanged.** Reproduces exactly the same D2 finding from Stage 1; the deck was not touched by this batch, so this is confirmation of no regression, not a new problem |
+| 8 | Open site/deck in a browser | **SKIPPED — PENDING HUMAN** (unchanged from Stage 1; no headless browser installed by design) |
+| 9 | Exercise the interactive and its fallback | **SKIPPED — PENDING HUMAN** (unchanged) |
+| 10 | Open the deck with no network access | **SKIPPED — PENDING HUMAN** (unchanged; check 7 already demonstrates the underlying failure statically) |
+| 11 | Confirm speaker notes/navigation | **SKIPPED — PENDING HUMAN** (unchanged) |
+
+### Human review
+
+Pending. Returned for external review before any further action.
+
+### Revisions
+
+Four fixes made during this batch are detailed under "Problems
+encountered" above.
+
+### Final result
+
+All batch deliverables are complete and content-real — no placeholder
+pages, no empty sections. Six of seven scripted checks pass; the seventh
+reproduces a known, already-diagnosed, unchanged finding. All
+browser-dependent checks remain honestly reported as pending, exactly as
+they were after Stage 1. Nothing was installed. Nothing outside
+`course-site/` was written (the sibling coordination plan was read only,
+for the practical-guide-spec provenance note).
+
+### Commit
+
+Not committed. Left as an uncommitted diff on top of checkpoint commit
+`c98c7dd`, per instruction.
+
+### Lessons for the course
+
+- A numerically-verified page is only as good as the independent
+  verification actually run before publishing — two real rounding errors
+  in `learn/neural-networks.qmd` were within this project's own
+  tolerance and would have shipped silently without the dedicated check
+  script, which is exactly the case this repository's own precision rule
+  PR6 warns about applied to its own production process.
+- Fetching a paper's abstract page is not the same as fetching the paper;
+  the arXiv abstract endpoint does not carry Table 1 or Section 4's text,
+  and the PDF fetch needed the PDF-aware `Read` tool rather than the
+  markdown-converting web-fetch path to be usable.
+
+## Second first-learner review: general-reader model, jargon reduction, slide-design rules
+
+- Date: 2026-09-14
+- Requested by: external review (second first-learner review)
+- Implemented with: Sonnet
+- Starting state: uncommitted redesign batch on top of checkpoint `c98c7dd`
+
+### Objective
+
+Remove the economist/PhD audience framing everywhere in public-facing
+pages and `CLAUDE.md`; adopt a general-reader model (quantitatively
+capable, little or no ML vocabulary); reduce jargon and add "Think of it
+this way" intuition callouts across the three existing lessons; update
+the reader-first Skill to enforce all of this; and establish binding
+slide-design rules declaring the Stage 1 slides style experiments, not
+approved content. No new modules; no final deck.
+
+### Files changed
+
+- `CLAUDE.md` — replaced the "Audience and pedagogical standard" section
+  with a "Reader model" section (general-reader bullets, the reminder
+  rule, the jargon-reduction rule, the "Think of it this way" rule, the
+  explanation standard); added a new "Slide-design rules" section;
+  softened PR1's "live slide title" prescription, since it no longer
+  presupposes the multinomial-logit bridge survives into the final deck.
+- `.claude/skills/reader-first-course-editor/SKILL.md` — added a binding
+  "Reader model" section, three new procedure steps (jargon audit,
+  "Think of it this way" callouts, an aging-definitions second pass), and
+  matching "Never do" entries; renumbered the remaining procedure steps
+  and widened the final summary to five lists.
+- `learn/softmax-sampling.qmd` — removed "a tool economists already use"
+  and the PhD-specific prerequisites line; added a "Think of it this way"
+  callout after logits/scores, softmax, and temperature (3 total); kept
+  the multinomial-logit bridge, reframed as explicitly optional and
+  conditional rather than a description of the audience.
+- `learn/neural-networks.qmd` — reworked §1's opening to define $x'\beta$
+  in plain language before using the notation; added six "Think of it
+  this way" callouts (parameters, nonlinear activation, layers, loss,
+  gradients, backpropagation); every equation block preserved
+  byte-for-byte.
+- `learn/why-transformers.qmd` — added a plain-language explanation of
+  big-O notation before relying on it; added two "Think of it this way"
+  callouts (recurrence, self-attention); reworded the arithmetic-cost
+  discussion in §9 to lead with "double the input, arithmetic roughly
+  quadruples" before the $O(n^2 d)$ notation.
+- `index.qmd`, `README.md` — applied the exact required sentence
+  replacement removing "PhD economists."
+- `resources.qmd` — no audience-specific language found; unchanged in
+  this pass beyond what the prior batch already did.
+- `docs/decisions.md` — three new dated rows: the audience-framing
+  change, the three new writing rules, and the slide-design rules.
+- `docs/live-talk-storyboard.md` — added the eight-step core story
+  ("training data → neural network → transformer → next-token
+  prediction → training → assistant → tools → agent"), the slide-design
+  rules, and an explicit note that the existing 21-segment table is
+  content planning, not slide-ready wording, and will need to be
+  re-screened against these rules before any future full-deck build.
+- `scripts/check_transformer_path_lengths.py` — one regex made
+  whitespace-tolerant across every word gap, not just one, after the
+  reworded prose shifted where the source file's line wrap fell (this is
+  the second time this exact class of bug has appeared; see "Lessons"
+  below).
+
+### Problems encountered and corrected during this pass
+
+1. **Dropped a claim citation during the softmax-sampling.qmd rewrite.**
+   The `[S-09]` tag (the logit-terminology claim) was not carried over
+   into the rewritten §3. Caught immediately by running
+   `scripts/check_sources.py` before moving on; fixed by reattaching the
+   citation to the correct sentence.
+2. **The transformer path-length regex broke again on a line-wrap
+   shift.** Rewording §4's prose moved exactly where the paragraph wraps,
+   breaking a regex that only tolerated whitespace at one specific word
+   gap. Fixed by making every word gap in the pattern whitespace-tolerant,
+   which should make this class of failure much less likely to recur.
+
+### Checks and results
+
+| # | Check | Result |
+|---|---|---|
+| 1 | `quarto render` | **PASS** — same 6 pages, no new warnings |
+| 2 | Internal links | **PASS** — 177 links/anchors across 7 files, unchanged |
+| 3 | Source-claim reconciliation | **PASS** — 20 claim IDs, both directions, after the S-09 fix above |
+| 4 | Softmax numerical reference | **PASS** — unaffected by prose changes |
+| 5 | Neuron/backprop numerical example | **PASS** — unaffected; every equation preserved byte-for-byte |
+| 6 | Transformer path-length numerical example | **PASS** — after the regex fix above |
+| 7 | Offline presentation check | **FAIL — unchanged.** Same D2 finding; deck untouched by this pass |
+
+Spot-checked the rendered output directly: 11 "Think of it this way"
+callouts render with correct Quarto callout styling across the three
+lessons (3 + 6 + 2), and a repository-wide search confirms no remaining
+"economist"/"PhD" reference in any public-facing page or in `CLAUDE.md`'s
+audience description (the two remaining hits in `CLAUDE.md` are the
+sentence announcing the change itself).
+
+### Human review
+
+Pending. Returned for another first-learner review, per instruction.
+
+### Final result
+
+All requested revisions are complete: audience framing removed from every
+public-facing page and `CLAUDE.md`; jargon reduced and intuition layers
+added across all three lessons without touching a single verified
+equation or number; the Skill updated to enforce this going forward;
+slide-design rules established, explicitly demoting the Stage 1 slides to
+style experiments. Six of seven scripted checks pass; the seventh
+reproduces the same known, unchanged D2 finding. Nothing committed beyond
+checkpoint `c98c7dd`. Nothing installed. Nothing outside `course-site/`
+touched.
+
+### Commit
+
+Not committed, per instruction.
+
+### Lessons for the course
+
+- The same class of bug (a regex anchored to one exact whitespace gap,
+  broken by a later reword that shifts the line wrap) has now appeared
+  twice in the same script. A regex that parses prose for verification
+  purposes should default to tolerating whitespace at *every* word
+  boundary it spans, not just the one gap that happened to wrap first.
+- A prose-quality editing pass that touches a section carrying a claim
+  citation is exactly the moment a citation is most likely to get
+  silently dropped — this is precisely why the reader-first Skill's
+  procedure requires running `check_sources.py` after every edit, not
+  just at the end of a whole file's revision.

@@ -1,0 +1,302 @@
+---
+title: "Neurons, Layers, and Learning"
+subtitle: "How a parameterized function computes, and how training adjusts it"
+---
+
+*Prerequisites: basic algebra and probability; a little calculus helps but
+is not required to follow the ideas. No machine-learning background
+assumed.*
+
+## 1. The problem being solved
+
+Suppose you want to turn a handful of measurements into one predictive
+number. The simplest recipe multiplies each measurement by a number that
+reflects how much it matters, then adds the results together — a weighted
+sum.
+
+That recipe is also fundamentally limited: it can only capture
+relationships that are straight-line (linear) in the measurements you
+started with. Modern machine learning needs something far more flexible —
+functions that can map raw pixels to an object label, or a sequence of
+words to the next one, in situations where nobody can write down the
+right weighted sum by hand in advance.
+
+The general answer is a function whose shape is controlled by a large set
+of adjustable numbers, fit to data by a training procedure rather than
+specified by a person. Those adjustable numbers are called **parameters**,
+such as weights and biases; the whole adjustable function is often written
+$f_\theta$, where $\theta$ stands for the entire collection of parameters.
+Everything in this lesson is about what that function is built from, and
+how the fitting procedure adjusts it.
+
+## 2. A small concrete example
+
+Take one toy computational unit with two inputs:
+
+$$x_1 = 1.0, \qquad x_2 = 2.0$$
+
+and three parameters: two weights, and a **bias** — a fixed number added
+regardless of the inputs, a baseline shift up or down:
+
+$$w_1 = 0.5, \qquad w_2 = -1.0, \qquad b = 0.3$$
+
+Every step below is computed on exactly these numbers, and every number
+that appears is checked independently by `scripts/check_neuron_example.py`.
+
+## 3. Weighted sums and biases
+
+The first thing this unit computes is the weighted sum from §1, plus the
+bias:
+
+$$
+a = w_1 x_1 + w_2 x_2 + b
+$$
+
+For the numbers in §2:
+
+$$
+a = (0.5)(1.0) + (-1.0)(2.0) + 0.3 = 0.5 - 2.0 + 0.3 = -1.2
+$$
+
+A weighted sum plus a constant is called an **affine** function of the
+inputs. Stacking such steps, with no other ingredient, still yields a
+single affine function of the original inputs, however many layers deep:
+composing affine maps gives another affine map. [S-15] Something else is
+needed for real flexibility.
+
+## 4. Nonlinearities
+
+That something is a fixed function that is not a straight line, applied
+to $a$ — a **nonlinearity**, also called an **activation function**. A
+classic choice is the logistic sigmoid,
+
+$$
+\sigma(a) = \frac{1}{1 + e^{-a}}
+$$
+
+which squashes any real number into the range $(0, 1)$ — useful when the
+unit's output should be read as a probability. For the running example:
+
+$$
+\hat y = \sigma(-1.2) = \frac{1}{1 + e^{1.2}} \approx 0.231475
+$$
+
+Because the activation is nonlinear, stacking layers no longer collapses
+to one affine map, and the network can represent nonlinear relationships
+that no weighted sum alone can reach. [S-15]
+
+## 5. Units and layers
+
+The full computation above — weighted sum, plus bias, then a
+nonlinearity — is a **unit**. This computational unit is often called a
+neuron, a historical analogy we will not rely on here. A **layer**
+computes several units in parallel from the same input, each with its own
+weights and bias; their outputs form a vector, and that vector is the
+input to the next layer. Building a complex function out of many such
+units, organized into layers, and letting a training procedure — not a
+person — choose every parameter, is a basic computational pattern behind
+many neural networks. [S-12]
+
+## 6. The forward pass
+
+Computing $a$, then $\hat y = \sigma(a)$, from a given input and a given
+set of parameters, is what this lesson calls a **forward pass**: running
+the unit (or a whole network of units) end to end, to produce an output
+from an input. The numerical computation in §§3–4 was one forward pass
+through one unit.
+
+## 7. Loss
+
+To train the parameters, we need a single number that measures how poor
+the current output is under the chosen training criterion. Suppose the
+*target* output for this example is $y = 1$ (the unit should have produced
+something close to 1, but computed 0.231475 instead — see §4). A standard
+way to measure that gap for a probability-valued output is the
+cross-entropy **loss**:
+
+$$
+L = -\big[y \log \hat y + (1-y)\log(1-\hat y)\big] = -\log \hat y
+\quad (\text{since } y=1)
+$$
+
+$$
+L = -\log(0.231475) \approx 1.4633
+$$
+
+If you know binary logistic regression, this single unit — weighted sum
+plus bias, a logistic-sigmoid nonlinearity, cross-entropy loss — is that
+same function. [S-13] The next two sections put that convenient structure
+to work.
+
+## 8. Gradient descent
+
+Training adjusts $w_1$, $w_2$, and $b$ to make the loss $L$ from §7
+smaller. For that, it needs the **gradient**: for each parameter, how fast
+the loss changes for a small change in that parameter, the others held
+fixed. The general update rule, for any parameter $\theta$ and a small
+step size (the **learning rate**) $\eta$, is:
+
+$$
+\theta \leftarrow \theta - \eta \, \frac{\partial L}{\partial \theta}
+$$
+
+This moves each parameter a small step in the direction that decreases
+$L$ fastest, given the current slope. Picture standing on a hillside in
+fog: you cannot see the whole landscape, but you can feel which way the
+ground slopes under your feet and take a small step downhill, then check
+again. The gradient is that local slope. The rule says nothing yet about
+*how* that slope is actually computed for every parameter in a network
+with many layers — that is backpropagation's job, next.
+
+## 9. Backpropagation
+
+**Backpropagation** is the procedure that computes the gradient from §8
+for every parameter in a multi-layer network — applying the chain rule
+from calculus backward from the loss, one layer at a time, in a single
+backward pass that reuses values saved from the forward pass. It does
+not, by itself, change any parameter. [S-14] A separate optimizer step
+(§8's plain gradient descent, or a more sophisticated rule such as Adam)
+uses that gradient to perform the actual update. The distinction matters
+because different optimizers can use the *same* backpropagated gradients
+very differently.
+
+The gradient for a parameter says how a small change in that parameter
+would change the loss at the current parameter values. For this unit's
+composition, the chain rule gives a clean result: the slope of the loss
+with respect to the pre-activation $a$ (§3's weighted sum, before the
+nonlinearity) simplifies to just $\hat y - y$ — the model's output minus
+the target. [S-13] Working through the rest of the chain rule for each
+parameter:
+
+$$
+\frac{\partial L}{\partial a} = \hat y - y = 0.231475 - 1 = -0.768525
+$$
+
+$$
+\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a}\cdot x_1
+= (-0.768525)(1.0) = -0.768525
+$$
+
+$$
+\frac{\partial L}{\partial w_2} = \frac{\partial L}{\partial a}\cdot x_2
+= (-0.768525)(2.0) = -1.537050
+$$
+
+$$
+\frac{\partial L}{\partial b} = \frac{\partial L}{\partial a}\cdot 1
+= -0.768525
+$$
+
+That is the entirety of what backpropagation computed here: three
+numbers, one gradient per parameter. With a single unit there is only one
+layer to work back through; in a deeper network the same chain rule is
+applied layer by layer. Nothing has been updated yet.
+
+## 10. The optimizer step
+
+Now take the optimizer step described in §8, with $\eta = 0.1$:
+
+$$
+w_1 \to 0.5 - 0.1(-0.768525) = 0.576853
+$$
+$$
+w_2 \to -1.0 - 0.1(-1.537050) = -0.846295
+$$
+$$
+b \to 0.3 - 0.1(-0.768525) = 0.376853
+$$
+
+Running a fresh forward pass (§6's term for one full input-to-output
+computation) with these updated parameters:
+
+$$
+a_{\text{new}} = (0.576853)(1.0) + (-0.846295)(2.0) + 0.376853 \approx -0.738885
+$$
+$$
+\hat y_{\text{new}} = \sigma(-0.738885) \approx 0.323248
+$$
+$$
+L_{\text{new}} = -\log(0.323248) \approx 1.1293
+$$
+
+$L_{\text{new}} \approx 1.1293$ is smaller than the original loss,
+$L \approx 1.4633$ from §7 — one gradient-descent step, using exactly the
+gradient backpropagation computed and nothing more, moved the parameters
+toward a better fit. Nothing told the network in advance what $w_1$,
+$w_2$, and $b$ should mean; they are whatever values this procedure
+reaches. `scripts/check_neuron_example.py` recomputes every number in this
+section independently and checks it against what is written here.
+
+## 11. How these ingredients reappear inside transformers
+
+A transformer, the architecture behind modern large language models, is a
+neural-network architecture built from the same basic computational ideas
+as §3–§5. Inside each of its repeating blocks, one mechanism (called
+attention) moves information between positions, while a separate
+feed-forward sublayer applies learned linear transformations and
+nonlinearities to each position. [S-19]
+
+The training concepts from this lesson sit around the architecture rather
+than inside it: a forward pass (§6) produces predictions and a loss (§7),
+backpropagation (§9) computes gradients, and an optimizer (§8, §10) uses
+those gradients to update the model's parameters.
+`learn/why-transformers.qmd` picks up from here and explains why that
+architecture takes the shape it does.
+
+## 12. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>What does backpropagation compute, and what does it not
+do?</summary>
+It computes the gradient of the loss with respect to every parameter, via
+the chain rule, in one backward pass. It does not update any parameter —
+that is a separate optimizer step's job (§9).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Why can't a network built only from weighted sums, with no
+nonlinearity anywhere, represent more than a single weighted sum
+can?</summary>
+Composing affine maps always yields another affine map, regardless of how
+many layers are stacked. A nonlinearity breaks that property, which is
+what allows a multi-layer network to represent relationships a weighted
+sum alone cannot (§3–§4).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>In the worked example, why does the loss decrease from about
+1.4633 to about 1.1293 after one gradient-descent step?</summary>
+The optimizer moved each parameter a small step ($\eta = 0.1$) in the
+direction that backpropagation's computed gradient said would decrease
+the loss fastest at that point (§9–§10). One step does not guarantee the
+lowest possible loss overall, only local improvement, which is what the
+recomputed forward pass confirms here.
+</details>
+:::
+
+## 13. Continue learning
+
+- **3Blue1Brown, *Transformers, the tech behind LLMs*** (video; the
+  relevant segment starts at 7:20, "the premise of deep learning," and
+  runs a few minutes; full video is part of a longer series).
+  Introductory/visual level. States the general principle this lesson
+  works through in one worked example: complex functions built from many
+  small, tunable, differentiable pieces, with parameters chosen by
+  training rather than hand-design. Limitation: does not work a numerical
+  example the way this lesson does.
+  <https://www.3blue1brown.com/lessons/gpt>
+
+- **3Blue1Brown's *Neural Networks* series** covers gradient descent and
+  backpropagation in more depth, with the multi-layer case fully animated.
+  It is a strong next step after this lesson — but its exact chapter
+  numbers, timestamps, and URL have not been verified for this course and
+  are deliberately not asserted here; confirm them directly on
+  3blue1brown.com before relying on a specific citation.
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

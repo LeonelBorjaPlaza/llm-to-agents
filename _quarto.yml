@@ -18,8 +18,14 @@ website:
         text: Home
       - href: slides/llms-to-agents.qmd
         text: Slides
-      - href: learn/softmax-sampling.qmd
-        text: Learn
+      - text: Learn
+        menu:
+          - href: learn/softmax-sampling.qmd
+            text: Softmax, Sampling, and Temperature
+          - href: learn/neural-networks.qmd
+            text: Neurons, Layers, and Learning
+          - href: learn/why-transformers.qmd
+            text: Why Transformers
       - href: resources.qmd
         text: Resources
 

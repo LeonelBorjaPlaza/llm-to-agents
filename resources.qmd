@@ -1,17 +1,18 @@
 ---
 title: "Resources"
-subtitle: "Sources used in this slice, annotated"
+subtitle: "Sources used so far, annotated"
 ---
 
-This slice draws on two sources. Both are used to *ground* claims (they
-also appear in `sources/source-map.md` and `sources/claims.csv` with exact
-timestamps) and are annotated here as *learning* resources in their own
-right, in case you want to go to the original.
+This course so far draws on three sources. All three are used to *ground*
+claims (they also appear in `sources/source-map.md` and
+`sources/claims.csv` with exact locators) and are annotated here as
+*learning* resources in their own right, in case you want to go to the
+original.
 
 The full course will eventually distinguish a bounded set of evidentiary
 sources from a larger, curated resource library organized into learning
-paths. This page is the seed of that library — only what this slice
-actually used, not a preview of the eventual full list.
+paths. This page is the seed of that library — only what has actually been
+used so far, not a preview of the eventual full list.
 
 ---
 
@@ -52,6 +53,32 @@ actually used, not a preview of the eventual full list.
   does not cover pretraining, post-training, or tokenization, all of which
   are addressed elsewhere in the video and in later modules not yet built
 - **Link:** <https://www.youtube.com/watch?v=7xTGNNLPyMI&t=1561s>
+
+### Vaswani et al., *Attention Is All You Need*
+
+- **Creator:** Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit,
+  Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin (Google
+  Brain / Google Research / University of Toronto)
+- **Format:** paper, arXiv:1706.03762 (v7, 2023-08-02); Sections 1 and 4
+  (a few pages) are the relevant sections for this course so far
+- **Level:** technical
+- **What it explains particularly well:** the precise, tabulated
+  computational trade-offs (complexity per layer, sequential operations,
+  maximum path length) between recurrent, convolutional, and self-attention
+  layers — Table 1 is the original source for every such figure used in
+  `learn/why-transformers.qmd`
+- **Recommended start:** Section 1 (Introduction) for the motivation;
+  Section 4 ("Why Self-Attention") and its Table 1 for the numbers
+- **Why included:** the primary source for the architectural claims in
+  `learn/why-transformers.qmd`; verified directly against the live paper
+  before any claim citing it was written
+- **Limitation:** written for a machine-translation encoder-decoder
+  setting, not a modern decoder-only language model, and the paper's tables
+  and figures are reproduced here only as short, attributed textual
+  descriptions, not copied images — the paper's own license
+  (arXiv's non-exclusive distribution license, not a Creative Commons
+  license) does not permit unrestricted figure reuse
+- **Link:** <https://arxiv.org/abs/1706.03762>
 
 ---
 

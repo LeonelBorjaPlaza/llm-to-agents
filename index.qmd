@@ -3,42 +3,54 @@ title: "From LLMs to Agents"
 subtitle: "What the model is, how it is built, and how it begins to act"
 ---
 
-This site supports a 45-minute conceptual talk for PhD economists,
-prepared as background for a later, more applied Claude Code workshop. It
-is co-produced with Claude Code under human review: Claude Code drafts and
-runs deterministic checks; a human reviewer approves substantive choices,
-final wording, and every commit.
+This site supports a 35–40 minute conceptual talk and a standalone
+learning resource for readers who are comfortable following mathematical
+ideas but may not use them every day, prepared as background for a
+later, more applied Claude Code workshop. It is co-produced with Claude
+Code under human review: Claude Code drafts and runs deterministic
+checks; a human reviewer approves substantive choices, final wording, and
+every commit.
 
 ::: {.callout-important}
-## This is a vertical slice
+## This site is still under construction
 
-This site currently contains **one** complete learning module and **three**
-of the eventual talk's slides — enough to prove that the website, the
-deck, and the browser-based interactive all work together, offline, from
-one set of sources. It is not the finished course. The remaining modules,
-the full 45-minute deck, and the curated resource library are planned but
-not yet built.
+This site currently contains **three** complete learning modules and
+**three** of the eventual talk's slides — enough to prove that the
+website, the deck, and the browser-based interactive all work together,
+offline, from one set of sources. It is not the finished course. The
+remaining modules, the full talk, and the curated resource library are
+planned but not yet built.
 :::
 
 ## How the two products relate
 
-The eventual live talk will be a carefully selected ~45-minute path through
-the material. This website is — and is intended to remain — the fuller,
-standalone learning resource: someone who never attends the talk should be
-able to learn the material from the site alone, with deeper mathematics,
-worked examples, and an interactive laboratory that the live talk only has
-time to demonstrate briefly.
+**The website is the primary, standalone learning product.** Someone who
+never attends the talk should be able to learn the material from the site
+alone, with the full mathematics, worked examples, and an interactive
+laboratory. The live talk is a carefully selected, lower-math path through
+this material: about 35–40 minutes, naming and defining every required
+term, but carrying no required live equation and no required live
+demonstration — both live in full on the site, which the talk points to
+rather than reproduces.
 
 ## Available now
 
 - [**Softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
   complete, standalone learning module, including a live softmax-and-
   sampling laboratory and a no-JavaScript fallback.
-- [**Slides**](slides/llms-to-agents.qmd) — the three built slides:
-  logits and softmax, training and maximum likelihood, and sampling and
-  temperature.
-- [**Resources**](resources.qmd) — the sources used in this slice,
-  annotated.
+- [**Neurons, layers, and learning**](learn/neural-networks.qmd) — a
+  complete, standalone module on parameterized functions, gradient descent,
+  and backpropagation, with a fully worked and independently
+  numerically-checked example.
+- [**Why transformers**](learn/why-transformers.qmd) — a complete,
+  standalone module on the sequence-processing problem self-attention was
+  built to solve, with a worked example checked against the original
+  paper's own stated bounds.
+- [**Slides**](slides/llms-to-agents.qmd) — three slides from an earlier
+  prototype iteration of the talk design (logits and softmax, training and
+  maximum likelihood, sampling and temperature). Left as a historical
+  checkpoint; not rebuilt to the current talk design in this batch.
+- [**Resources**](resources.qmd) — the sources used so far, annotated.
 
 ## Sources
 
