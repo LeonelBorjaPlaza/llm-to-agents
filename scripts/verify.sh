@@ -12,7 +12,7 @@ cd "$(dirname "$0")/.." || exit 1
 
 FAIL=0
 
-echo "== 1/7: quarto render =="
+echo "== 1/8: quarto render =="
 if quarto render; then
     echo "PASS: quarto render"
 else
@@ -21,7 +21,7 @@ else
 fi
 echo
 
-echo "== 2/7: internal links =="
+echo "== 2/8: internal links =="
 if python3 scripts/check_links.py; then
     :
 else
@@ -29,7 +29,7 @@ else
 fi
 echo
 
-echo "== 3/7: source-claim reconciliation =="
+echo "== 3/8: source-claim reconciliation =="
 if python3 scripts/check_sources.py; then
     :
 else
@@ -37,7 +37,7 @@ else
 fi
 echo
 
-echo "== 4/7: softmax numerical reference =="
+echo "== 4/8: softmax numerical reference =="
 if python3 scripts/check_softmax_reference.py; then
     :
 else
@@ -45,7 +45,7 @@ else
 fi
 echo
 
-echo "== 5/7: neuron/backprop numerical example =="
+echo "== 5/8: neuron/backprop numerical example =="
 if python3 scripts/check_neuron_example.py; then
     :
 else
@@ -53,7 +53,7 @@ else
 fi
 echo
 
-echo "== 6/7: transformer path-length numerical example =="
+echo "== 6/8: transformer path-length numerical example =="
 if python3 scripts/check_transformer_path_lengths.py; then
     :
 else
@@ -61,7 +61,15 @@ else
 fi
 echo
 
-echo "== 7/7: offline presentation check (static) =="
+echo "== 7/8: BPE and context-budget examples =="
+if python3 scripts/check_bpe_example.py; then
+    :
+else
+    FAIL=1
+fi
+echo
+
+echo "== 8/8: offline presentation check (static) =="
 if python3 scripts/check_offline.py; then
     :
 else

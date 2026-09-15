@@ -544,3 +544,55 @@ Not committed, per instruction.
   silently dropped — this is precisely why the reader-first Skill's
   procedure requires running `check_sources.py` after every edit, not
   just at the end of a whole file's revision.
+
+## Task: text-to-numbers pages (2026-09-15)
+
+### Scope
+
+Created `learn/how-created.qmd` (main path) and `learn/tokens-context.qmd`
+(optional deep dive), per the batch instruction. The three anchor lessons
+were not edited.
+
+### Research performed (bounded)
+
+Verified, on 2026-09-15, exactly the sentences the pages rely on:
+Sennrich et al. 2016 (arXiv abstract); Radford et al. 2019, GPT-2,
+Section 2.2 and the vocabulary/context sentence of Section 2.3 (PDF text
+extracted with `pdftotext` after the fetch summarizer could not read the
+two-column layout); Bengio et al. 2003, abstract, §1.1, §2 (PDF text);
+Vaswani et al. §3.4 and the first sentence of §3.5 (arXiv HTML v7); Liu
+et al. 2023 (abstract); Lewis et al. 2020 (abstract); Anthropic's
+*Context windows* documentation page and the 2025-09-29 context-engineering
+post (both product-specific, access-dated). No other sections of those
+sources were read or cited. `learn/.Rhistory` was left untouched.
+
+### Verification files
+
+- `scripts/check_bpe_example.py` (new): re-runs the toy BPE merges from
+  the committed word counts and checks each merge step, the final splits,
+  and the context-budget subtraction against the page text. Its first run
+  caught its own bug (the budget regex also matched the BPE word-count
+  rows, inflating the "used" total by 18); fixed by requiring a
+  plain-text label.
+- `scripts/verify.sh`: added as step 7 of 8.
+
+### Not done in this batch
+
+- The Karpathy tokenization segment is cited as a learning resource with
+  no timestamp, because none was verified.
+
+### Correction pass before commit (2026-09-15)
+
+Nine bounded corrections from external review, none structural: position
+information made architecture-neutral (the original Transformer's added
+encoding is one mechanism, not the only one); the objective named as
+autoregressive pretraining; fixed tokenizer/ID mapping distinguished from
+the learned embedding parameters; characters and bytes separated as
+distinct base units, with subword-plus-byte-fallback described as the
+common pattern rather than a universal; spaces/punctuation generalization
+limited to "in many commonly used subword tokenizers ... influence the
+split"; the `bank` example made causal ("the river bank" vs. "the central
+bank"); the context-versus-parameters distinction separated from
+product-level persistence; "re-sent" replaced with logical-context
+language; and `index.qmd`'s lesson list updated so the visible path is
+text → numbers → neurons → transformers, with the deep dive exposed.

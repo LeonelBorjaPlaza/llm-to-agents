@@ -54,6 +54,55 @@ Transformers for Language Understanding*.**
 `learn/why-transformers.qmd` §5. **Abstract verified verbatim on
 2026-09-15**; no other section read.
 
+**S14 — Sennrich, Haddow, and Birch, *Neural Machine Translation of Rare
+Words with Subword Units*.** <https://arxiv.org/abs/1508.07909> (v5,
+2016-06-10). New in the tokens/context batch (2026-09-15). Used for the
+subword-unit motivation and the BPE procedure in
+`learn/tokens-context.qmd` §2. **Abstract verified verbatim on
+2026-09-15.**
+
+**S15 — Radford, Wu, Child, Luan, Amodei, and Sutskever, *Language Models
+are Unsupervised Multitask Learners* (GPT-2).**
+<https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf>
+(OpenAI, 2019). New in the tokens/context batch. Used for byte-level BPE,
+the space and punctuation merge rules, the 50,257-entry vocabulary, and
+the 1,024-token context size. **Section 2.2 and the vocabulary/context
+sentence in Section 2.3 verified against the PDF text (pdftotext) on
+2026-09-15.**
+
+**S16 — Bengio, Ducharme, Vincent, and Jauvin, *A Neural Probabilistic
+Language Model*.** Journal of Machine Learning Research 3 (2003),
+1137–1155. <https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf>.
+New in the tokens/context batch. Used for the learned embedding table
+(C as a |V| × m matrix of free parameters) and for why similarity
+structure emerges. **Abstract, Section 1.1, and Section 2 verified
+against the PDF text on 2026-09-15.**
+
+**S17 — Anthropic, *Context windows* (Claude API documentation).**
+<https://platform.claude.com/docs/en/build-with-claude/context-windows>,
+**accessed 2026-09-15** (the docs.anthropic.com URL redirects here).
+Product-specific; used, labeled as such, for the definition of a context
+window, what counts toward it, and the up-to-1M-token size figure.
+
+**S18 — Liu et al., *Lost in the Middle: How Language Models Use Long
+Contexts*.** <https://arxiv.org/abs/2307.03172> (v3, 2023-11-20). New in
+the tokens/context batch. Used for the placement effect in
+`learn/tokens-context.qmd` §10. **Abstract verified verbatim on
+2026-09-15.**
+
+**S19 — Lewis et al., *Retrieval-Augmented Generation for
+Knowledge-Intensive NLP Tasks*.** <https://arxiv.org/abs/2005.11401>
+(v4, 2021-04-12). New in the tokens/context batch. Used only for the
+general idea of retrieval placing external text into the context.
+**Abstract verified verbatim on 2026-09-15.**
+
+**S20 — Anthropic, *Effective context engineering for AI agents*
+(engineering blog, published 2025-09-29).**
+<https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents>,
+**accessed 2026-09-15**. Vendor guidance (PR9), used alongside S18 for
+the practical-consequences section, attributed as one provider's
+statement.
+
 ## Claim-by-claim
 
 | ID | Claim (short) | Source | Locator | Support | Confidence | Caveat |
@@ -84,6 +133,15 @@ Transformers for Language Understanding*.**
 | S-24 | Pretrained BERT fine-tuned with one additional output layer for a wide range of tasks | S11 | Abstract | direct | high | **Verified verbatim 2026-09-15.** Encoder model; used only for the transfer layer of §5 |
 | S-25 | Loss scales as a power law in model size, data, and compute over more than seven orders of magnitude | S12 | Abstract | direct | high | **Verified verbatim 2026-09-15.** Empirical regularity over the studied range, not a law |
 | S-26 | GPT-3 (175B, autoregressive) applied without gradient updates; scaling improves task-agnostic few-shot performance | S13 | Abstract | direct | high | **Verified verbatim 2026-09-15.** CC2 applies: observed task performance, not thinking |
+| S-27 | Subword units for open-vocabulary translation; BPE adapted to segmentation | S14 | Abstract; §3.2 | direct | high | **Verified 2026-09-15.** Toy merge example is the course's own, checked by `check_bpe_example.py` |
+| S-28 | Byte-level BPE (256-byte base); "dog. dog! dog?" merge problem; no merges across character categories except spaces; 32k–64k BPE vocabularies common; GPT-2 vocabulary 50,257 and context 1,024 | S15 | §2.2; §2.3 | direct | high | **Verified against PDF text 2026-09-15.** One 2019 tokenizer; other families differ (PR4) |
+| S-29 | Learned word feature vectors, jointly with the probability function; C is a \|V\| × m matrix of free parameters; similar words get similar vectors; m = 30–100 in experiments | S16 | Abstract; §1.1; §2 | direct | high | **Verified against PDF text 2026-09-15.** No "first" claim |
+| S-30 | Learned embeddings to d_model-dimensional vectors; learned linear + softmax to next-token probabilities; shared matrix; position information must be injected | S10 | §3.4; §3.5 first sentence | direct | high | **Verified verbatim 2026-09-15 (arXiv HTML v7)** |
+| S-31 | Context window = all text the model can reference incl. its response; everything in a request counts; turns accumulate; "context rot"; up to 1M tokens depending on model | S17 | "How the context window works"; "Context window sizes by model" | direct | high | **Product-specific, accessed 2026-09-15 (PR9).** Size figure will change |
+| S-32 | Performance highest with relevant information at the beginning or end of a long context; degrades in the middle | S18 | Abstract | direct | high | **Verified 2026-09-15.** 2023 models and tasks; phrased as one study's finding |
+| S-33 | Parametric knowledge access is limited; RAG combines parametric and non-parametric (retrieved) memory | S19 | Abstract | direct | high | **Verified 2026-09-15.** Used only for the general mechanism |
+| S-34 | Context = tokens included when sampling; recall decreases as tokens grow; finite resource; smallest set of high-signal tokens | S20 | Opening sections | direct | medium-high | **Vendor guidance, accessed 2026-09-15 (PR9)**; paired with S-32 |
+| S-35 | Tokenization helps explain awkwardness with spelling, character counting, and string operations; not the sole cause | — (course inference; PR4) | inference from S-27/S-28 | inference | medium | Course synthesis; no model-specific behavior asserted |
 
 ## Open verification debt (carried forward from the implementation plan)
 
@@ -110,7 +168,15 @@ Transformers for Language Understanding*.**
   "why prevalent" section. No other sections of those three papers were
   read; do not cite them for anything beyond the quoted sentences without
   a fresh verification.
-- S-02, S-03, S-06, S-10, S-11, S-18, and S-20 are marked `inference`
+- **Resolved, not open (tokens/context batch, 2026-09-15):** S-27–S-34
+  were verified against the live sources on 2026-09-15 (arXiv abstract
+  pages for S-27, S-32, S-33; the GPT-2 and Bengio PDFs via text
+  extraction for S-28, S-29; arXiv HTML for S-30; the two Anthropic pages
+  for S-31, S-34, which are product-specific and access-dated). The
+  Karpathy tokenization segment cited as a learning resource on
+  `learn/how-created.qmd` carries **no timestamp**, deliberately: none
+  has been verified (same class of gap as G1).
+- S-02, S-03, S-06, S-10, S-11, S-18, S-20, and S-35 are marked `inference`
   because they are this course's own editorial framing, naming convention,
   or field characterization — not a direct claim made by a video or paper.
   This is intentional and should not be "fixed" by attributing them to a

@@ -35,9 +35,9 @@ rather than reproduces.
 
 ## Available now
 
-- [**Softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
-  complete, standalone learning module, including a live softmax-and-
-  sampling laboratory and a no-JavaScript fallback.
+- [**From text to numbers**](learn/how-created.qmd) — what has to happen
+  before a language model can learn from text: tokens, token IDs,
+  embedding vectors, and next-token targets, traced through one sentence.
 - [**Neurons, layers, and learning**](learn/neural-networks.qmd) — a
   complete, standalone module on parameterized functions, gradient descent,
   and backpropagation, with a fully worked and independently
@@ -46,6 +46,13 @@ rather than reproduces.
   standalone module on the sequence-processing problem self-attention was
   built to solve, with a worked example checked against the original
   paper's own stated bounds.
+- [**Softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
+  complete, standalone learning module, including a live softmax-and-
+  sampling laboratory and a no-JavaScript fallback.
+- [**Deep dive: tokens, embeddings, and the context window**](learn/tokens-context.qmd)
+  — optional; why models use subword units, what the embedding table does
+  and does not encode, and what a finite context window implies in
+  practice.
 - [**Slides**](slides/llms-to-agents.qmd) — three slides from an earlier
   prototype iteration of the talk design (logits and softmax, training and
   maximum likelihood, sampling and temperature). Left as a historical

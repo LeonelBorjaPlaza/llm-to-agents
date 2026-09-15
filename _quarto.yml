@@ -10,8 +10,8 @@ project:
 website:
   title: "From LLMs to Agents"
   description: >-
-    A conceptual course for PhD economists: what a large language model is,
-    how it is built, and how it begins to act.
+    A conceptual course: what a large language model is, how it is built,
+    and how it begins to act.
   navbar:
     left:
       - href: index.qmd
@@ -20,12 +20,16 @@ website:
         text: Slides
       - text: Learn
         menu:
-          - href: learn/softmax-sampling.qmd
-            text: Softmax, Sampling, and Temperature
+          - href: learn/how-created.qmd
+            text: From Text to Numbers
           - href: learn/neural-networks.qmd
             text: Neurons, Layers, and Learning
           - href: learn/why-transformers.qmd
             text: Why Transformers
+          - href: learn/softmax-sampling.qmd
+            text: Softmax, Sampling, and Temperature
+          - href: learn/tokens-context.qmd
+            text: "Deep dive: Tokens, Embeddings, and the Context Window"
       - href: resources.qmd
         text: Resources
 

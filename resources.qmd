@@ -3,11 +3,13 @@ title: "Resources"
 subtitle: "Sources used so far, annotated"
 ---
 
-This course so far draws on three sources. All three are used to *ground*
-claims (they also appear in `sources/source-map.md` and
-`sources/claims.csv` with exact locators) and are annotated here as
-*learning* resources in their own right, in case you want to go to the
-original.
+Every source listed here is used to *ground* claims in the course (each
+also appears in `sources/source-map.md` and `sources/claims.csv` with
+exact locators) and is annotated as a *learning* resource in its own
+right, in case you want to go to the original. The first three anchor the
+softmax, neural-network, and why-transformers lessons; the rest were added
+for the later sections of `learn/why-transformers.qmd` and for the two
+text-to-numbers lessons.
 
 The full course will eventually distinguish a bounded set of evidentiary
 sources from a larger, curated resource library organized into learning
@@ -79,6 +81,127 @@ used so far, not a preview of the eventual full list.
   (arXiv's non-exclusive distribution license, not a Creative Commons
   license) does not permit unrestricted figure reuse
 - **Link:** <https://arxiv.org/abs/1706.03762>
+
+### Devlin et al., *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*
+
+- **Format:** paper, arXiv:1810.04805 (v2, 2019-05-24); the abstract is
+  enough for how this course uses it
+- **Level:** technical
+- **What it explains particularly well:** that one pretrained transformer
+  can be adapted to many downstream tasks with minimal task-specific
+  architecture, the pretraining-and-transfer step in
+  `learn/why-transformers.qmd`
+- **Limitation:** an encoder model, not an autoregressive language model
+- **Link:** <https://arxiv.org/abs/1810.04805>
+
+### Kaplan et al., *Scaling Laws for Neural Language Models*
+
+- **Format:** paper, arXiv:2001.08361 (v1, 2020-01-23); the abstract
+  states the result used
+- **Level:** technical
+- **What it explains particularly well:** the empirical regularity that
+  language-model loss improves systematically with model size, data, and
+  compute over a wide range
+- **Limitation:** an empirical regularity for the studied setup, not a law
+- **Link:** <https://arxiv.org/abs/2001.08361>
+
+### Brown et al., *Language Models are Few-Shot Learners*
+
+- **Format:** paper, arXiv:2005.14165 (v4, 2020-07-22); the abstract
+  states the results used
+- **Level:** technical
+- **What it explains particularly well:** that a large autoregressive
+  transformer can perform tasks from demonstrations placed in its input,
+  without any parameter updates
+- **Limitation:** reports observed performance; does not explain the
+  mechanism
+- **Link:** <https://arxiv.org/abs/2005.14165>
+
+### Sennrich, Haddow, and Birch, *Neural Machine Translation of Rare Words with Subword Units*
+
+- **Format:** paper, arXiv:1508.07909 (v5, 2016-06-10); the abstract and
+  the BPE section are short
+- **Level:** technical
+- **What it explains particularly well:** why a fixed word vocabulary
+  fails on rare and unknown words, and how repeatedly merging frequent
+  character pairs produces a subword vocabulary; the basis for
+  `learn/tokens-context.qmd` §2–§3
+- **Limitation:** written for machine translation, before byte-level
+  variants and the space and punctuation rules later tokenizers adopted
+- **Link:** <https://arxiv.org/abs/1508.07909>
+
+### Radford et al., *Language Models are Unsupervised Multitask Learners* (GPT-2)
+
+- **Format:** paper (OpenAI, 2019); Section 2.2, "Input Representation",
+  is one page
+- **Level:** technical
+- **What it explains particularly well:** the concrete reasoning behind
+  byte-level BPE and the rule that spaces may merge with a following word
+  while punctuation may not, in the authors' own words; also the source of
+  the 50,257-token vocabulary and 1,024-token context figures used in the
+  text-to-numbers lessons
+- **Limitation:** describes one 2019 tokenizer; current tokenizers differ
+  in details
+- **Link:** <https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf>
+
+### Bengio, Ducharme, Vincent, and Jauvin, *A Neural Probabilistic Language Model*
+
+- **Format:** paper, Journal of Machine Learning Research 3 (2003),
+  1137–1155; Sections 1 and 2 carry the ideas used
+- **Level:** technical
+- **What it explains particularly well:** the idea of learning a vector
+  for each word jointly with the model that predicts the next word, and
+  why similar words end up with similar vectors; the basis for the
+  embedding sections of `learn/how-created.qmd` and
+  `learn/tokens-context.qmd`
+- **Limitation:** the network is not a transformer, and the vocabulary is
+  words, not subword tokens
+- **Link:** <https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf>
+
+### Liu et al., *Lost in the Middle: How Language Models Use Long Contexts*
+
+- **Format:** paper, arXiv:2307.03172 (v3, 2023-11-20); the abstract and
+  figures carry the main result
+- **Level:** technical
+- **What it explains particularly well:** empirical evidence that where a
+  relevant passage sits in a long input affects how well a model uses it
+- **Limitation:** 2023 models; the size of the effect varies by model and
+  task
+- **Link:** <https://arxiv.org/abs/2307.03172>
+
+### Lewis et al., *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*
+
+- **Format:** paper, arXiv:2005.11401 (v4, 2021-04-12); the abstract is
+  enough for how this course uses it
+- **Level:** technical
+- **What it explains particularly well:** the idea of combining a model's
+  fixed parametric knowledge with text retrieved at request time
+- **Limitation:** the specific architecture described is one of many ways
+  to do retrieval; the course uses only the general idea
+- **Link:** <https://arxiv.org/abs/2005.11401>
+
+### Anthropic, *Context windows* (Claude API documentation)
+
+- **Format:** documentation page, accessed 2026-09-15
+- **Level:** practitioner
+- **What it explains particularly well:** exactly what counts toward one
+  provider's context window and how turns accumulate; the product-specific
+  illustration in `learn/tokens-context.qmd` §8–§9
+- **Limitation:** product-specific and revised over time; figures are as
+  of the access date
+- **Link:** <https://platform.claude.com/docs/en/build-with-claude/context-windows>
+
+### Anthropic, *Effective context engineering for AI agents*
+
+- **Format:** engineering blog post, published 2025-09-29, accessed
+  2026-09-15
+- **Level:** practitioner
+- **What it explains particularly well:** the working definition of
+  context as the tokens included when sampling, and the case for treating
+  it as a finite resource
+- **Limitation:** one provider's guidance about its own models, not a
+  peer-reviewed result; this course pairs it with Liu et al. above
+- **Link:** <https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents>
 
 ---
 

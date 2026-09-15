@@ -1,0 +1,299 @@
+---
+title: "From Text to Numbers"
+subtitle: "What has to happen before a language model can learn from text"
+---
+
+*Prerequisites: none. This page comes before `learn/neural-networks.qmd`
+in the course sequence, but neither page assumes the other.*
+
+## 1. The problem being solved
+
+A neural network computes with numbers. Each of its units takes a list of
+numbers in, forms a weighted sum, applies a fixed nonlinear function, and
+passes the result on; `learn/neural-networks.qmd` works one such unit
+through in full. Text is not a list of numbers. A sentence is a string of
+characters, and there is no arithmetic to do on the letter "b". So before
+any learning can happen, every piece of training text, and later every
+prompt, has to be turned into numbers that a network can operate on.
+
+The conversion has to satisfy two requirements at once. It must be
+mechanical and consistent, so that the same text always becomes the same
+numbers, during training and afterwards. And it must produce numbers the
+network can *improve*: numbers that training is allowed to adjust so that
+they become useful for prediction, rather than fixed codes chosen by a
+person. Those two requirements are met by three steps, taken in order:
+
+1. split the text into units drawn from a fixed inventory (**tokens**);
+2. replace each unit by its index in that inventory (**token IDs**);
+3. replace each index by a list of adjustable numbers looked up from a
+   table (**embedding vectors**).
+
+The rest of this page follows one short sentence through those three
+steps, then explains what the network is asked to do with the result and
+where training takes over.
+
+## 2. A small example
+
+The running example is the sentence
+
+> "The bridge was closed."
+
+By the end of §6 it will have become an array of numbers with one row per
+token, and by the end of §7 it will also have supplied the answers the
+network is trained to predict.
+
+## 3. Splitting text into tokens
+
+The first step cuts the text into pieces. The pieces come from a fixed
+inventory, called the **vocabulary**, that is decided once, before
+training, and then used unchanged for all text the model ever sees. The
+program that does the cutting is the **tokenizer**. The pieces it produces
+are tokens, and they are often whole words, but not always: a common word
+may be one token, a rare or long word may be split into several, and in
+many commonly used tokenizers spaces and punctuation influence the split.
+
+For the running example, an illustrative tokenizer might produce five
+tokens:
+
+| Position | Token |
+|---|---|
+| 1 | `The` |
+| 2 | ` bridge` |
+| 3 | ` was` |
+| 4 | ` closed` |
+| 5 | `.` |
+
+Two details of this split are worth noticing, because they are typical of
+many commonly used tokenizers. The space before a word is part of the
+token (` bridge` with a leading space is a different token from `bridge`
+without one), and the full stop is its own token. In the tokenizer used by
+GPT-2, for example, spaces were deliberately allowed to merge with the
+word that follows them, while punctuation was kept from merging with
+words. [S-28]
+
+The split above is **illustrative**. It is not the exact tokenization any
+particular current model would produce; different model families use
+different tokenizers, and the same sentence can be cut differently by
+each. What is not illustrative is the shape of the outcome: a fixed
+vocabulary, typically tens of thousands of entries (GPT-2's had 50,257),
+and a sequence of tokens drawn from it. [S-28] How a vocabulary like that
+is built, and why models use word fragments rather than characters or
+whole words, is the subject of `learn/tokens-context.qmd`.
+
+## 4. From tokens to token IDs
+
+Each entry in the vocabulary has a position in it, an integer from 0 up to
+the vocabulary size minus one. Replacing each token by that integer gives
+the **token ID**. For the running example, with made-up numbers:
+
+| Position | Token | Token ID (illustrative) |
+|---|---|---|
+| 1 | `The` | 1032 |
+| 2 | ` bridge` | 2471 |
+| 3 | ` was` | 88 |
+| 4 | ` closed` | 5109 |
+| 5 | `.` | 12 |
+
+A token ID is an address, and nothing more. The number 5109 is not
+"larger" than 88 in any sense that matters to the model: ` closed` is not
+more of anything than ` was`, and IDs that are close together are not
+similar tokens. The network never adds, compares, or multiplies token
+IDs. It uses each one only to look up a row in a table, which is the next
+step. A different tokenizer would assign entirely different numbers to the
+same pieces, and the model built on it would work just as well.
+
+## 5. From token IDs to embedding vectors
+
+The network needs each token to arrive as a list of numbers it can do
+arithmetic on. That list is a **vector**: an ordered list of $d$ real
+numbers, written for example as $(0.21, -0.60, 0.05)$ when $d = 3$. Every
+token gets a vector of the same length $d$.
+
+The vectors live in a table with one row per vocabulary entry and $d$
+columns, called the **embedding table** and written $E$. Converting a
+token ID to its vector is a row lookup:
+
+$$
+\mathbf{e}_t = E_{\text{id}_t}
+$$
+
+Here $\text{id}_t$ is the token ID at position $t$, $E_{\text{id}_t}$ is
+the row of the table with that index, and $\mathbf{e}_t$ is the resulting
+vector, the **embedding** of the token at position $t$. For the running
+example, with $d = 3$ and made-up entries:
+
+| Position | Token | Token ID | Embedding vector (illustrative, $d = 3$) |
+|---|---|---|---|
+| 1 | `The` | 1032 | $(0.21, -0.60, 0.05)$ |
+| 2 | ` bridge` | 2471 | $(-0.33, 0.14, 0.92)$ |
+| 3 | ` was` | 88 | $(0.08, 0.47, -0.21)$ |
+| 4 | ` closed` | 5109 | $(0.55, -0.12, 0.30)$ |
+| 5 | `.` | 12 | $(-0.70, 0.02, -0.15)$ |
+
+Where do these numbers come from? Not from a dictionary. Nothing in the
+row for ` bridge` encodes "a structure carrying a road over a river". The
+entries of $E$ are **parameters** of the model, in exactly the sense that
+the weights and biases of a unit are parameters: they start as arbitrary
+values and are adjusted by training, together with every other parameter,
+so that the network's predictions improve. The idea of learning a vector
+for each word jointly with the rest of a language model goes back to an
+early neural language model, in which the table of word vectors was
+explicitly a matrix of free parameters with one row per vocabulary entry;
+the transformer uses a learned embedding table in the same way. [S-29]
+[S-30] Whatever usefulness a row of $E$ ends up having is a result of
+training, not something written into it in advance.
+
+The length $d$ is a design choice. In that early model the vectors had
+30 to 100 entries. [S-29] Real vectors have far too many entries to print;
+the $d = 3$ table above is only to show the shape.
+
+## 6. What the model receives
+
+After the three steps, the sentence has become five vectors of length
+$d$, one per token, in order. Stacked, they form an array with $n = 5$
+rows and $d$ columns. That array, not the sentence, is what enters the
+network.
+
+One thing is missing from that array. The token vectors alone carry no
+information about order: the row looked up for ` bridge` is the same
+whether the token is first or fifth, and nothing in the stack of rows
+says which came before which. A transformer therefore needs an explicit
+mechanism that lets it distinguish positions. The original Transformer
+added a positional encoding to each input embedding; other transformer
+architectures provide position information in other ways. [S-30] The
+mechanics of that step, and of what the layers then do, belong to later
+pages.
+
+So the answer to "what does the model actually receive instead of a
+sentence?" is: a sequence of $n$ vectors, one per token, each looked up
+from a learned table by the token's ID, together with a mechanism that
+lets the architecture tell the positions apart. None of it is a letter, a
+word, or a meaning.
+
+## 7. What the model is asked to predict
+
+Autoregressive language models, the kind this course is about, are
+pretrained by predicting the next token from the tokens that came before
+it. The running example supplies its own answers. Reading the five tokens
+left to right, the input at each position and the target the model
+should predict are:
+
+| Position | Input so far | Target (next token) |
+|---|---|---|
+| 1 | `The` | ` bridge` |
+| 2 | `The` ` bridge` | ` was` |
+| 3 | `The` ` bridge` ` was` | ` closed` |
+| 4 | `The` ` bridge` ` was` ` closed` | `.` |
+
+The targets are the text shifted by one position. No person had to label
+anything: each position for which a following token is available supplies
+a prediction target automatically. At each position the network's output is not
+a single guess but a probability distribution over the entire
+vocabulary, and the target is a token ID, an index into that same
+vocabulary. [S-05] How raw output scores become that distribution is the
+subject of `learn/softmax-sampling.qmd`; some models even reuse the
+embedding table $E$ for the final step that produces one score per
+vocabulary entry. [S-30]
+
+## 8. Where training takes over
+
+Two of the three steps above are fixed for the life of the model: the
+tokenizer's splitting rule and the mapping from vocabulary entries to
+IDs are decided once and never learned. The third is different. The
+embedding lookup itself is part of every forward computation, and the
+entries of the table it reads from are parameters, updated during
+training. Training is what happens next, and the ingredients are the
+ones `learn/neural-networks.qmd` works through on a single unit: a
+forward pass produces the predicted
+distribution at each position; a loss measures how much probability was
+assigned to the actual next token; backpropagation computes how the loss
+would change with a small change in each parameter; and an optimizer
+adjusts the parameters, the rows of the embedding table among them, which
+is why the vectors in §5 end up useful even though they started
+arbitrary. Doing this over an enormous body of text
+is pretraining, covered in a later lesson. This page stops at the
+handoff: the network now has numbers to compute with and a target to
+compare against.
+
+## 9. A common misconception
+
+**"The model looks each word up in a dictionary."** The embedding step is
+a lookup, so the confusion is understandable, but what is looked up is a
+row of adjustable numbers, not a definition. The row has no content
+before training and acquires whatever structure it has only because
+adjusting it helped the network predict next tokens. A related confusion
+treats token IDs as measurements: they are not. A token ID is an index
+into a table, and two IDs being numerically close says nothing about the
+tokens.
+
+## 10. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>The model is given the sentence "The bridge was closed." What
+does it actually receive?</summary>
+A sequence of vectors, one per token: the sentence is split into tokens
+by the tokenizer, each token is replaced by its ID, each ID selects a row
+of the learned embedding table, and the architecture supplies a way to
+tell the positions apart. The network operates on that array of numbers,
+never on the characters (§6).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Token ` closed` has ID 5109 and token ` was` has ID 88 in the
+illustrative table. Does the larger number mean anything?</summary>
+No. A token ID is an index into the vocabulary and is used only to look
+up a row of the embedding table. The model never does arithmetic on IDs,
+and numerically close IDs are not similar tokens (§4).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Where do the numbers in an embedding vector come from?</summary>
+They are parameters of the model. They start as arbitrary values and are
+adjusted during training, together with all the other parameters, so that
+the network's next-token predictions improve. They are not dictionary
+definitions stored as numbers (§5).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Who supplies the correct answers the model is trained
+against?</summary>
+The text itself. At each position that has a following token, the target
+is simply that next token, so the training text supplies its own targets
+without any human labeling (§7).
+</details>
+:::
+
+## 11. Continue learning
+
+- **`learn/tokens-context.qmd`** (this course). The deep dive on how a
+  vocabulary is built, why tokens are word fragments, what the embedding
+  table does and does not encode, and what the finite context window
+  implies in practice.
+
+- **Bengio, Ducharme, Vincent, and Jauvin, *A Neural Probabilistic
+  Language Model*** (paper, Journal of Machine Learning Research 3,
+  2003; Sections 1 and 2 are enough for this page's point). Technical
+  level. The clearest early statement of the idea in §5: learn a vector
+  for each word jointly with the model that predicts the next word.
+  Limitation: the network it describes is not a transformer, and the
+  vocabulary is words, not subword tokens.
+  <https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf>
+
+- **Andrej Karpathy, *Deep Dive into LLMs like ChatGPT*** (video, 3.5
+  hours, including a walkthrough of tokenization). Introductory level,
+  plain language. Especially good for seeing real text being split into
+  tokens and assigned IDs by an actual tokenizer. Limitation: the
+  specific tokenizer and numbers shown are one model's, and the location
+  of the tokenization segment within the video has not been verified for
+  this course, so no timestamp is given.
+  <https://www.youtube.com/watch?v=7xTGNNLPyMI>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

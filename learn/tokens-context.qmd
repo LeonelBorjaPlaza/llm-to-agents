@@ -1,0 +1,416 @@
+---
+title: "Tokens, Embeddings, and the Context Window"
+subtitle: "What the units of text are, what the vectors are, and what a finite working sequence implies"
+---
+
+*Prerequisites: none. `learn/how-created.qmd` gives the short version of
+the first half of this page; this page can be read on its own.*
+
+## 1. What this page adds
+
+A language model does not operate on characters or words. It operates on
+tokens drawn from a fixed vocabulary, converts each token to a vector of
+numbers looked up from a learned table, and at generation time works
+within a finite sequence of tokens called the context window. Each of
+those three facts has consequences that are easy to get wrong: why a
+model can stumble on spelling, why two occurrences of the same word are
+not represented the same way inside the network, and why adding more
+material to a prompt is not automatically helpful. This page goes through
+the three in turn.
+
+## 2. Why models use subword units
+
+There are several ways to cut text into units, and the one mainstream
+models use is a compromise between the extremes.
+
+At one extreme are small fixed inventories. A character-level model uses
+individual characters as its units: the inventory is small, but every
+sequence becomes very long and each unit carries almost no information on
+its own. A byte-level approach goes one step further and uses the 256
+possible byte values as its inventory, which means any text at all can be
+represented, with no "unknown" unit ever needed, at the cost of even
+longer sequences. [S-28] When GPT-2 was built, its authors reported that
+models working directly on bytes were not competitive with word-level
+models on large datasets. [S-28]
+
+At the other extreme are whole words. Each unit then carries a lot, but
+the inventory has to contain every word the model will ever meet. It
+cannot: new names, rare words, misspellings, and words from other
+languages keep appearing, and anything outside the inventory has to be
+replaced by a placeholder "unknown" symbol. A method proposed for machine
+translation addressed exactly this by encoding rare and unknown words as
+sequences of smaller **subword units**, so that the model could handle an
+open vocabulary. [S-27]
+
+The compromise most large language models use is a vocabulary whose
+entries are pieces of words, chosen so that frequent words are single
+pieces and rare words are built from several. The most widely known
+procedure for choosing those pieces adapts a data-compression algorithm
+called **byte pair encoding** (BPE): it starts from single units and
+repeatedly merges the most frequent adjacent pair into a new vocabulary
+entry. [S-27] The GPT-2 authors described BPE as "a practical middle
+ground between character and word level language modeling," interpolating
+between word-level units for frequent sequences and character-level
+units for infrequent ones. [S-28] Many current tokenizers combine subword
+units with a byte-level base or a byte fallback, so that anything not
+covered by a subword piece can still be represented; implementations
+differ in exactly how.
+
+## 3. A BPE-style example
+
+The procedure is easiest to see on a toy corpus. Suppose the training
+text contained only four distinct words, with these counts:
+
+| Word | Occurrences |
+|---|---|
+| `tall` | 6 |
+| `ball` | 5 |
+| `taller` | 4 |
+| `tale` | 3 |
+
+Start with every word split into single characters, so the vocabulary is
+{`a`, `b`, `e`, `l`, `r`, `t`}. Count how often each adjacent pair of
+units occurs across the corpus, weighting by word counts, and merge the
+most frequent pair into one new unit. Repeat.
+
+| Merge | Most frequent adjacent pair | Count | New vocabulary entry |
+|---|---|---|---|
+| 1 | `a` + `l` | 18 | `al` |
+| 2 | `al` + `l` | 15 | `all` |
+| 3 | `t` + `all` | 10 | `tall` |
+
+The first merge creates `al`, because `a` is followed by `l` in all four
+words (6 + 5 + 4 + 3 = 18 occurrences). After that merge `al` is followed
+by `l` in three of the words (15 occurrences), which creates `all`; then
+`t` followed by `all` (10 occurrences) creates `tall`. Stopping after
+three merges, the vocabulary has nine entries and the four words are
+split as:
+
+- `tall` → `tall`
+- `ball` → `b` `all`
+- `taller` → `tall` `e` `r`
+- `tale` → `t` `al` `e`
+
+The most frequent word has become a single token; the others are built
+from shared pieces. A real run continues for tens of thousands of merges
+over a far larger body of text, which is how vocabularies of the size
+mentioned below arise. Several simplifications are in play: some widely
+used tokenizers, including GPT-2's byte-level BPE, begin from bytes rather
+than characters, while others use different base units or fallback
+schemes; real tokenizers apply extra rules about spaces and punctuation
+(§4); and not all of them are BPE. The counts above are recomputed by
+`scripts/check_bpe_example.py`.
+
+## 4. Spaces, punctuation, and why a token is not a word
+
+Because the merge procedure only looks at frequency, it will happily
+merge a word with the punctuation that often follows it. The GPT-2 paper
+reports exactly this problem: their tokenizer was learning many versions
+of common words "since they occur in many variations such as dog. dog!
+dog?", wasting vocabulary entries. Their fix was to prevent merges across
+character categories (letters with punctuation, for instance), with one
+exception: spaces were allowed to merge with the word that follows them,
+which improved compression at the cost of only minor fragmentation.
+[S-28] In that tokenizer, a word with a leading space and the same word
+without one are therefore different tokens, and punctuation is kept
+apart from the letters next to it.
+
+More generally, in many commonly used subword tokenizers, spaces and
+punctuation influence the split, and the details differ between
+tokenizer families. The same frequency-driven mechanism explains several
+facts that surprise people the first time. A capitalized word and its
+lowercase form are different character sequences and can tokenize
+differently. A word at the start of a text (no leading space) and the
+same word mid-sentence (leading space) can be different tokens. And an
+ordinary word can be split in ways that have nothing to do with its
+linguistic structure, because the pieces were chosen by frequency, not by
+grammar. Different model families build
+their vocabularies with different procedures and different training text,
+so the same sentence can tokenize differently across models; GPT-2's
+vocabulary had 50,257 entries, and BPE vocabularies of 32,000 to 64,000
+entries were described as common at the time. [S-28]
+
+Token IDs, finally, are indices into whichever vocabulary a model uses.
+They are assigned when the vocabulary is built and carry no information
+beyond "which row of the table."
+
+## 5. Consequences for spelling, counting, and string operations
+
+A model never receives letters. If a word is a single token, the model
+receives one vector for it, and nothing in the input tells it how many
+letters the word has or what the third one is. Any knowledge it has about
+spelling has to have been learned indirectly, from text in which
+spellings were discussed or words were broken up. Tokenization therefore
+helps explain why spelling, character counting, and some string
+operations can be awkward for language models. [S-35] It is not the sole
+explanation for every such failure: a model can also simply have learned
+a pattern imperfectly, and a task that is easy for a person can be
+statistically rare in text.
+
+## 6. Embeddings: the learned lookup table
+
+Once text is tokens and tokens are IDs, each ID is replaced by a vector.
+A vector here means an ordered list of $d$ real numbers, and every token
+in the vocabulary gets a vector of the same length. The vectors are the
+rows of a table $E$ with $V$ rows (one per vocabulary entry) and $d$
+columns, and the conversion is a row lookup, $\mathbf{e} = E_{\text{id}}$.
+
+The entries of $E$ are parameters, learned along with everything else.
+The idea is due to an early neural language model, which associated each
+word with a real-valued vector, expressed the probability of a word
+sequence in terms of those vectors, and learned the vectors and the
+probability function simultaneously; the table was "a $|V| \times m$
+matrix of free parameters." [S-29] The transformer uses learned
+embeddings in the same way, converting input tokens to vectors of a fixed
+dimension. [S-30]
+
+What structure do the learned vectors have? The same early paper gave the
+reason any structure appears at all: the model generalizes because
+"similar" words are expected to end up with similar vectors, and because
+the probability function is a smooth function of the vectors, so a
+sequence never seen in training gets reasonable probability if it is
+made of words whose vectors are near those of a sequence that was seen.
+[S-29] Training pushes tokens that occur in similar contexts toward
+similar vectors, because that makes prediction easier. Two cautions
+follow. Nearness in this table reflects learned statistical relationships
+in the training text, which may or may not line up with a relationship a
+person would name. And nothing guarantees that individual coordinates, or
+particular directions, correspond to clean human-interpretable
+properties; a row of $E$ is a list of numbers that turned out to be
+useful, not a list of attributes.
+
+## 7. Three things that are easy to confuse
+
+The **token ID** is an integer index. The **token embedding** is the row
+of $E$ that the index selects. Both depend only on which vocabulary entry
+the token is. Every occurrence of the token ` bank` in every text the
+model ever processes starts from the same ID and the same row of $E$.
+
+The **contextual representation** is different. After the embedding
+lookup, position information is added, because the transformer has no
+built-in notion of order [S-30], and the vectors then pass through the
+network's layers. Inside each transformer block, one mechanism, attention,
+moves information between positions. [S-19] In the autoregressive decoder
+this course is about, a position may use itself and the permitted earlier
+positions, never later ones, so after several layers the vector at the
+position of ` bank` depends on ` bank` and on what came before it. In
+"the river bank" and "the central bank", the token ` bank` has the same
+ID and the same initial embedding in both, and the different words before
+it cause its later contextual representations to differ. That is the
+difference between a lookup table and a network: the table gives every
+occurrence the same starting point, and the network computes something
+occurrence-specific from it.
+
+At the output end, the representation at the last position is turned into
+one raw score per vocabulary entry, which softmax converts into a
+probability distribution over the next token (`learn/softmax-sampling.qmd`
+covers that step). The whole pipeline is therefore vocabulary → ID → row
+of $E$ → layers → scores over the vocabulary.
+
+## 8. The context window
+
+At generation time the model works on a finite sequence of tokens. That
+sequence, everything the model can reference when producing its output,
+including the output it has already produced, is the **context window**.
+Its size is a fixed maximum number of tokens. Each generation step
+predicts one token, which is appended to the sequence, and the next step
+runs on the extended sequence. [S-07] The window is distinct from the
+model's parameters and from the text the model was trained on: the
+parameters were fixed when training ended, while the context is assembled
+afresh for each request and holds whatever that request supplied. [S-31]
+
+The size has grown a great deal. GPT-2 used a context of 1,024 tokens.
+[S-28] Anthropic's documentation for the Claude API, accessed 2026-09-15,
+describes context windows of up to one million tokens depending on the
+model; that figure is product-specific and will change. [S-31] Whatever
+the size, the sequence is finite, and once it is full something has to be
+dropped, summarized, or left out before generation can continue.
+
+## 9. What fills the context of an assistant
+
+For a base model, the context is the prompt plus what has been generated.
+For an assistant that has been given instructions and tools, the context
+assembled for each model call can include, in general terms:
+
+- instructions to the assistant (often called a system prompt);
+- the conversation so far, both the user's messages and the assistant's
+  earlier replies;
+- text retrieved from a document collection or a search;
+- definitions of the tools the assistant may call;
+- the results returned by tools it has already called;
+- files or excerpts made available for the task;
+- the tokens generated so far in the current reply.
+
+All of these are tokens in the same finite sequence, and they compete for
+the same space. As one product-specific illustration: Anthropic's API
+documentation, accessed 2026-09-15, states that everything in a request
+counts toward the window (the system prompt, every message including tool
+results and documents, and the tool definitions), that generated output
+counts too, and that across a conversation each user message and
+assistant response accumulates in the window. [S-31] Other products
+assemble and manage context differently, and the same product may change
+how it does so.
+
+A small illustrative budget makes the arithmetic concrete. Suppose a
+window of 100,000 tokens and a session in which:
+
+| Item | Tokens |
+|---|---|
+| Window (illustrative) | 100,000 |
+| Instructions | 1,500 |
+| A file added to the session | 40,000 |
+| Conversation so far | 12,000 |
+| Tool outputs so far | 8,000 |
+| Remaining | 38,500 |
+
+The 61,500 tokens already used remain part of the logical context on
+subsequent turns until the system removes, summarizes, compacts, or
+otherwise stops supplying them, and the remaining 38,500 must hold every
+further message, tool result, and generated reply. Implementations can
+cache repeated input for efficiency, but cached tokens still occupy
+logical context capacity. These numbers are invented to show the
+accounting; real windows, and real token counts for a given file, depend
+on the model and its tokenizer.
+
+## 10. Practical consequences
+
+**Irrelevant context competes with useful context.** Space is the
+obvious cost: every token of unneeded material is a token unavailable for
+something needed. There is also evidence that placement and volume affect
+how well a model uses what it is given. One empirical study of long
+inputs found that performance on tasks requiring a specific piece of
+information was often highest when that information sat at the beginning
+or end of the input and degraded significantly when it sat in the middle
+of a long context. [S-32] Anthropic's documentation and engineering
+guidance, accessed 2026-09-15, state that as token count grows, accuracy
+and recall degrade, and recommend treating context as a finite resource
+and finding the smallest set of high-signal tokens for the task; that is
+one provider's statement about its models at that date, not a law.
+[S-31] [S-34]
+
+**Repeated material consumes capacity.** If the same file or the same
+long instruction is added twice, it occupies twice the space and brings
+nothing new. The accounting in §9 is unforgiving about this.
+
+**Retrieval brings external information into the current inference.**
+Since the parameters are fixed and the model's ability to access precise
+knowledge stored in them is limited, a standard remedy is to retrieve
+relevant text from an external collection and place it in the context, so
+that generation combines the model's parametric knowledge with
+non-parametric memory supplied at request time. [S-33] Retrieved text is
+context, not training: it changes this request's inputs, not the model's
+parameters.
+
+**A larger window does not make selection irrelevant.** More room means
+more can be included, but the evidence and guidance above are about what
+happens as the included material grows. Deciding what belongs in the
+context, and where, remains part of using a model well, at any window
+size. [S-31] [S-34]
+
+## 11. Common misconceptions
+
+**"Adding a document to the conversation teaches the model."** It does
+not. Supplying a document at inference time does not update the model's
+parameters: training and post-training change parameters, while
+instructions, retrieved text, tool results, and files change
+inference-time context. [S-31] A product may separately retain the
+conversation or the files, keep persistent memory or project state, store
+information externally, and retrieve it into a later model call. Those are
+behaviors of the surrounding system, not changes to the model's weights.
+
+**"A token is a word, and the context window counts words."** A token is
+a vocabulary entry, frequently a word fragment, and in many tokenizers
+spaces and punctuation influence the split (§4). Token counts for the
+same text differ across tokenizers, so a window size in tokens does not
+translate to a fixed number of words.
+
+## 12. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>Why do language models use word fragments rather than whole
+words or single characters?</summary>
+Characters give a tiny inventory but very long sequences in which each
+unit carries little. Whole words give informative units but an inventory
+that can never contain every word, so rare or new words become "unknown".
+Subword units are the compromise: frequent words are single tokens and
+rare words are built from shared pieces, which greatly reduces the
+unknown-word problem; a byte-level base or byte fallback can additionally
+guarantee that arbitrary text remains representable (§2).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>The token ` bank` appears in two different sentences. Which of
+the following are the same in both cases: the token ID, the initial
+embedding, the contextual representation after the transformer's
+layers?</summary>
+The token ID and the initial embedding are identical in both cases, since
+both depend only on the vocabulary entry. The contextual representation
+differs, because the network's layers update each position using the
+other positions in the sequence (§7).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>You add a long file to a session and the assistant answers
+questions about it correctly. Have the model's parameters
+changed?</summary>
+No. The file is in the context window, and each call reads it from there.
+The parameters are unchanged. Whether the file remains available in a
+later session depends on the product or surrounding system, not on
+anything the model learned (§8, §11).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>A model's context window is large enough to hold an entire
+document collection. Is there any reason not to include all of it with
+every question?</summary>
+Yes. Every included token competes for the same finite space and is
+re-sent on every turn, and there is empirical evidence that where and how
+much relevant information is included affects how well the model uses it.
+Selecting relevant material, for instance by retrieval, remains useful at
+any window size (§10).
+</details>
+:::
+
+## 13. Continue learning
+
+- **Sennrich, Haddow, and Birch, *Neural Machine Translation of Rare
+  Words with Subword Units*** (paper, arXiv:1508.07909; the abstract and
+  the section describing the BPE procedure are enough for this page).
+  Technical level. The original description of adapting byte pair
+  encoding to build a subword vocabulary, with a worked merge example.
+  Limitation: written for machine translation, before the byte-level
+  variant and the space and punctuation rules described in §4.
+  <https://arxiv.org/abs/1508.07909>
+
+- **Radford et al., *Language Models are Unsupervised Multitask
+  Learners*** (paper, the GPT-2 report; Section 2.2, "Input
+  Representation", is one page). Technical level. Especially good for
+  the concrete reasoning behind byte-level BPE and the punctuation and
+  space rules, in the authors' own words. Limitation: describes one
+  tokenizer from 2019; current tokenizers differ in details.
+  <https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf>
+
+- **Liu et al., *Lost in the Middle: How Language Models Use Long
+  Contexts*** (paper, arXiv:2307.03172; the abstract and figures carry
+  the main result). Technical level. The empirical source for the
+  placement effect in §10. Limitation: the models studied are from 2023,
+  and the size of the effect varies by model and task.
+  <https://arxiv.org/abs/2307.03172>
+
+- **Anthropic, *Context windows*** (API documentation page, accessed
+  2026-09-15). Practitioner level. A precise account of what counts
+  toward one provider's context window, how turns accumulate, and how
+  tool results and generated output are counted. Limitation:
+  product-specific and revised over time; treat the numbers as of the
+  access date.
+  <https://platform.claude.com/docs/en/build-with-claude/context-windows>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.
