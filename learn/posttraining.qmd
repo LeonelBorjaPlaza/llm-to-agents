@@ -1,0 +1,400 @@
+---
+title: "Post-training"
+subtitle: "How a pretrained model becomes an assistant that follows instructions, and what that does and does not change"
+---
+
+*Prerequisites: the idea that a model has parameters adjusted by training,
+and that a prompt is inference-time context rather than training.
+`learn/training.qmd` covers the first; `learn/tokens-context.qmd` the
+second. Both are linked where they matter, and neither is assumed.*
+
+## 1. The gap pretraining leaves
+
+Pretraining, as `learn/training.qmd` describes, adjusts a model's
+parameters so that it assigns higher probability to the next token in a
+very large body of text. That objective produces broad linguistic and
+task capability, and a pretrained model given an instruction will often
+continue it sensibly, because instructions followed by answers occur in
+text. But nothing in the objective is aimed at the interaction a user
+actually wants. A raw pretrained model is not specifically optimized to
+read a request as an instruction rather than as text to continue, to
+answer in the form the user needs, to decline or redirect some kinds of
+requests, to prefer one acceptable answer over another, or to keep to
+conversational norms consistently. Given "Explain the bridge closure",
+it may explain it, or continue with more headlines, or produce a list of
+similar prompts, because all of those follow such a sentence somewhere
+in the training text.
+
+The methods that close this gap are collectively called post-training.
+They deliberately shape the model's behavior toward the interaction
+patterns its builders want.
+
+## 2. What post-training is
+
+Post-training is additional parameter-updating training applied after
+pretraining to shape the model's behavior, capabilities, preferences, or
+safety characteristics. [S-55] The one invariant that matters most in
+this course is in that sentence: post-training changes the model's
+parameters. It is training in exactly the sense of the previous page,
+with different data and, sometimes, different objectives, and when it is
+finished the model is a different function than it was before.
+
+That invariant separates post-training from a set of things it is often
+confused with. A system prompt, the instructions a product places in
+front of a conversation, is inference-time context. So is the
+conversation itself, retrieved text, the definitions of any tools the
+model may call, the results those tools return, and any memory or files
+that surrounding software supplies to a call. None of these change a
+single parameter. They change what the model is conditioning on for the
+current call, and they are gone from the model the moment the call ends,
+whatever the surrounding software chooses to store. [S-31] The rest of
+this page is about the methods that do change parameters; the next page,
+`learn/agents.qmd`, is largely about the things that do not.
+
+## 3. Supervised instruction tuning
+
+The simplest post-training idea is to show the model what a good
+interaction looks like. The training data consists of pairs: an
+instruction or prompt, and a response someone judged to be the desired
+one. A tiny example:
+
+> **Instruction:** "In one sentence, why was the bridge closed?"
+>
+> **Desired response:** "The bridge was closed because the traffic data
+> showed a structural risk that needed inspection."
+
+The model is trained on these pairs using the same language-model loss
+as pretraining: the negative log-likelihood of the response tokens given
+the instruction (the loss `learn/training.qmd` §3 defines). The
+parameters are adjusted so that, given such an instruction, the
+demonstrated kind of response becomes more probable. This is
+**supervised fine-tuning**, or instruction tuning when the pairs are
+instructions and answers. In the InstructGPT work that made the recipe
+widely known, the first stage was exactly this: a dataset of
+labeler-written demonstrations of desired behavior, used to fine-tune a
+pretrained model with supervised learning. [S-46]
+
+Instruction tuning does not guarantee compliance or correctness. It
+raises the probability of responses that resemble the demonstrations,
+and a model that has seen a few thousand good answers can still produce
+a bad one on a new prompt. What it changes is the default: after
+instruction tuning, "Explain the bridge closure" is far more likely to
+be treated as a request for an explanation than as a headline to
+continue.
+
+## 4. Why demonstrations are not enough
+
+For many prompts there is no single correct string to demonstrate. Two
+answers to "What should the agency do about the bridge?" may both be
+reasonable, and a reviewer may still prefer one because it is more
+helpful, more relevant, clearer, safer, better organized, or less likely
+to mislead. Writing one demonstration per prompt throws that information
+away, and writing the single best answer for every prompt is expensive
+and often impossible.
+
+The conceptual change that addresses this is small but important.
+Instead of only showing the model a target response, one can collect
+information about which of several responses is preferred. In many
+settings, asking a reviewer to compare two candidate answers ("A is
+better than B") can be easier or cheaper than asking the reviewer to
+write an ideal answer from scratch; a comparison captures information
+about relative preference that a single demonstration does not; and
+comparisons can be collected on the model's own outputs, which is where
+its mistakes actually appear.
+
+## 5. Preference-based post-training
+
+Post-training on preferences is a family of methods sharing one setup:
+generate candidate responses to prompts; collect judgments about which
+candidates are preferred; use those judgments to update the model's
+parameters toward the preferred behavior. The members of the family
+differ in how the last step is carried out. [S-55]
+
+**The reward-model and reinforcement-learning route.** The pipeline
+usually called RLHF, reinforcement learning from human feedback, works
+in two stages. Terminology here is not perfectly standardized; some
+writers use "RLHF" for any preference-based post-training. This page uses
+"classic RLHF pipeline" or "RLHF-style" for this specific route. First,
+the comparison data is used to train a separate
+**reward model**, a network that takes a prompt and a response and
+outputs a single score predicting how a human rater would rank it.
+Second, the language model is updated by reinforcement learning to
+produce responses that score highly under the reward model, while being
+constrained not to drift too far from the model it started from.
+InstructGPT's second stage followed this route: rankings of model
+outputs were collected and used to fine-tune the supervised model with
+reinforcement learning from human feedback. [S-46] The constraint is not
+decoration. The reward model is an imperfect stand-in for human
+judgment, and a model optimized hard against it will find responses that
+score well without being good; keeping the updated model close to its
+starting point limits how far that can go. If it helps to see the shape
+of this particular route (it is a schematic of the classic RLHF pipeline,
+not a definition of post-training or of preference optimization in
+general), the quantity being maximized is roughly
+
+$$
+\text{expected reward} \;-\; \beta \times \text{(divergence from the reference model)}
+$$
+
+where $\beta$ sets how strongly drift is penalized. The details of the
+reinforcement-learning algorithm used to do the maximizing are beyond
+this page; the two-term structure is what matters. The InstructGPT
+authors reported that outputs from their 1.3-billion-parameter
+post-trained model were preferred by raters to outputs from the
+175-billion-parameter pretrained model, while noting that the
+post-trained model still made simple mistakes. [S-46]
+
+**The direct preference optimization route.** The two-stage pipeline is
+complex to run: it requires a separate reward model and repeated
+sampling from the language model during training. Direct preference
+optimization (DPO) and related methods reach a similar goal by a
+shorter path. They rewrite the same constrained objective so that, given
+a fixed preference dataset, the language model can be updated directly
+from the comparison pairs, using a loss that resembles ordinary
+classification, without training a separate reward model and without the
+online, reward-model-guided reinforcement-learning loop of the classic
+pipeline. (The preference dataset itself may well have been built by
+sampling candidate responses; what DPO removes is the separate reward
+model and that optimization loop.) [S-47] Its
+authors reported that it matched or improved on the reward-model route
+on the tasks they tested, while being substantially simpler to run.
+[S-47] That is a result for those experiments, not a general verdict;
+both routes remain in use, and providers mix and vary them.
+
+The takeaway is a distinction in kind. Preference learning is a goal
+and a family; RLHF-style and DPO-style methods are different
+implementations of it. "RLHF" names one route through the family, not
+the family, and not post-training as a whole.
+
+## 6. Human feedback is not the only feedback
+
+The judgments in §5 do not have to come from people. Preference or
+critique signals can be produced or assisted by models, by written
+rules, by automatic verifiers, or by other processes. One published
+example is Constitutional AI, in which the human oversight is a written
+list of principles. In its supervised phase, an initial model's
+responses are critiqued and revised by the model itself against those
+principles, and the original model is fine-tuned on the revised
+responses. In its reinforcement-learning phase, a model judges which of
+two responses is better, a preference model is trained on that dataset
+of AI preferences, and the language model is then trained with the
+preference model as the reward signal, which its authors call
+reinforcement learning from AI feedback. [S-48]
+
+The point of this section is narrow. It is not that every provider uses
+this method, and not that human feedback is obsolete. It is that the
+equation "post-training = humans rank answers = one particular
+reinforcement-learning algorithm" is false on every term. The source of
+the feedback, the form it takes, and the algorithm that consumes it are
+three separate choices.
+
+## 7. Reinforcement learning and reasoning-oriented training
+
+Reinforcement learning, used in §5 and §6 as one route for preference
+data, is a broad optimization framework: behavior is updated using a
+reward signal computed on what the model produced, rather than by
+matching a fixed target string. Anything that can be scored can, in
+principle, supply the reward.
+
+A more recent use applies that observation to tasks whose outcomes can
+be checked automatically. If a mathematics problem has a known answer,
+or a program has tests, a response can be rewarded for being correct
+without any rater and without a learned reward model. Reinforcement
+learning against such rewards can then incentivize whatever behavior
+raises the reward, including producing longer intermediate reasoning
+before the final answer and checking that answer before committing to
+it.
+
+The public case that established this is documented in the DeepSeek-R1
+report, and its two models must be kept apart. DeepSeek-R1-Zero was
+trained by what the report calls pure reinforcement learning, without
+supervised fine-tuning as a preliminary step, using rule-based rewards
+for accuracy and format rather than a neural reward model on reasoning
+tasks. The report describes the model's responses growing steadily
+longer over training, with self-verification and reflection appearing
+in them, and it reports strong results on verifiable tasks; it also
+reports that R1-Zero suffered from poor readability and mixing of
+languages within a response. DeepSeek-R1 is a different model, trained
+through a multi-stage framework that integrates supervised fine-tuning,
+rejection sampling, and reinforcement learning, precisely to address
+those problems. [S-49] Describing DeepSeek-R1 as "pure RL" conflates the
+two, and generalizing either recipe to every reasoning-oriented model is
+unsupported: other providers have published less, and recipes differ.
+
+Two cautions apply to the reasoning traces such models produce. On some
+difficult tasks, producing intermediate reasoning tokens provides
+additional inference-time computation and can improve performance; that
+is the supported statement. [S-49] It does not follow that the generated
+text is a faithful transcript of the model's internal computation, or
+that it is thought in the human sense; the tokens are output, produced
+by the same next-token mechanism as any other output. The policy was
+optimized using outcome and format reward signals; the intermediate text
+was not supervised as a faithful description of the model's internal
+computation. Saying that a model "needs tokens to think" is
+shorthand for the first statement, not a technical claim about the
+second.
+
+## 8. Post-training does not replace pretraining
+
+Every method above starts from a pretrained model and changes it
+further. Many broad language and task capabilities, the ability to write
+fluent text on nearly any topic, to follow the shape of an argument, to
+produce code, are established during pretraining, and post-training
+begins from that pretrained model and further changes its behavior and
+capabilities: how those capabilities are elicited, what the model does
+by default when given an instruction, a preference-laden choice, or a
+checkable problem, and, as §5 and §7 show, how well it performs on some
+tasks.
+
+A tidy slogan is available here and should be refused: "pretraining
+creates intelligence, post-training creates personality." It is wrong in
+both directions. Post-training can measurably change task performance,
+as §5 and §7 show, not only tone; and the behaviors post-training shapes,
+such as answering rather than continuing, were already present in the
+pretrained model as possibilities, not absent from it. The mechanistic
+statement is the accurate one: pretraining and post-training are both
+parameter updates, on different data, with different objectives, and
+the finished model is the result of both.
+
+## 9. Model versus assistant
+
+The word "model" in this course means a parameterized neural network
+that maps inference-time context to a probability distribution over the
+next token. Post-training changes that network. An **assistant**, the
+thing a person actually types to, is a product built around a model, and
+it usually adds a great deal that is not in the network: a system prompt
+carrying instructions and a persona; management of the conversation
+state; retrieval of documents; tools the model may request; safety
+checks applied before or after the model call; a user interface; and
+other product logic that decides what enters the context and what
+leaves it. [S-31]
+
+The assistant is therefore not identical to the underlying model, and
+its behavior can be changed in two entirely different ways. Post-training
+changes the model. Changing the system prompt, adding a tool, enabling
+retrieval, or altering the product logic changes the assistant's
+behavior without touching a parameter. Two assistants built on the same
+post-trained model can behave quite differently, and the same assistant
+can behave differently tomorrow after a system-prompt change with no
+training run in between. `learn/agents.qmd` builds on exactly this
+separation.
+
+## 10. Common misconceptions
+
+**"Post-training means RLHF."** RLHF is one route through one family of
+post-training methods. Supervised instruction tuning, direct preference
+optimization, AI-generated feedback, and reinforcement learning against
+automatic checks are all post-training too, and recipes combine them
+differently (§3–§7).
+
+**"A system prompt is post-training."** A system prompt is inference-time
+context. It changes what the model conditions on for a call and changes
+no parameter (§2).
+
+**"The assistant and the model are the same thing."** The assistant is
+a product around the model. Much of its behavior comes from instructions,
+tools, retrieval, and product logic that never touch the model's
+parameters (§9).
+
+**"Reasoning models were trained simply by asking for a chain of
+thought."** Asking for intermediate reasoning in a prompt is
+inference-time context, not parameter-updating training. In the DeepSeek
+R1 and R1-Zero case discussed here, reinforcement learning against
+checkable rewards was central to the training recipe, with R1 using a
+multi-stage process. Other reasoning-oriented models may use different
+recipes, and many providers do not publish enough detail to characterize
+them this specifically (§7).
+
+## 11. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>Pretraining and post-training both change the model's
+parameters. What differs between them?</summary>
+The data and the objective. Pretraining maximizes next-token likelihood
+on a very large general corpus. Post-training uses much smaller sets of
+demonstrations, preference comparisons, or checkable tasks, with
+objectives chosen to shape behavior, and starts from the pretrained
+parameters rather than from scratch (§2, §8).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>A dataset contains pairs of responses to the same prompt with a
+label saying which one a reviewer preferred. Is this supervised
+instruction tuning?</summary>
+No. Instruction tuning trains on a single demonstrated response per
+prompt. Comparison labels are preference data, and they are used by
+preference-based methods, whether through a reward model and
+reinforcement learning or through a direct method such as DPO (§4–§5).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Does DPO use the same reward-model-plus-reinforcement-learning
+pipeline as classic RLHF?</summary>
+No. DPO uses preference comparisons to update the language model directly
+and does not require that separate reward-model-plus-online-RL pipeline.
+Both are members of the same family, preference-based post-training; they
+differ in mechanism (§5).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>A company changes its assistant's system prompt so that it
+answers more concisely. Has the model been post-trained?</summary>
+No. The system prompt is inference-time context. The assistant's
+behavior changed; the model's parameters did not (§2, §9).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Two products use the same post-trained model but behave
+differently. Does that contradict anything on this page?</summary>
+No. The assistant is the model plus instructions, conversation state,
+retrieval, tools, safety checks, and product logic. Those can differ
+between products while the model, and its parameters, are identical
+(§9).
+</details>
+:::
+
+## 12. Continue learning
+
+- **Ouyang et al., *Training language models to follow instructions with
+  human feedback*** (paper, arXiv:2203.02155; the abstract and Section 3
+  describe the three-stage recipe). Technical level. The primary source
+  for the supervised-then-reward-model-then-RL pipeline, with the
+  striking size comparison quoted in §5. Limitation: one provider's 2022
+  recipe; current recipes vary.
+  <https://arxiv.org/abs/2203.02155>
+
+- **Rafailov et al., *Direct Preference Optimization: Your Language Model
+  is Secretly a Reward Model*** (paper, arXiv:2305.18290; the
+  introduction is enough for the idea). Technical level, with a
+  derivation for those who want it. Especially good for seeing why the
+  reward-model stage can be folded away. Limitation: the comparison
+  results are for the tasks and scales tested in the paper.
+  <https://arxiv.org/abs/2305.18290>
+
+- **Bai et al., *Constitutional AI: Harmlessness from AI Feedback***
+  (paper, arXiv:2212.08073; the abstract states the two phases).
+  Technical level. The primary source for feedback generated by a model
+  under written principles. Limitation: describes one method at one
+  provider in 2022.
+  <https://arxiv.org/abs/2212.08073>
+
+- **DeepSeek-AI, *DeepSeek-R1: Incentivizing Reasoning Capability in
+  LLMs via Reinforcement Learning*** (paper, arXiv:2501.12948; the
+  abstract and introduction distinguish R1-Zero from R1). Technical
+  level. The most detailed public account of reinforcement learning
+  against checkable rewards producing long reasoning traces. Limitation:
+  one lab's recipe; the reasoning traces it shows should not be read as
+  transcripts of internal computation.
+  <https://arxiv.org/abs/2501.12948>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

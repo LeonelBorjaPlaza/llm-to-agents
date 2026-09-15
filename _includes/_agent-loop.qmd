@@ -1,0 +1,24 @@
+```
+objective + current context and state
+            │
+            ▼
+   model call: choose the next action
+            │
+            ▼
+   structured tool request  ──or──  final response
+            │
+            ▼
+   permission check / validation by surrounding software
+            │
+            ▼
+   external execution (file read, command, search, ...)
+            │
+            ▼
+   observation / evidence returned
+            │
+            ▼
+   context and state updated
+            │
+            ▼
+   next model call  ──►  continue, ask the user, or stop
+```

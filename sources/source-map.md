@@ -115,6 +115,47 @@ verbatim at Sections 3.2, 3.2.1, 3.2.2, 3.1, 3.3, and 5.3, and S15
 (GPT-2) at Section 2 (Equation 1), Section 2.3, and the abstract, all on
 2026-09-15 via the arXiv HTML and the PDF text respectively.
 
+**S22 — Ouyang et al., *Training language models to follow instructions
+with human feedback* (InstructGPT).** <https://arxiv.org/abs/2203.02155>
+(v1, 2022-03-04). New in the post-training/agents batch (2026-09-15).
+**Abstract verified verbatim on 2026-09-15.**
+
+**S23 — Rafailov et al., *Direct Preference Optimization: Your Language
+Model is Secretly a Reward Model*.** <https://arxiv.org/abs/2305.18290>
+(v3, 2024-07-29). New in the post-training/agents batch. **Abstract
+verified verbatim on 2026-09-15.**
+
+**S24 — Bai et al., *Constitutional AI: Harmlessness from AI
+Feedback*.** <https://arxiv.org/abs/2212.08073> (v1, 2022-12-15). New in
+the post-training/agents batch. **Abstract verified verbatim on
+2026-09-15.**
+
+**S25 — DeepSeek-AI, *DeepSeek-R1: Incentivizing Reasoning Capability in
+LLMs via Reinforcement Learning*.** <https://arxiv.org/abs/2501.12948>
+(v2, 2026-01-04). New in the post-training/agents batch. **Abstract and
+introduction verified against the arXiv HTML on 2026-09-15**; no other
+section read.
+
+**S26 — Anthropic, *Building Effective AI Agents* (engineering article,
+published 2024-12-19).**
+<https://www.anthropic.com/engineering/building-effective-agents>,
+**accessed 2026-09-15**. Vendor engineering guidance (PR9); the source
+of the workflow/agent vocabulary in `learn/agents.qmd`.
+
+**S27 — Anthropic, *Tool use with Claude* (API documentation).**
+<https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview>,
+**accessed 2026-09-15**. Product-specific; used for one concrete
+tool-call round trip.
+
+**S28 — Anthropic, Claude Code documentation: *Overview*, *Extend Claude
+with skills*, *Configure permissions*.**
+<https://code.claude.com/docs/en/overview>,
+<https://code.claude.com/docs/en/skills>,
+<https://code.claude.com/docs/en/permissions>, all **accessed
+2026-09-15**. Product-specific; used only as the concrete current
+example in `learn/agents.qmd` §8, §10, and §11, after the generic
+mechanism is established.
+
 ## Claim-by-claim
 
 | ID | Claim (short) | Source | Locator | Support | Confidence | Caveat |
@@ -164,6 +205,17 @@ verbatim at Sections 3.2, 3.2.1, 3.2.2, 3.1, 3.3, and 5.3, and S15
 | S-43 | Incremental decoding repeatedly loads stored keys and values; a recognized bottleneck | S21 | Abstract | direct | high | **Verified 2026-09-15.** Supports PR3's "reusing cached representations" |
 | S-44 | Language models "begin to learn" QA, translation, comprehension, summarization without explicit supervision | S15 | Abstract | direct | high | **Verified 2026-09-15.** Paired with S-26; no claim about where capabilities are stored |
 | S-45 | Attention weights are not automatically explanations or importance scores; heads lack guaranteed stable roles | — (course caution; CC4) | follows from S-36/S-37 | inference | medium-high | No interpretability literature surveyed |
+| S-46 | InstructGPT: supervised fine-tuning on demonstrations, then RLHF on rankings; 1.3B post-trained preferred over 175B pretrained; still makes simple mistakes | S22 | Abstract | direct | high | **Verified 2026-09-15.** One 2022 recipe (CC3) |
+| S-47 | RLHF = reward model + RL with drift constraint; DPO optimizes directly with a classification-style loss, no sampling; matched or improved on tested tasks | S23 | Abstract | direct | high | **Verified 2026-09-15.** Result scoped to the paper's tasks |
+| S-48 | Constitutional AI: oversight via written principles; self-critique/revision SFT phase; AI-preference model as RL reward (RLAIF) | S24 | Abstract | direct | high | **Verified 2026-09-15.** One method, one provider |
+| S-49 | R1-Zero: pure RL without preliminary SFT, rule-based rewards, growing "thinking time", readability/language-mixing issues; R1: multi-stage SFT + rejection sampling + RL | S25 | Abstract; §1 | direct | high | **Verified 2026-09-15.** R1-Zero and R1 kept distinct; CC2 applied |
+| S-50 | Workflows vs. agents definitions; simplest solution first; augmented LLM; ground truth per step; compounding errors, sandboxing, guardrails | S26 | Named sections | direct | high | **Accessed 2026-09-15 (PR9).** "Agent" has no fixed definition |
+| S-51 | Model decides to call a tool and returns a structured call; the developer's application executes it and returns a tool_result; tools have name, description, input schema | S27 | Opening; "How tool use works" | direct | high | **Product-specific, accessed 2026-09-15 (PR9).** Instance of PR5 |
+| S-52 | Claude Code: agentic coding tool that reads a codebase, edits files, runs commands; works with git; reads CLAUDE.md each session; skills | S28 (overview) | Page summary; "What you can do" | direct | high | **Product-specific, accessed 2026-09-15 (PR9)** |
+| S-53 | Skills: SKILL.md; descriptions loaded, full content only when invoked; location decides which sessions load it | S28 (skills) | Opening; loading; locations | direct | high | **Product-specific, accessed 2026-09-15 (PR9).** Context, not retraining |
+| S-54 | Tiered permissions: reads need no approval in the working directory; shell commands and file edits require approval; deny rules; plan mode reads only | S28 (permissions) | "Permission system"; "Permission modes" | direct | high | **Product-specific, accessed 2026-09-15 (PR9)** |
+| S-55 | Post-training definition and family taxonomy; RLHF is one route, not the family | — (course synthesis; CC3) | synthesis of S-46–S-49 | inference | high | Each member sourced individually |
+| S-56 | Agent = software repeatedly invoking a model with updated state, executing its tool requests under permissions; not a distinct architecture | — (course synthesis) | synthesis of S-50, S-51 | inference | high | Vocabulary stated as non-fixed |
 
 ## Open verification debt (carried forward from the implementation plan)
 
@@ -204,7 +256,12 @@ verbatim at Sections 3.2, 3.2.1, 3.2.2, 3.1, 3.3, and 5.3, and S15
   abstract page). The 3Blue1Brown attention lesson listed under Continue
   learning on `learn/transformers-attention.qmd` was confirmed to exist at
   its URL on 2026-09-15; no timestamp or length is asserted.
-- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, and S-45 are marked `inference`
+- **Resolved, not open (post-training/agents batch, 2026-09-15):**
+  S-46–S-49 verified against arXiv (abstract pages; arXiv HTML for the
+  DeepSeek-R1 introduction); S-50–S-54 are vendor engineering guidance
+  and product documentation, all access-dated 2026-09-15 and labeled
+  product-specific in the lessons. No other sources were consulted.
+- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, S-45, S-55, and S-56 are marked `inference`
   because they are this course's own editorial framing, naming convention,
   or field characterization — not a direct claim made by a video or paper.
   This is intentional and should not be "fixed" by attributing them to a

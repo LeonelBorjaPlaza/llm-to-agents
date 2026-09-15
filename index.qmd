@@ -57,6 +57,15 @@ rather than reproduces.
   objective, negative log-likelihood, the optimization loop, what
   pretraining does and does not teach, and how it differs from
   post-training and from inference-time context.
+- [**Post-training**](learn/posttraining.qmd) — how a pretrained model
+  becomes an assistant: supervised instruction tuning, preference-based
+  methods (reward-model and direct routes), model-generated feedback,
+  reasoning-oriented reinforcement learning, and why none of it is a
+  system prompt.
+- [**From assistant to agent**](learn/agents.qmd) — what a tool call
+  actually is, the workflow-versus-agent distinction, the agent loop,
+  state and memory, reusable procedures, verification, and permissions,
+  with a coding agent as the running example.
 - [**Deep dive: tokens, embeddings, and the context window**](learn/tokens-context.qmd)
   — optional; why models use subword units, what the embedding table does
   and does not encode, and what a finite context window implies in

@@ -1,0 +1,462 @@
+---
+title: "From Assistant to Agent"
+subtitle: "How software around a model turns text generation into inspecting files, running code, and carrying a task through many steps"
+---
+
+*Prerequisites: the distinction between a model's parameters and its
+inference-time context, from `learn/tokens-context.qmd` and
+`learn/posttraining.qmd`. Both are linked where they matter; neither is
+assumed.*
+
+## 1. What a bare model call cannot do
+
+A call to a language model maps the supplied context, the instructions,
+the conversation, and whatever else was placed in the window, to
+generated output. That is the whole transaction. By itself, generating
+the sentence "I searched the web and found the report" does not mean a
+web search happened; generating "I have fixed the bug in `parse.py`"
+does not mean the file changed; generating "the tests now pass" does not
+mean any test ran. A bare model call can produce text or structured
+output, but by itself it does not change an external file, run a
+program, search the web, or send a message. Those effects require
+surrounding software, or a provider-operated tool, to execute an action.
+A model can therefore produce fluent text describing actions without any
+of those actions occurring.
+
+For a system to act on files, programs, databases, or the web, software
+around the model has to expose those capabilities as tools and carry out
+the actions the model requests, within whatever limits the software
+enforces. Everything on this page follows from keeping two things
+separate: the model, which produces output from context, and the
+software loop around it, which decides what enters the context, executes
+what the model requests, and decides when to stop.
+
+## 2. What actually happens in a tool call
+
+Take one tool call literally. The surrounding software first gives the
+model, as part of its inference-time context, a description of each
+available tool: a name, a statement of what it does, and a schema for
+the inputs it takes. Given the user's task and the rest of the context,
+the model may then generate a structured request naming a tool and
+supplying inputs, instead of, or in addition to, ordinary text. The
+software reads that request, checks it against its permission rules and
+policies, and, if allowed, runs the tool. The tool returns a result: a
+file's contents, a command's output, a search's hits, an error message.
+The software places that result into the context of a later model call,
+and the model generates its next output using the new evidence, which
+may be another tool request, a question to the user, or a final answer.
+
+At the model boundary, then, a tool call is generated structured output.
+Surrounding system infrastructure interprets that request, executes or
+routes the action, and supplies the result to a subsequent model step.
+The model does not open a file, run a program, or send a message by
+generating text about doing so; it produces a request, and something
+else acts. Which "something else" varies: often the developer's own
+application, sometimes infrastructure operated by the model provider. As
+one concrete, product-specific illustration: Anthropic's
+API documentation, accessed 2026-09-15, describes tool use as the model
+deciding when to call a tool based on the user's request and the tool's
+description, then returning a structured call that the developer's own
+application executes (or, for a small set of server-side tools, that
+Anthropic's infrastructure executes), with the developer's code sending
+the result back for the model's next turn. [S-51] Other providers'
+interfaces differ in detail; the division of labor is the same.
+
+## 3. One sustained example
+
+Suppose a user tells a coding system:
+
+> "Find why this script fails and fix it."
+
+A capable system might proceed as follows. The labels in brackets say
+which kind of step each one is.
+
+1. The model, reading the task and a description of the repository's
+   tools, requests a listing of the project directory. [model decision]
+2. The software runs the listing and returns the file names. [tool
+   execution; evidence returned]
+3. The model requests that the failing script be run. [model decision]
+4. The software runs it, possibly after asking the user, since running
+   code can have effects, and returns the error message and traceback.
+   [permission; tool execution; evidence returned]
+5. The model reads the traceback, which names a function in one file,
+   and requests that file's contents. [model decision]
+6. The software returns the file. [tool execution; evidence returned]
+7. The model proposes a bounded edit to the function and requests that
+   it be applied. [model decision]
+8. The software shows the proposed change and asks the user to approve
+   it, then applies it. [permission; tool execution]
+9. The model requests that the tests be run. [model decision]
+10. The software runs them and returns the output. [tool execution;
+    evidence returned]
+11. If a test failed, the model continues from step 5 with the new
+    evidence. If the specified checks passed, it reports what it did and
+    stops. If the situation is ambiguous, for instance two plausible
+    causes, it asks the user. [model decision; stopping condition]
+
+Every "model decision" is a generated output. Every "tool execution" is
+the software acting. Every "evidence returned" is new content placed in
+the context for the next call. The permission steps are where the
+software's rules, not the model's inclinations, determine whether an
+action happens. Nothing in this sequence is specific to any product;
+§11 returns to it with a concrete one.
+
+## 4. Workflow versus agent
+
+The word "agent" has no universally fixed definition, and this page
+uses it as a useful distinction rather than a natural kind. One
+vocabulary that has proved useful comes from an engineering article
+Anthropic published in December 2024, which separates two kinds of
+system. A **workflow** is a system in which "LLMs and tools are
+orchestrated through predefined code paths": the sequence of model calls
+and tool uses is substantially written in advance by a programmer. An
+**agent** is a system in which "LLMs dynamically direct their own
+processes and tool usage, maintaining control over how they accomplish
+tasks": the model has meaningful say over which steps and tools to use
+and in what order, within constraints, in pursuit of an objective.
+[S-50]
+
+A workflow example: classify an incoming document, retrieve the three
+most relevant reference documents, summarize the document against them.
+The path is fixed; the model fills in each step. The example in §3 is an
+agent in this vocabulary: the software did not prescribe "list, run,
+read, edit, test"; the model chose those steps from the evidence as it
+arrived.
+
+Neither term implies the absence of human oversight, and neither is
+better in general. The same article recommends finding the simplest
+solution possible and increasing complexity only when needed, and notes
+that agentic systems often trade latency and cost for better task
+performance. [S-50] Stated as a design principle: use the simplest
+system that reliably solves the task. If a fixed workflow already solves
+the task reliably, giving the model more control may add cost, latency,
+and failure modes without providing enough additional benefit to justify
+the complexity.
+
+## 5. The agent loop
+
+The system in §3 is an instance of one loop, which is the minimal
+mechanism behind the definition of an agent used on this page:
+
+{{< include ../_includes/_agent-loop.qmd >}}
+
+Read it from the top. The software assembles a context from the
+objective and the current state and calls the model. The model's output
+is either a structured tool request or a response. A tool request goes
+through the software's permission and validation rules. If it passes,
+the software executes the action against the external world and
+receives an observation. The observation is added to the context, the
+state is updated, and the software calls the model again. On each pass
+the model may continue, ask the user, or stop; the software may also
+stop it, on a step limit, a rule, or a user interruption.
+
+One point about this loop is easy to miss. The model does not remain
+running between calls, deliberating in the background. The loop advances
+through distinct model steps, and continuity between those steps is
+supplied by context and state that the surrounding system maintains or
+supplies; how a given API or product manages that state, and what it
+caches, varies. The conceptual point is that continuity belongs to the
+system's context and state machinery, not to a model continuously
+deliberating between calls. [S-56]
+
+## 6. What makes agentic work possible
+
+The loop needs a small number of ingredients, and agentic capability
+comes from their combination, not from a new kind of neural network. An
+"agent" is not an architecture; the model inside is the same transformer
+the earlier pages describe. [S-56]
+
+An **objective** is the task, stated well enough that progress and
+completion can be recognized. The **model** produces each next action
+from context. The **context** is what the model can see on a given
+call: the objective, instructions, the history of actions and
+observations, and any supplied material, subject to the finite window
+`learn/tokens-context.qmd` describes. **Tools** are the capabilities the
+software exposes, each with a description the model reads and an
+implementation the software runs. **External state** is the world the
+tools act on and observe: files, a repository, a database, a web page.
+A **stopping condition** says when the loop ends, whether a check
+passed, a step budget ran out, or the user was asked. **Permissions**
+decide which requested actions are executed automatically, which need
+approval, and which are refused. **Verification** is the use of tools to
+make success observable rather than asserted, which §9 takes up. Remove
+any one of these and the loop degrades in a predictable way: no
+objective and it wanders, no tools and it can only talk, no stopping
+condition and it does not end, no verification and its reports are
+unchecked claims.
+
+## 7. State and memory
+
+Three kinds of state are involved, and they are easy to run together.
+The model's **parameters** are fixed throughout the loop; nothing the
+agent does during a task changes them. The **context window** is the
+model's working input for one call, finite and reassembled every call.
+**External state** is everything the software or the tools persist
+outside the model: files the agent writes, a repository it commits to,
+database rows it inserts, notes it saves, summaries the software stores
+when the context grows too long. [S-31]
+
+External state can be brought back into a later context, in this task
+or a future one, by reading the file, querying the database, or having
+the software supply the saved summary. That is retrieval into context,
+and it is the mechanism behind every kind of persistence an agent
+system offers. The word "memory" is used for several of these things,
+and it should be qualified when it is used: system-level persistent
+memory is external state that software stores and re-supplies, and it
+is a different object from the model's weights (which training changes)
+and from the current context (which lasts one call). An agent that
+"remembers" a project across sessions has been given, by its software, a
+file or store that is read back in. The behavior can change when that
+state is supplied again, but no model parameter was updated.
+
+## 8. Skills, instructions, and reusable procedures
+
+A system can give the model reusable instructions, procedures, examples,
+or resources that say how to carry out a class of tasks: how this
+project's tests are run, what a good commit message looks like here,
+which checks to perform before reporting a number. These are loaded into
+inference-time context when relevant, and they are the natural way to
+make an agent competent at a recurring task without retraining anything.
+The durable concept is that reusable procedural context is not model
+retraining: a procedure loaded into context changes what the model
+conditions on for this task and leaves its parameters exactly as they
+were. [S-31]
+
+Claude Code, Anthropic's coding tool, is one product-specific example of
+this pattern, as documented on 2026-09-15. A project can carry a
+`CLAUDE.md` file of persistent instructions that the tool reads at the
+start of every session, and it can define **skills**, each a folder
+with a `SKILL.md` file of instructions and optionally scripts and
+resources. The documentation states that in a regular session skill
+descriptions are loaded into context so the model knows what is
+available, while a skill's full content is loaded only when it is
+invoked, and that where a skill is saved decides which sessions load it.
+[S-52] [S-53] Both are files read into context. Neither trains the
+model.
+
+## 9. Verification is part of the loop
+
+When an agent reports "Done", that report is generated output like any
+other, and it is not evidence that the task succeeded. What tools make
+possible is turning success into something observable. Running the tests
+shows whether the tests pass. Rendering the document shows whether it
+renders. Recomputing a number in a separate script shows whether the
+committed figure matches. Inspecting the version-control diff shows
+exactly what changed. Querying the database shows what is actually
+stored. Reading the downloaded file shows what was actually retrieved.
+The engineering article cited in §4 makes the same point in its own
+terms: during execution, agents need to gain "ground truth" from the
+environment at each step, such as tool call results or code execution,
+to assess their progress. [S-50]
+
+The limit of verification has to be stated as carefully as its value. A
+passing test provides evidence that the specified checks passed. It does
+not establish that the specification, research design, or resulting
+number is correct. A test checks what it was written to check, no more;
+an agent that satisfies every automated check can still have solved the
+wrong problem, or solved the right one in a way the checks did not
+examine. For high-stakes or judgment-heavy work, human review of what
+was done, not only of whether the checks passed, remains part of the
+loop.
+
+## 10. Permissions and human control
+
+Because the software executes what the model requests, the software is
+also where boundaries belong. Depending on the task and the setting, an
+agent system may allow read-only actions to run automatically, require
+approval before files are changed, block particular commands, restrict
+what the agent may send outside the machine, limit which tools are
+available at all, and impose stopping conditions. These are system-level
+controls, implemented in the loop, and they hold regardless of what the
+model generates. They are not properties the model acquired through
+post-training, and a well-behaved model is not a substitute for them:
+the article in §4 notes that the autonomy of agents brings higher costs
+and the potential for compounding errors, and recommends sandboxed
+testing with appropriate guardrails. [S-50]
+
+Claude Code's permission system, as documented on 2026-09-15, is one
+concrete instance. It is described as tiered. In its Manual mode, the
+default approval pattern is that file reads within the allowed working
+directories need no approval, shell commands require approval except for
+a built-in set of read-only commands, and file modifications require
+approval; explicit deny rules can prevent a tool from being used at all.
+Claude Code also provides other permission modes that change which
+actions require a prompt, such as a plan mode that restricts a session to
+read-only exploration. [S-54] The specifics will change; the shape, in
+which approval is decided by the software according to rules the user
+controls, is what to take from it. Permissions are enforced by the
+surrounding software, not by the model.
+
+## 11. From assistant to coding agent
+
+A chat assistant, as `learn/posttraining.qmd` §9 describes it, is a
+post-trained model plus instructions, conversation state, and product
+logic, responding turn by turn. A coding agent is the same kind of
+system given more: access to a repository; tools that read and edit
+files; a shell in which to run commands, tests, and builds;
+version-control information; persistent project instructions of the
+kind §8 describes; and the loop of §5 to hold it all together. With
+those, a single request becomes a sequence:
+
+```
+inspect → plan → edit → run → observe → revise → verify → stop
+```
+
+which is the sequence the example in §3 followed.
+
+Claude Code is one current example of such a system. Its own
+documentation, accessed 2026-09-15, describes it as an agentic coding
+tool that reads a codebase, edits files, runs commands, and integrates
+with development tools, working from the terminal, an editor, or a
+browser; it works with git, staging changes and creating branches and
+pull requests; and it reads a project's `CLAUDE.md` at the start of
+every session. [S-52] Each of those capabilities is a tool or a piece of
+context in the sense of this page: the model requests a file edit or a
+command, the tool runs it under the permission rules of §10, and the
+result comes back as evidence. Later pages cover using it in practice;
+nothing more about the product is needed to understand what it is.
+
+## 12. Why agents fail
+
+Agent systems fail in ways that follow directly from the loop, and it is
+worth naming the common ones without pretending the list is complete.
+The objective may be ambiguous, so the model pursues a reasonable
+reading that was not the intended one. The context may lack something
+the task needed, or contain so much that the relevant part is
+crowded out. Tool descriptions may be poor, leading to the wrong tool or
+the wrong inputs. Errors compound: a small misreading at step 3 shapes
+every later decision, and the loop has no built-in way to notice that
+its premise was wrong. An intermediate result may be accepted without
+being checked. The loop may continue after it should have stopped, or
+stop before the task was done. And a consequential action may be taken
+that should have waited for approval.
+
+Each failure has a counterpart in prevention, and none of the
+counterparts is a property of the model alone: a clear task
+specification with recognizable completion; tools with accurate
+descriptions and bounded effects; observable checks built into the task
+rather than assumed; permissions that make consequential actions wait;
+and human review of the result. An agent system is as reliable as the
+loop around the model, and the loop is where reliability is engineered.
+
+## 13. Common misconceptions
+
+**"The model itself ran the tool."** The model generated a structured
+request. The surrounding software executed it, under its own rules, and
+returned the result (§2).
+
+**"Agent means fully autonomous."** An agent in this page's sense is a
+system in which the model directs its sequence of actions within
+constraints. Permission checks, stopping conditions, and the option to
+ask the user are part of the design, and human approval can sit at any
+step (§4, §10).
+
+**"An agent is a different neural-network architecture."** It is not.
+The model inside is an ordinary transformer language model. The agentic
+behavior comes from the loop, the tools, the state, and the controls
+around it (§5–§6).
+
+**"Giving the agent a skill retrains it."** A skill, a project
+instruction file, or any reusable procedure is loaded into inference-time
+context. The parameters are unchanged (§8).
+
+**"If the test passed, the task is correct."** A passing test is evidence
+that the specified checks passed, and only that. It says nothing about
+whether the specification was right or the checks were the right ones
+(§9).
+
+## 14. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>An agent's transcript shows the model writing "Running the test
+suite now." What has actually happened at that point?</summary>
+Only that the model produced that output. A test runs only if the model
+also generated a structured tool request, the system's permission rules
+allowed it, and the surrounding software executed it. The transcript
+sentence by itself is output, not an action (§1–§2).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>What is the difference between a tool request and a tool
+execution, and which does the model perform?</summary>
+The model generates the request: structured output naming a tool and its
+inputs. The surrounding system performs the external execution, after
+checking permissions, and supplies the result to a subsequent model step
+(§2).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>A system always runs the same three steps: extract the tables
+from a report, check them against a database, write a summary. Is it a
+workflow or an agent in this page's vocabulary?</summary>
+A workflow. The sequence is predefined in code; the model fills in each
+step but does not choose the steps. An agent would have meaningful
+control over which steps and tools to use and in what order (§4).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>During a long task an agent writes notes to a file and reads
+them back in later sessions. Which of the model's parameters, its context
+window, or external state has changed?</summary>
+Only external state. The file is persisted by the software and retrieved
+into the context window of later calls. The parameters are untouched
+(§7).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>All the automated checks an agent ran have passed. What can you
+conclude?</summary>
+That those checks passed. Whether the task specification was right, the
+checks were the appropriate ones, or the overall result is correct
+remains to be judged, by further checks or by a person (§9).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Why are permissions implemented in the software around the
+model rather than relied on as a property of the model?</summary>
+Because the software is what executes actions, so it is the only place a
+boundary can be enforced regardless of what the model generates. A
+well-behaved model reduces bad requests; it does not make a bad request
+impossible, and it cannot stop an execution the software has already
+allowed (§10).
+</details>
+:::
+
+## 15. Continue learning
+
+- **Anthropic, *Building Effective AI Agents*** (engineering article,
+  published 2024-12-19). Practitioner level. The source of the
+  workflow-versus-agent vocabulary used in §4, with a short catalogue of
+  composable patterns and a clear statement of when not to build an
+  agent. Limitation: one provider's engineering guidance, written for
+  developers; terminology elsewhere differs.
+  <https://www.anthropic.com/engineering/building-effective-agents>
+
+- **Anthropic, *Tool use with Claude*** (API documentation page,
+  accessed 2026-09-15). Practitioner level. A precise account of one
+  provider's tool-call round trip: tool definitions, the structured
+  request, execution by the developer's code, and the result returned.
+  Limitation: product-specific and revised over time.
+  <https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview>
+
+- **Anthropic, *Claude Code* documentation: overview, skills, and
+  permissions** (documentation pages, accessed 2026-09-15).
+  Practitioner level. The concrete instances used in §8, §10, and §11.
+  Limitation: product-specific; treat every detail as of the access
+  date, and read the later practical pages of this course before relying
+  on it.
+  <https://code.claude.com/docs/en/overview>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

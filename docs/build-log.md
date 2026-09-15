@@ -658,3 +658,74 @@ the architecture defines. One authorized consistency edit to the
 otherwise frozen `learn/tokens-context.qmd` §7: "position information is
 added" became "the architecture incorporates information about position
 and order", matching `learn/how-created.qmd` §6.
+
+## Task: post-training and agents pages (2026-09-15, Batch 3)
+
+### Scope
+
+Created `learn/posttraining.qmd`, `learn/agents.qmd`, and the shared
+include `_includes/_agent-loop.qmd` (a plain preformatted diagram, no
+JavaScript, so it can be reused by the deck without an offline
+dependency). The seven earlier lessons were not edited; no contradiction
+requiring an edit to a frozen page was found.
+
+### Research performed (bounded)
+
+Verified on 2026-09-15: InstructGPT, DPO, and Constitutional AI abstracts
+(arXiv abstract pages); the DeepSeek-R1 abstract and introduction (arXiv
+HTML, v2), including the report's own "pure reinforcement learning"
+phrase for R1-Zero and the multi-stage description of R1; Anthropic's
+*Building Effective AI Agents* (article text); Anthropic's tool-use
+overview page; and the Claude Code overview, skills, and permissions
+pages (the permissions page was saved to disk and searched for the
+permission-system table and mode list). No other sources were read.
+No agent-framework survey was performed.
+
+### Product-specific claims and access dates
+
+All Claude API and Claude Code facts (S-51–S-54) are labeled
+product-specific in the lessons and dated 2026-09-15 in `claims.csv`,
+`source-map.md`, and `resources.qmd`. The lessons state the durable shape
+(software executes tool requests; procedures are context; approval is
+decided by software under user-controlled rules) and treat the specifics
+as changeable.
+
+### Choices worth recording
+
+- No equations beyond one optional two-term schematic (expected reward
+  minus a drift penalty) on the post-training page, explained in words.
+- The DeepSeek-R1 discussion attributes "pure RL" only to R1-Zero, using
+  the report's own phrase, and describes R1 with the report's verified
+  "multi-stage learning framework that integrates rejection sampling,
+  reinforcement learning, and supervised fine-tuning".
+- The agent loop is a fenced text diagram in an include rather than a
+  Mermaid or SVG figure, to avoid adding a render-time dependency in
+  this batch; it can be redrawn later without changing the lesson text.
+
+### Correction pass before commit (2026-09-15, Batch 3)
+
+Fifteen bounded corrections from external review, none structural. Agents
+page: a bare model call produces text or structured output and external
+effects require surrounding software or a provider-operated tool
+(replacing "producing text is all a model call does"); the tool boundary
+restated as "surrounding system infrastructure interprets, executes or
+routes, and supplies the result to a subsequent model step", so
+provider-executed tools are covered; the workflow-versus-agent
+conclusion softened to "may add cost ... without enough additional
+benefit"; the loop described as the minimal mechanism behind this page's
+definition rather than "the whole of what agentic means"; "fresh
+invocation" replaced by architecture-neutral continuity language; "the
+model learned nothing" replaced by "no model parameter was updated";
+Claude Code permissions qualified as Manual-mode behavior with other
+modes noted; the check answers now say the model generates the request
+and the system performs the execution. Post-training page: the
+comparison-cost claim made non-universal; the DPO description now says
+what it removes (the separate reward model and the online RL loop) given
+a fixed preference dataset; a one-sentence terminology note fixes
+"classic RLHF pipeline" as this page's convention and the DPO check
+question now tests mechanism; the reasoning-trace sentence now says the
+policy was optimized on outcome and format rewards and the intermediate
+text was not supervised as a faithful description; the pretraining
+attribution softened to "many broad capabilities are established during
+pretraining"; the reasoning-model misconception scoped to the DeepSeek
+case; the reward schematic explicitly attached to the classic route.
