@@ -103,6 +103,18 @@ general idea of retrieval placing external text into the context.
 the practical-consequences section, attributed as one provider's
 statement.
 
+**S21 — Shazeer, *Fast Transformer Decoding: One Write-Head is All You
+Need*.** <https://arxiv.org/abs/1911.02150> (v1, 2019-11-06). New in the
+attention/training batch (2026-09-15). Used only for the fact that
+token-by-token decoding stores and reloads earlier positions' keys and
+values (`learn/training.qmd` §9). **Abstract verified verbatim on
+2026-09-15.**
+
+In the attention/training batch, S10 (Vaswani) was additionally verified
+verbatim at Sections 3.2, 3.2.1, 3.2.2, 3.1, 3.3, and 5.3, and S15
+(GPT-2) at Section 2 (Equation 1), Section 2.3, and the abstract, all on
+2026-09-15 via the arXiv HTML and the PDF text respectively.
+
 ## Claim-by-claim
 
 | ID | Claim (short) | Source | Locator | Support | Confidence | Caveat |
@@ -142,6 +154,16 @@ statement.
 | S-33 | Parametric knowledge access is limited; RAG combines parametric and non-parametric (retrieved) memory | S19 | Abstract | direct | high | **Verified 2026-09-15.** Used only for the general mechanism |
 | S-34 | Context = tokens included when sampling; recall decreases as tokens grow; finite resource; smallest set of high-signal tokens | S20 | Opening sections | direct | medium-high | **Vendor guidance, accessed 2026-09-15 (PR9)**; paired with S-32 |
 | S-35 | Tokenization helps explain awkwardness with spelling, character counting, and string operations; not the sole cause | — (course inference; PR4) | inference from S-27/S-28 | inference | medium | Course synthesis; no model-specific behavior asserted |
+| S-36 | Attention as query against key-value pairs; scaled dot-product definition; $\sqrt{d_k}$ scaling motivated by small softmax gradients | S10 | §3.2; §3.2.1 | direct | high | **Verified verbatim 2026-09-15.** Toy numbers are the course's own, checked by `check_attention_example.py` |
+| S-37 | Multi-head: separate projections, concatenate, $W^O$; "different representation subspaces"; $h=8$, $d_k=d_v=64$ | S10 | §3.2.2 | direct | high | **Verified 2026-09-15.** No per-head semantic roles claimed (CC4) |
+| S-38 | Residual connection + LayerNorm(x + Sublayer(x)); position-wise FFN, two linear maps with ReLU, applied per position | S10 | §3.1; §3.3 | direct | high | **Verified 2026-09-15.** Original ordering only; see S-39 |
+| S-39 | GPT-2 moved layer normalization to the input of each sub-block (pre-normalization) | S15 | §2.3 | direct | high | **Verified against PDF text 2026-09-15.** Establishes that ordering varies by architecture |
+| S-40 | Language modeling as distribution estimation; factorize $p(x)$ as a product of next-symbol conditionals | S15 | §2, Eq. 1 | direct | high | **Verified 2026-09-15.** The factorization is a general identity |
+| S-41 | Product of conditionals of next word given previous; parameters tuned to maximize training log-likelihood | S16 | §1.1 | direct | high | **Verified 2026-09-15.** Companion to S-29 |
+| S-42 | The Transformer was trained with Adam | S10 | §5.3 | direct | high | **Verified 2026-09-15.** Adam's description is standard, not attributed |
+| S-43 | Incremental decoding repeatedly loads stored keys and values; a recognized bottleneck | S21 | Abstract | direct | high | **Verified 2026-09-15.** Supports PR3's "reusing cached representations" |
+| S-44 | Language models "begin to learn" QA, translation, comprehension, summarization without explicit supervision | S15 | Abstract | direct | high | **Verified 2026-09-15.** Paired with S-26; no claim about where capabilities are stored |
+| S-45 | Attention weights are not automatically explanations or importance scores; heads lack guaranteed stable roles | — (course caution; CC4) | follows from S-36/S-37 | inference | medium-high | No interpretability literature surveyed |
 
 ## Open verification debt (carried forward from the implementation plan)
 
@@ -176,7 +198,13 @@ statement.
   Karpathy tokenization segment cited as a learning resource on
   `learn/how-created.qmd` carries **no timestamp**, deliberately: none
   has been verified (same class of gap as G1).
-- S-02, S-03, S-06, S-10, S-11, S-18, S-20, and S-35 are marked `inference`
+- **Resolved, not open (attention/training batch, 2026-09-15):**
+  S-36–S-44 were verified against the live sources on 2026-09-15 (Vaswani
+  via arXiv HTML v7; GPT-2 and Bengio via PDF text; Shazeer via the arXiv
+  abstract page). The 3Blue1Brown attention lesson listed under Continue
+  learning on `learn/transformers-attention.qmd` was confirmed to exist at
+  its URL on 2026-09-15; no timestamp or length is asserted.
+- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, and S-45 are marked `inference`
   because they are this course's own editorial framing, naming convention,
   or field characterization — not a direct claim made by a video or paper.
   This is intentional and should not be "fixed" by attributing them to a

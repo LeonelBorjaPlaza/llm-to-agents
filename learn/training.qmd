@@ -1,0 +1,386 @@
+---
+title: "How Pretraining Works"
+subtitle: "The objective, the loss, the optimization loop, and what they do and do not teach the model"
+---
+
+*Prerequisites: basic probability (a product of probabilities; a
+logarithm) and the idea of a weighted sum. `learn/neural-networks.qmd`
+works through loss, gradient, backpropagation, and the optimizer step on
+one unit; this page uses those words with one-clause reminders and links
+there for the derivation.*
+
+## 1. The objective
+
+An autoregressive language model predicts each token from the tokens that
+came before it. That single sentence is the whole training objective, and
+the rest of this page unpacks it.
+
+Write a training sequence of $T$ tokens as $x_1, x_2, \ldots, x_T$. The
+probability the model assigns to the entire sequence is built from
+one-step predictions, one per position:
+
+$$
+p(x_1, x_2, \ldots, x_T) = \prod_{t=1}^{T} p(x_t \mid x_{<t})
+$$
+
+Read the right-hand side as: the probability of the first token, times
+the probability of the second token given the first, times the
+probability of the third given the first two, and so on. The notation
+$x_{<t}$ means "all the tokens before position $t$", and $\prod$ means
+"multiply these together". Nothing is being assumed about the text; any
+joint probability over a sequence can be written as such a chain of
+conditionals, and language modeling has long been framed as estimating
+exactly this product of next-symbol conditionals. [S-40] [S-41] What the
+model provides is each factor: at every position, a probability
+distribution over the vocabulary for the next token, given the tokens so
+far.
+
+The targets come from the text itself. `learn/how-created.qmd` shows the
+shift-by-one construction: at each position that has a following token,
+that following token is the target. Equivalently, the representation the
+network computes at input position $t$ is used to predict $x_{t+1}$. One
+bookkeeping point reconciles this with the product above. The very first
+factor, $p(x_1)$, conditions on nothing, so in practice a model predicts
+the first token from a conventional start-of-sequence marker or from
+preceding context. For the five-token sentence used on this and the
+earlier page, the course conditions on the first displayed token and
+shows the four following-token targets. No labels are written by anyone;
+a body of text supplies one target per position with a successor.
+
+## 2. Training evaluates many positions at once
+
+Generation is sequential by nature. The model predicts a distribution
+for the next token, one token is selected, it is appended to the
+sequence, and the next prediction depends on the token that was actually
+chosen. Nothing about step $t+1$ can begin until step $t$ has produced its
+token.
+
+Training is different, and the difference is what makes transformers
+practical to train. A training sequence is complete before training
+touches it: $x_1$ through $x_T$ are all known. The network can therefore
+compute its prediction at every position in a single forward pass,
+provided the prediction at position $t$ is prevented from using the
+tokens after $t$. That is exactly what causal masking does, as
+`learn/transformers-attention.qmd` §4 describes: the scores for future
+positions are removed before softmax, so the representation at position
+$t$ depends only on positions $1$ to $t$. [S-22] With the mask in place,
+the prediction at position 1, the prediction at position 2, and every
+other prediction are computed from the same forward pass, and their
+losses are computed together. A recurrent network cannot do this, because
+its computation at each position waits for the previous position to
+finish; the original Transformer paper gives removing that sequential
+dependency as a central motivation. [S-16]
+
+So the model is trained in parallel across positions and used
+sequentially across positions. The two computations share the same
+parameters and the same masking rule, and they differ in what is known
+in advance.
+
+## 3. From logits to loss
+
+At each position the transformer's final layer produces one raw score
+per vocabulary entry; machine-learning literature calls these scores
+logits. Softmax maps them into a probability distribution over the
+vocabulary, exactly as `learn/softmax-sampling.qmd` works through. [S-05]
+[S-30] The observed next token, the target, picks out one entry of that
+distribution. Write $p_\theta(x_t \mid x_{<t})$ for the probability the
+model, with its current parameters $\theta$, assigns to the token that
+actually came next. The loss at that position is
+
+$$
+L_t = -\log p_\theta(x_t \mid x_{<t})
+$$
+
+the negative logarithm of the probability given to the correct token. This
+is the **negative log-likelihood**, and for a distribution produced by
+softmax it is the same quantity as the cross-entropy loss that
+`learn/neural-networks.qmd` uses for its single unit, now with a
+vocabulary-sized set of categories instead of two. A few values show its
+shape: if the model gave the correct token probability 1, the loss would
+be 0; probability 0.5 gives a loss of about 0.69; probability 0.05 gives
+about 3.0. The loss falls as the probability assigned to the observed
+token rises, and it rises without bound as that probability approaches
+zero. Lowering the loss therefore means, and can only mean, raising the
+probability the model assigns to what actually came next.
+
+For a sequence, the per-position losses are added up (or averaged over
+the target positions); for a batch of sequences, over all their target
+positions. Because $\log$ turns a product into a sum, the summed loss is
+exactly $-\log$ of the sequence probability in §1:
+
+$$
+\sum_{t} L_t = -\log \prod_{t} p_\theta(x_t \mid x_{<t})
+$$
+
+Minimizing the summed negative log-likelihood is therefore the same thing
+as maximizing the probability the model assigns to the observed training
+tokens, which makes this **maximum-likelihood training**. [S-05] [S-41]
+It is maximum-likelihood training, but it is not a conventional
+econometric exercise aimed at identifying interpretable structural
+parameters or reporting classical standard errors: the parameters are
+the millions or billions of numbers inside a network, none of which is
+meant to be read as a coefficient, and the goal is predictive fit. That
+is a statement about what this training is for, not a claim that
+uncertainty about a model's outputs is impossible to measure. [S-06]
+
+## 4. The optimization loop
+
+Pretraining is the loop that `learn/neural-networks.qmd` runs once on a
+single unit, run an enormous number of times on the whole network:
+
+1. sample a **mini-batch**, a small set of token sequences drawn from the
+   training text;
+2. run a forward pass on each sequence, producing a distribution over the
+   next token at every position;
+3. compute the loss $L_t$ at every target position;
+4. combine those into one batch loss, by summing or averaging;
+5. run **backpropagation**, which computes the gradient of the batch loss
+   with respect to every trainable parameter, that is, how the loss would
+   change with a small change in each parameter, at the current values;
+6. let the **optimizer** use those gradients to update the parameters;
+7. repeat with the next mini-batch.
+
+Two points from the single-unit lesson carry over unchanged. First,
+backpropagation computes gradients and does nothing else; a separate
+optimizer step performs the update. [S-14] Second, the update is a small
+step, taken many times. Two different gradients are worth keeping apart
+here. Backpropagation computes the gradient of the current mini-batch's
+loss exactly, up to ordinary numerical precision. But the mini-batch is
+only a sample of the training data, so that mini-batch gradient is a
+noisy estimate of the gradient of the full-data objective, and it varies
+from batch to batch; this is why the procedure is called stochastic
+optimization. The original Transformer was trained with Adam, a rule that
+adapts the step size for each parameter using running averages of past
+gradients. [S-42] The details of optimizer design are beyond this page.
+
+What are the trainable parameters? Everything in the network that
+training is allowed to change: the token embedding table; the query, key,
+value, and output projection matrices in every attention layer; the
+weights and biases of every feed-forward sublayer; the scaling parameters
+of the normalization layers, where the architecture has them; and the
+final projection that turns the last representation into logits over the
+vocabulary. [S-29] [S-30] [S-36] [S-38] Backpropagation computes the
+gradients for the trainable parameters at step 5, and the optimizer uses
+those gradients to determine their updates at step 6.
+
+## 5. A small numerical example
+
+Take the sentence from `learn/how-created.qmd`, "The bridge was closed.",
+tokenized illustratively as `The`, ` bridge`, ` was`, ` closed`, `.`. The
+four positions with a following token give four targets. Suppose a model
+A assigns the probabilities in the third column to the correct next
+token at each position, and a better-trained model B assigns those in the
+fifth column. The numbers are invented; the arithmetic is not.
+
+<!-- check:likelihood -->
+
+| Position | Target | $p_A$ | $-\log p_A$ | $p_B$ | $-\log p_B$ |
+|---|---|---|---|---|---|
+| 1 | ` bridge` | 0.60 | 0.511 | 0.80 | 0.223 |
+| 2 | ` was` | 0.22 | 1.514 | 0.50 | 0.693 |
+| 3 | ` closed` | 0.05 | 2.996 | 0.30 | 1.204 |
+| 4 | `.` | 0.40 | 0.916 | 0.70 | 0.357 |
+| Sum | | | 5.937 | | 2.477 |
+| Mean | | | 1.484 | | 0.619 |
+
+Model B assigns more probability to every correct token, so every
+per-position loss is smaller, and its mean loss over the four targets is
+0.619 against model A's 1.484. The sums say the same thing in the language
+of §1: the conditional probability model A assigns to this four-target
+continuation, given the initial displayed token, is the product
+$0.60 \times 0.22 \times 0.05 \times 0.40 =
+0.00264$, and $-\log 0.00264 = 5.937$, the summed loss; for model B the
+product is $0.084$ and its negative log is $2.477$. Among the four
+positions, ` closed` under model A, at probability 0.05, contributes the
+largest token-level loss. Every number in the table is recomputed by
+`scripts/check_training_example.py`.
+
+## 6. What pretraining learns
+
+The objective rewards one thing: assigning higher probability to the
+observed next token. It provides no verified database of facts, no
+hand-written rules of grammar, no human-defined list of meanings, and no
+separate objective that checks whether a statement is true. During
+pretraining, all parameter updates are driven by this prediction
+objective. Capabilities that emerge from pretraining therefore emerge
+under optimization of next-token prediction, even though the objective
+does not explicitly label syntax, semantics, factual knowledge, or
+reasoning as separate tasks.
+
+Prediction on that scale turns out to require a great deal. To predict
+the next token well, a network benefits from internal representations
+that capture syntax, word meaning, factual associations that recur in
+the data, conventions of discourse, and patterns of reasoning as
+expressed in text, among many other regularities present in it. An early
+neural language model already explained its generalization this way:
+words used in similar contexts come to have similar learned vectors, so
+that a sequence never seen in training receives sensible probability if
+it resembles sequences that were. [S-29] Later work found that language
+models trained only to predict text began to perform tasks such as
+answering questions and translating without explicit supervision for
+those tasks, and that this behavior strengthened with scale. [S-44]
+[S-26] None of this is stored as a neat entry in a particular parameter
+or unit; what the model has is a set of parameters that jointly produce
+good predictions, and the question of exactly where a given capability
+lives inside them is an open research topic, not something this page can
+state.
+
+## 7. The objective is prediction, not verification
+
+Pretraining teaches the model to predict statistical patterns in its
+data. Factual accuracy can emerge because factual regularities are
+present in that data: if a fact is stated consistently across many
+documents, predicting those documents well requires reproducing it. But
+independent verification of truth is not itself the pretraining
+objective. The loss at a position is lowered by assigning probability to
+whatever token actually followed in the training text, whether that text
+was accurate or not, and ordinary autoregressive decoding does not itself
+include the training loss or an independent truth-verification
+objective. [S-08] A surrounding system can separately add retrieval,
+verifiers, tools, reranking, or other checks; later pages cover those.
+
+Two conclusions that do not follow should be named. The objective does
+not make the model a copy of its training data; it produces a function
+that generalizes to sequences it never saw, as §6 describes. And it is
+not accurate to say that next-token prediction "causes" false outputs, as
+though a different objective would remove them; the precise statement is
+that the objective rewards plausible continuation and does not check
+truth, so a fluent, unsupported continuation is not penalized as such.
+How that plays out in deployed models, and what grounding and external
+checks add, is the subject of later pages.
+
+## 8. Pretraining, post-training, and inference-time context
+
+Three different things happen to a model over its life, and only two of
+them change its parameters.
+
+**Pretraining** is this page: large-scale training on the next-token
+objective, changing every trainable parameter.
+
+**Post-training** also changes parameters, using further training with
+different data and objectives. It is a family of methods rather than one
+fixed procedure: supervised training on demonstrations of desired
+behavior, optimization toward human or model preferences, reinforcement
+learning, and safety or behavior shaping are all members of it. A later
+lesson covers them; this page only marks that they, too, are parameter
+changes.
+
+**Inference-time context** changes no parameter at all. Instructions,
+the conversation so far, retrieved documents, tool results, and files or
+other state supplied to the current call are tokens in the context
+window, as `learn/tokens-context.qmd` describes; they shape this call's
+prediction and leave the parameters as they were. [S-31] If a product
+keeps a memory, a file, or a project state between sessions, that
+persistence is implemented by the surrounding software, which stores the
+information and supplies it again later. It is not a parameter update,
+and calling it "training" or "learning" in the sense of this page would
+be wrong.
+
+## 9. Training and generation are not the same computation
+
+At training time, many target positions of a complete sequence are
+evaluated in parallel under the causal mask, a loss is computed from all
+of them, backpropagation computes gradients, and the optimizer updates
+the parameters. At inference time, the parameters are normally fixed;
+the model predicts a distribution for the next token, one token is
+selected by argmax or by sampling, and the selected token becomes part
+of the context for the prediction after it. [S-07]
+
+One implementation detail is worth a sentence because it is often
+described loosely. When generating token by token, the keys and values
+computed for earlier positions do not change from one step to the next,
+so implementations typically store them and reuse them instead of
+recomputing every earlier position's attention inputs at every step; the
+cost of repeatedly loading those stored keys and values is a recognized
+bottleneck of step-by-step decoding. [S-43] This reuse is an efficiency
+measure. The mathematics of autoregression, each token predicted from
+the tokens before it, is the same with or without it.
+
+## 10. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>Why can a transformer compute the training loss for every
+position of a sequence in one forward pass, when generation has to
+proceed one token at a time?</summary>
+Because during training the whole sequence is already known, and causal
+masking guarantees that the prediction at each position uses only the
+positions before it. All positions can therefore be evaluated together
+without any prediction seeing its own target. During generation the
+later tokens do not exist until they are selected, so each step must
+wait for the previous one (§2, §9).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>A model assigns probability 0.05 to the observed next token at
+one position and 0.50 at another. Which position contributes more to the
+loss, and by roughly how much?</summary>
+The first. Its loss is $-\log 0.05 \approx 3.0$ against $-\log 0.50
+\approx 0.69$, so it contributes more than four times as much. Lowering
+the loss means raising the probability assigned to observed tokens
+(§3, §5).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>What does backpropagation change?</summary>
+Nothing. It computes the gradient of the batch loss with respect to every
+trainable parameter. The optimizer then uses those gradients to update
+the parameters in a separate step (§4).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Which of these change the model's parameters: pretraining,
+post-training, a document placed in the context window, a tool result
+returned to the model?</summary>
+Pretraining and post-training. A document in the context and a tool
+result are inference-time context: they change what the model is
+conditioning on for this call and leave the parameters untouched (§8).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Does the pretraining objective check whether the training text
+is true?</summary>
+No. It rewards assigning probability to whatever token actually followed.
+Factual regularities in the data can make accurate prediction and
+accurate statements coincide, but truth verification is not part of the
+objective (§7).
+</details>
+:::
+
+## 11. Continue learning
+
+- **Radford et al., *Language Models are Unsupervised Multitask
+  Learners*** (paper, the GPT-2 report; Section 2 states the objective
+  in one paragraph). Technical level. Especially good for seeing the
+  autoregressive factorization written down for a transformer language
+  model, and for the claim that prediction alone led to task behavior.
+  Limitation: a 2019 model and dataset; the training details are brief.
+  <https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf>
+
+- **Bengio, Ducharme, Vincent, and Jauvin, *A Neural Probabilistic
+  Language Model*** (paper, Journal of Machine Learning Research 3,
+  2003; Sections 1 and 2). Technical level. The clearest early statement
+  that a neural network can be trained by maximizing the log-likelihood
+  of next-word predictions and that learned vectors are what make it
+  generalize. Limitation: not a transformer, and a word rather than
+  subword vocabulary.
+  <https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf>
+
+- **Andrej Karpathy, *Deep Dive into LLMs like ChatGPT*** (video, 3.5
+  hours; the pretraining discussion occupies its first part).
+  Introductory level, plain language. Especially good for the scale and
+  the practical shape of pretraining on real data. Limitation: no
+  equations, and no timestamp is given here because none has been
+  verified for this course.
+  <https://www.youtube.com/watch?v=7xTGNNLPyMI>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.

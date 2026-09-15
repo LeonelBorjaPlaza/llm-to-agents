@@ -180,6 +180,35 @@ used so far, not a preview of the eventual full list.
   to do retrieval; the course uses only the general idea
 - **Link:** <https://arxiv.org/abs/2005.11401>
 
+### Shazeer, *Fast Transformer Decoding: One Write-Head is All You Need*
+
+- **Format:** paper, arXiv:1911.02150 (v1, 2019-11-06); the abstract is
+  enough for how this course uses it
+- **Level:** technical
+- **What it explains particularly well:** that token-by-token decoding
+  stores and repeatedly reloads earlier positions' keys and values, and
+  that this is a real cost; the source for the one caching sentence in
+  `learn/training.qmd`
+- **Limitation:** the paper's own proposal (multi-query attention) is not
+  covered by this course
+- **Link:** <https://arxiv.org/abs/1911.02150>
+
+### 3Blue1Brown, *Attention in transformers, step-by-step*
+
+- **Creator:** Grant Sanderson (3Blue1Brown); chapter 6 of the *Deep
+  Learning* series
+- **Format:** video lesson; length and timestamps not verified for this
+  course
+- **Level:** introductory, strongly visual
+- **What it explains particularly well:** the query, key, and value
+  transformations and the weighted combination of values, animated on
+  actual vectors; the visual counterpart to
+  `learn/transformers-attention.qmd` §2–§5
+- **Limitation:** leans on the "what is this token looking for" reading
+  more than this course does; a learning resource, not an evidentiary
+  source for any claim
+- **Link:** <https://www.3blue1brown.com/lessons/attention>
+
 ### Anthropic, *Context windows* (Claude API documentation)
 
 - **Format:** documentation page, accessed 2026-09-15

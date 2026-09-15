@@ -187,9 +187,9 @@ the token is. Every occurrence of the token ` bank` in every text the
 model ever processes starts from the same ID and the same row of $E$.
 
 The **contextual representation** is different. After the embedding
-lookup, position information is added, because the transformer has no
-built-in notion of order [S-30], and the vectors then pass through the
-network's layers. Inside each transformer block, one mechanism, attention,
+lookup, the architecture incorporates information about position and
+order, because the transformer has no built-in notion of order [S-30],
+and the vectors then pass through the network's layers. Inside each transformer block, one mechanism, attention,
 moves information between positions. [S-19] In the autoregressive decoder
 this course is about, a position may use itself and the permitted earlier
 positions, never later ones, so after several layers the vector at the

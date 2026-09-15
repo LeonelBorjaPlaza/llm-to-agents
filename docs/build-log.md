@@ -596,3 +596,65 @@ bank"); the context-versus-parameters distinction separated from
 product-level persistence; "re-sent" replaced with logical-context
 language; and `index.qmd`'s lesson list updated so the visible path is
 text → numbers → neurons → transformers, with the deep dive exposed.
+
+## Task: attention and pretraining pages (2026-09-15, Batch 2)
+
+### Scope
+
+Created `learn/transformers-attention.qmd` and `learn/training.qmd`. The
+five earlier lessons were not edited; no contradiction requiring an edit
+to a frozen page was found.
+
+### Research performed (bounded)
+
+Verified on 2026-09-15: Vaswani et al. §3.2, §3.2.1 (definition and the
+$\sqrt{d_k}$ paragraph), §3.2.2, §3.1, §3.3, §5.3 (arXiv HTML v7); GPT-2
+§2 Equation 1, §2.3 pre-normalization sentence, and the abstract's
+"begin to learn" sentence (PDF text already on disk from Batch 1);
+Bengio et al. §1.1 objective sentences (PDF text); Shazeer 2019 abstract
+(arXiv). The 3Blue1Brown attention lesson URL was confirmed to exist; no
+timestamp is asserted. No other sources were read.
+
+### Verification files
+
+- `scripts/check_attention_example.py` (new): recomputes the 3-position,
+  $d_k = 2$ causal example from the committed q/k/v vectors and checks
+  scores, weights, masked entries, row sums, and outputs. Tables are
+  located by `<!-- check:... -->` markers rather than prose.
+- `scripts/check_training_example.py` (new): recomputes each $-\log p$,
+  the sums and means for both models, and the two sequence-probability
+  products quoted in the prose.
+- `scripts/verify.sh`: both added, as steps 8 and 9 of 10.
+
+### Choices worth recording
+
+- The q/k/v vectors in the attention example are given as already
+  projected, with the projection matrices not shown, so that the
+  score → weight → weighted-sum mechanism stays visible in two-entry
+  vectors.
+- The training example reuses Batch 1's sentence and its four targets,
+  so the shift-by-one construction is the same object across pages.
+- "Like many models since" (Adam) is course characterization and is
+  flagged as such in S-42's caveat.
+
+### Correction pass before commit (2026-09-15, Batch 2)
+
+Eleven bounded corrections from external review, none structural: the
+attention opening simplified and "five positions earlier" made
+non-specific; dot-product wording now notes dependence on magnitudes as
+well as alignment; the incoming-representation parenthetical made
+architecture-neutral about position; the objective's first-token
+convention and the shift-by-one indexing reconciled in one paragraph;
+the exact mini-batch gradient distinguished from its role as a noisy
+estimate of the full-data gradient; "like many models since" dropped from
+the Adam sentence; the trainable-parameter sentence no longer implies
+every parameter gets a nonzero update; the unsupported "gradient would
+push hardest" inference deleted and the four-target product named as a
+conditional probability; the teleological "everything the model comes to
+do" sentence replaced; "scored by nothing at all" narrowed to the
+model-level statement with a one-line pointer to system-level checks; and
+the head-interpretability and attention-weight cautions narrowed to what
+the architecture defines. One authorized consistency edit to the
+otherwise frozen `learn/tokens-context.qmd` §7: "position information is
+added" became "the architecture incorporates information about position
+and order", matching `learn/how-created.qmd` §6.

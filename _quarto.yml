@@ -26,8 +26,12 @@ website:
             text: Neurons, Layers, and Learning
           - href: learn/why-transformers.qmd
             text: Why Transformers
+          - href: learn/transformers-attention.qmd
+            text: "Deep dive: How Self-Attention Moves Information"
           - href: learn/softmax-sampling.qmd
             text: Softmax, Sampling, and Temperature
+          - href: learn/training.qmd
+            text: How Pretraining Works
           - href: learn/tokens-context.qmd
             text: "Deep dive: Tokens, Embeddings, and the Context Window"
       - href: resources.qmd

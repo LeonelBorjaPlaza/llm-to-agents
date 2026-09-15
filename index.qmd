@@ -46,9 +46,17 @@ rather than reproduces.
   standalone module on the sequence-processing problem self-attention was
   built to solve, with a worked example checked against the original
   paper's own stated bounds.
+- [**Deep dive: how self-attention moves information**](learn/transformers-attention.qmd)
+  — optional; queries, keys, values, causal masking, multi-head
+  attention, and where attention sits inside a transformer block, with a
+  worked numerical example.
 - [**Softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
   complete, standalone learning module, including a live softmax-and-
   sampling laboratory and a no-JavaScript fallback.
+- [**How pretraining works**](learn/training.qmd) — the autoregressive
+  objective, negative log-likelihood, the optimization loop, what
+  pretraining does and does not teach, and how it differs from
+  post-training and from inference-time context.
 - [**Deep dive: tokens, embeddings, and the context window**](learn/tokens-context.qmd)
   — optional; why models use subword units, what the embedding table does
   and does not encode, and what a finite context window implies in

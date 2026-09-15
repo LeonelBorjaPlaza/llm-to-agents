@@ -1,0 +1,377 @@
+---
+title: "How Self-Attention Moves Information"
+subtitle: "Queries, keys, values, causal masking, and where attention sits inside a transformer block"
+---
+
+*Prerequisites: comfort with vectors as lists of numbers and with the
+idea of a weighted sum. `learn/why-transformers.qmd` explains why this
+mechanism was wanted; `learn/tokens-context.qmd` explains where the input
+vectors come from. Neither is assumed, and each is linked where it
+matters.*
+
+## 1. Why information has to move
+
+Every token enters a transformer as a vector looked up from a table by
+its token ID. The same token begins from the same learned token
+embedding wherever it occurs; its later representation can differ
+because of context, and the representation that is useful for predicting
+what comes next depends on the surrounding text. Something inside the
+network has to let the vector at one position be updated using the
+vectors at other positions. Self-attention is that mechanism.
+
+Take the sentence fragment
+
+> "The bridge was closed because it"
+
+and consider predicting the next token. Whatever the network predicts, a
+good prediction needs to know what "it" refers to, and that information
+sits at the position of ` bridge`, several positions earlier. In an
+autoregressive language model, the kind this course is about, the
+prediction at a position may use that position and the ones before it,
+never the ones after. So the mechanism has to let the representation at
+the position of "it" draw on earlier positions, and it has to do so
+without any hand-written rule saying that pronouns look for nouns. It is
+learned, like everything else in the network.
+
+## 2. One attention head, conceptually
+
+Fix one position $i$, the destination, whose representation is about to
+be updated. The permitted source positions are $i$ itself and every
+earlier position. A single **attention head** does the following with the
+vectors at those positions.
+
+First, three learned transformations are applied. The vector at the
+destination is transformed into a **query** vector $\mathbf{q}_i$. The
+vector at each permitted source position $j$ is transformed into a
+**key** vector $\mathbf{k}_j$ and, separately, into a **value** vector
+$\mathbf{v}_j$. All three are ordinary matrix multiplications with
+matrices the network learned during training; there is nothing else
+inside them.
+
+Second, the query is compared with each key. The comparison is a dot
+product, a single number for each pair $(i, j)$, and it serves as a
+compatibility score. The dot product is large and positive when the two
+vectors are strongly aligned, and its value depends on both their
+alignment and their magnitudes.
+
+Third, the scores over the permitted source positions are turned into
+weights that are nonnegative and sum to one. The function that does this
+is softmax, the same one that turns output scores into next-token
+probabilities in `learn/softmax-sampling.qmd`; here it is applied across
+positions rather than across the vocabulary.
+
+Fourth, the head returns to position $i$ a weighted sum of the value
+vectors, each value weighted by its attention weight. A source position
+with a large weight contributes most of its value vector; one with a
+tiny weight contributes almost nothing. That weighted sum is the
+information moved to position $i$ in this head at this layer. [S-36]
+
+Why three separate transformations, and why these names? The
+architecture separates *what is compared* (query against key) from
+*what is transferred* (the value), so that the network can learn to
+match positions on one basis and transfer information on another. The
+names come from that division of labor. As a way of holding the
+mechanism in mind, it can help to read the query as "what the
+destination is looking for" and the key as "what the source offers".
+That reading is an intuition for learned vector matching and nothing
+more: a query is a projected vector, not a question, and nothing in the
+network assigns it a meaning a person could read off.
+
+## 3. The mathematics
+
+Write $\mathbf{x}_i$ for the incoming representation at position $i$,
+the vector that arrives at this layer (at the first layer, the token's
+initial representation after whatever positional mechanism the
+architecture uses; at later layers, the output of the previous block).
+For one head, the three transformations are
+
+$$
+\mathbf{q}_i = W_Q \mathbf{x}_i, \qquad
+\mathbf{k}_j = W_K \mathbf{x}_j, \qquad
+\mathbf{v}_j = W_V \mathbf{x}_j
+$$
+
+where $W_Q$, $W_K$, and $W_V$ are the head's learned parameter matrices.
+The queries and keys have the same length, written $d_k$; the values may
+have a different length. The compatibility score between destination $i$
+and source $j$ is the dot product of query and key, divided by the square
+root of $d_k$:
+
+$$
+s_{ij} = \frac{\mathbf{q}_i^{\top} \mathbf{k}_j}{\sqrt{d_k}}
+$$
+
+Applying softmax across the permitted source positions turns the scores
+into attention weights:
+
+$$
+a_{ij} = \frac{\exp(s_{ij})}{\sum_{j'} \exp(s_{ij'})}
+$$
+
+where the sum in the denominator runs over the permitted sources $j'$ for
+destination $i$. Every $a_{ij}$ is positive and, for each $i$, the weights
+sum to one. The head's output at position $i$ is the weighted sum of the
+values:
+
+$$
+\mathbf{y}_i = \sum_{j} a_{ij}\, \mathbf{v}_j
+$$
+
+This is scaled dot-product attention, as the original Transformer paper
+defined it: compute the dot products of the query with all keys, divide
+each by $\sqrt{d_k}$, apply softmax to obtain the weights on the values.
+[S-36]
+
+The division by $\sqrt{d_k}$ is there for a practical reason. A dot
+product adds up $d_k$ terms, so as $d_k$ grows the scores tend to grow in
+magnitude. Large scores push softmax toward putting almost all its weight
+on one position, and in that regime the gradients that training relies
+on become very small. The paper's authors state exactly this concern and
+scale the dot products by $1/\sqrt{d_k}$ to counteract it. [S-36] For
+this page it is enough to know that the scaling keeps the scores in a
+range where softmax remains sensitive to differences between them.
+
+## 4. Causal masking
+
+In an autoregressive decoder, position $i$ may attend to itself and to
+earlier positions, and not to later ones. The way this is enforced is
+simple: before softmax, the scores $s_{ij}$ for every future position
+$j > i$ are replaced by a value so negative that $\exp$ of it is
+effectively zero, so those positions receive zero weight and the
+remaining weights still sum to one over the permitted positions. [S-22]
+
+This matters most during training. The whole training sequence is
+present at once, so the network could in principle look at the token it
+is supposed to predict. The mask prevents that: the prediction at
+position $i$ is computed from positions $1$ to $i$ only, exactly as it
+would be at generation time when the later tokens do not yet exist.
+`learn/training.qmd` explains what that makes possible, namely
+evaluating the predictions for every position of a sequence in one
+forward pass.
+
+Not every transformer uses this mask. An encoder, such as the one in the
+original Transformer's machine-translation model or in BERT, uses
+bidirectional self-attention in which every position may attend to every
+other, because its job is to represent a complete input rather than to
+generate it token by token. [S-22] [S-24] When this course says
+"self-attention" without qualification, it means the causal, decoder
+form.
+
+## 5. A small numerical example
+
+Take the first three tokens of the running sentence, one attention head,
+and vectors of length $d_k = d_v = 2$, so that every number can be
+followed by hand. Suppose the three learned transformations have already
+been applied to the incoming representations and produced the following
+query, key, and value vectors. The numbers are invented for illustration.
+
+<!-- check:qkv -->
+
+| Position | Token | $\mathbf{q}$ | $\mathbf{k}$ | $\mathbf{v}$ |
+|---|---|---|---|---|
+| 1 | `The` | (1, 0) | (1, 0) | (2, 0) |
+| 2 | ` bridge` | (0, 2) | (0, 1) | (0, 2) |
+| 3 | ` was` | (2, 1) | (1, 1) | (1, 1) |
+
+Scores are dot products divided by $\sqrt{2} \approx 1.414$. With the
+causal mask, position 1 may attend only to itself, position 2 to
+positions 1 and 2, and position 3 to all three. Masked entries are shown
+as "—".
+
+<!-- check:scores -->
+
+| Destination $i$ | $s_{i1}$ | $s_{i2}$ | $s_{i3}$ |
+|---|---|---|---|
+| 1 | 0.707 | — | — |
+| 2 | 0.000 | 1.414 | — |
+| 3 | 1.414 | 0.707 | 2.121 |
+
+For position 3, for example, $s_{31} = (2 \cdot 1 + 1 \cdot 0)/1.414 =
+1.414$, $s_{32} = (2 \cdot 0 + 1 \cdot 1)/1.414 = 0.707$, and $s_{33} =
+(2 \cdot 1 + 1 \cdot 1)/1.414 = 2.121$. Softmax across each row's
+permitted entries gives the attention weights:
+
+<!-- check:weights -->
+
+| Destination $i$ | $a_{i1}$ | $a_{i2}$ | $a_{i3}$ |
+|---|---|---|---|
+| 1 | 1.000 | — | — |
+| 2 | 0.196 | 0.804 | — |
+| 3 | 0.284 | 0.140 | 0.576 |
+
+Each row sums to one. Position 1 has only itself to attend to, so its
+weight is 1 regardless of its score. Finally, each destination receives
+the weighted sum of the value vectors of its permitted sources:
+
+<!-- check:outputs -->
+
+| Destination $i$ | $\mathbf{y}_i$ |
+|---|---|
+| 1 | (2.000, 0.000) |
+| 2 | (0.391, 1.609) |
+| 3 | (1.144, 0.856) |
+
+For position 3: $0.284 \cdot (2, 0) + 0.140 \cdot (0, 2) + 0.576 \cdot
+(1, 1) = (1.144, 0.856)$. The three permitted sources contribute
+different amounts: most of the update comes from position 3's own value,
+a substantial share from position 1, and little from position 2. Change
+the query at position 3 and the weights change; change a key and the
+weights for every destination that can see it change. In a trained model
+those vectors were all produced by learned matrices from the incoming
+representations, so the pattern of weights is itself something training
+shaped. Every number above is recomputed by
+`scripts/check_attention_example.py`.
+
+## 6. Multi-head attention
+
+One head produces one pattern of weights per destination. A transformer
+layer runs several heads in parallel, each with its own $W_Q$, $W_K$,
+and $W_V$, so that several attention patterns can operate at once over
+the same positions. The heads' outputs are concatenated and passed
+through one more learned matrix to produce the layer's attention output.
+The original Transformer used eight heads, each working with query, key,
+and value vectors of length 64, and described the purpose as letting the
+model "jointly attend to information from different representation
+subspaces at different positions." [S-37]
+
+That is the whole claim. It is tempting to go further and say that one
+head handles grammar, another handles names, and so on. The architecture
+does not assign each head a fixed human-readable job, and the training
+objective does not either, so a reader should not assume that a head
+corresponds to a stable concept such as grammar, names, or topics without
+separate evidence. [S-45]
+
+## 7. Attention is one part of a transformer block
+
+Self-attention is not the transformer. It is one of two main
+computations inside each repeating block, and a model stacks many such
+blocks. The hierarchy runs:
+
+- a language model, the trained function as a whole;
+- its transformer architecture;
+- the repeated transformer blocks that make up most of it;
+- inside each block, an attention mechanism and a feed-forward
+  computation.
+
+Attention, as above, exchanges information between positions. The
+**feed-forward** (or MLP) sublayer does the other kind of work: it is
+applied to each position separately and identically, with no exchange
+between positions, and in the original design consists of two linear
+transformations with a nonlinearity between them, the same
+weighted-sum-then-nonlinearity pattern that `learn/neural-networks.qmd`
+works through on a single unit. [S-38] [S-19] After attention has
+gathered information from other positions into position $i$, the
+feed-forward sublayer computes on that gathered vector alone.
+
+Two further ingredients hold the block together. A **residual
+connection** adds each sublayer's input to its output, so that a sublayer
+computes an update to the representation rather than a replacement for
+it. **Normalization** rescales the vectors so that their values stay in a
+workable range through many layers. In the original Transformer, each
+sublayer's output was the normalization of the residual sum, written
+$\text{LayerNorm}(x + \text{Sublayer}(x))$. [S-38] Many later decoder
+architectures use a different arrangement; GPT-2, for instance, moved the
+normalization to the input of each sublayer. [S-39] The exact ordering is
+a property of the named architecture, not of transformers in general,
+and this page does not fix one.
+
+## 8. What attention weights do and do not mean
+
+The weights $a_{ij}$ determine how the value vectors are combined inside
+one head, at one layer, for one destination. That is a precise, local
+role. It is a mistake to read more into them. A large weight from
+position $i$ to position $j$ is not a probability that token $j$ caused
+token $i$, and an attention weight describes one local weighted
+combination inside one head and layer; it is not by itself a complete
+explanation of the model's final output, which depends on every head in
+every layer, on the feed-forward sublayers, and on the residual stream
+carrying earlier representations forward. Attention weights are a useful
+window into one step of the computation, and only that. [S-45]
+
+## 9. The cost of comparing every pair
+
+Because each destination computes a score against every permitted source,
+one layer of dense self-attention performs a number of comparisons that
+grows with the square of the sequence length. That is the source of the
+$O(n^2 \cdot d)$ arithmetic cost per layer that `learn/why-transformers.qmd`
+discusses, together with what it does and does not imply. [S-17] This
+page adds only the mechanism behind the count: the comparisons are the
+dot products $\mathbf{q}_i^{\top}\mathbf{k}_j$ of §3, one per pair.
+
+## 10. Check your understanding
+
+::: {.check-understanding}
+<details>
+<summary>In one head, what is compared with what, and what is actually
+transferred to the destination position?</summary>
+The destination's query vector is compared, by dot product, with each
+permitted source's key vector; those comparisons become the attention
+weights. What is transferred is a weighted sum of the sources' value
+vectors, which are a separate learned transformation of the same
+incoming representations (§2–§3).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>If a source position has attention weight 0.804, what does the
+destination receive from it?</summary>
+0.804 times that source's value vector, added to the contributions of
+the other permitted sources. The weight is a multiplier; the value
+vector is the content being combined (§3, §5).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>During training the whole sequence is available. Why does the
+model at position $i$ not use the tokens after $i$?</summary>
+Because causal masking sets the scores for later positions to an
+effectively infinitely negative value before softmax, giving them zero
+weight. The prediction at position $i$ is then computed from positions
+$1$ to $i$ only, as it will be at generation time (§4).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>Is self-attention the same thing as a transformer?</summary>
+No. Self-attention is one mechanism inside each transformer block. The
+block also contains a feed-forward sublayer that computes on each
+position separately, plus residual connections and normalization, and
+the model stacks many blocks (§7).
+</details>
+:::
+
+::: {.check-understanding}
+<details>
+<summary>A model has 32 heads per layer. Does each head have a fixed,
+nameable job?</summary>
+Not in general. Multiple heads allow several attention patterns to run in
+parallel over the same positions, but no stable, human-readable role is
+assigned to any head by the architecture or the training objective, so
+none should be assumed without separate evidence (§6).
+</details>
+:::
+
+## 11. Continue learning
+
+- **Vaswani et al., *Attention Is All You Need*** (paper, arXiv:1706.03762;
+  Section 3.2 for attention and Sections 3.1 and 3.3 for the block are
+  three pages). Technical level. The primary source for every equation on
+  this page, including the multi-head construction and the reason for the
+  $\sqrt{d_k}$ scaling. Limitation: an encoder-decoder translation model;
+  the causal decoder form used by language models is described only
+  briefly, in Section 3.2.3.
+  <https://arxiv.org/abs/1706.03762>
+
+- **3Blue1Brown, *Attention in transformers, step-by-step*** (video
+  lesson, chapter 6 of the *Deep Learning* series). Introductory/visual
+  level. Especially good for seeing the query, key, and value
+  transformations and the weighted combination animated on actual
+  vectors. Limitation: uses the "what is the token looking for" reading
+  more freely than this page does; keep §2's caution in mind.
+  <https://www.3blue1brown.com/lessons/attention>
+
+See `resources.qmd` for the complete list of sources used across this
+course, with full source-map entries.
