@@ -140,8 +140,8 @@ $$
 \theta \leftarrow \theta - \eta \, \frac{\partial L}{\partial \theta}
 $$
 
-This moves each parameter a small step in the direction that decreases
-$L$ fastest, given the current slope. Picture standing on a hillside in
+Taken together, these updates move the parameter vector a small step in
+the direction of steepest local decrease in the loss. Picture standing on a hillside in
 fog: you cannot see the whole landscape, but you can feel which way the
 ground slopes under your feet and take a small step downhill, then check
 again. The gradient is that local slope. The rule says nothing yet about

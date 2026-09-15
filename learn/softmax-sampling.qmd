@@ -106,8 +106,9 @@ to one, and in the same order as the raw scores. With a real vocabulary,
 every additional token's score enters the sum in the denominator, so the
 probabilities of these five would all be smaller than shown here.
 
-The name contrasts softmax with a hard **argmax** — picking the single
-top-scoring token and giving it everything. Softmax returns a whole
+The name contrasts softmax with a hard winner-take-all choice based on
+the **argmax** — selecting the single top-scoring token and giving it
+everything. Softmax returns a whole
 distribution instead; as $T \to 0$ that distribution approaches the
 argmax's all-or-nothing choice (derived in §6). It is also smooth, so
 gradients pass through it during training (see `learn/neural-networks.qmd`
@@ -130,8 +131,8 @@ The third property in §4 is the familiar odds-ratio property associated
 with independence of irrelevant alternatives (IIA): for a fixed set of
 scores, the ratio of any two probabilities depends only on those two
 scores. It holds here algebraically, exactly as it does in a standard
-conditional-logit model. [S-03] It is also where the name "logit" comes
-from: with exactly two candidates, that same identity reads
+conditional-logit model. [S-03] This identity also shows the connection
+to statistical log-odds: with exactly two candidates, it reads
 $\operatorname{logit}(p_1) = \log\!\big(p_1/(1-p_1)\big) = (z_1 - z_2)/T$,
 and only at $T = 1$ does this reduce to
 $\operatorname{logit}(p_1) = z_1 - z_2$. [S-09]
