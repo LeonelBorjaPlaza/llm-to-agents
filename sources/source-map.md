@@ -1,8 +1,9 @@
 # Source map — vertical slice
 
 Human-readable companion to `sources/claims.csv`. Every claim ID used in
-`learn/softmax-sampling.qmd` or `slides/llms-to-agents.qmd` appears here and
-in the CSV; `scripts/check_sources.py` checks both directions
+any public page (`learn/*.qmd`, `slides/*.qmd`, and every root-level page
+including `short-story.qmd`, `milestones.qmd`, `glossary.qmd`, and
+`resources.qmd`) appears here and in the CSV; `scripts/check_sources.py` checks both directions
 mechanically — no claim ID without a row, no row that no page cites.
 
 This batch adds two new lessons (neural networks; why transformers) on top
@@ -190,6 +191,73 @@ just-in-time context, progressive disclosure, compaction, and structured
 note-taking (S-61), and S17 (the context-windows page) for the sentence
 on prompt caching (S-62), both on 2026-09-15.
 
+
+**S33 — Rosenblatt, *The perceptron: A probabilistic model for
+information storage and organization in the brain*.** Psychological
+Review 65(6), 1958, 386–408, <https://doi.org/10.1037/h0042519>. New in
+the reference-layer batch (2026-09-15). **Bibliographic record only,
+verified via the Crossref DOI record and PubMed (PMID 13602029) on
+2026-09-15**; the full text is paywalled (publisher page
+JavaScript-rendered; academia.edu and ResearchGate copies require login;
+the MIT Press *Neurocomputing* reprint page and Semantic Scholar returned
+403 on 2026-09-15), so nothing is quoted from it and the milestones page
+describes the paper only by its title and by S34's characterization of
+the perceptron-convergence procedure. Retrieval and provenance notes for
+the timeline sources live here and in `docs/build-log.md`, not on the
+public page.
+
+**S34 — Rumelhart, Hinton, and Williams, *Learning representations by
+back-propagating errors*.** Nature 323, 533–536, 1986-10-09,
+<https://www.nature.com/articles/323533a0>. New in the reference-layer
+batch. **Abstract verified verbatim on 2026-09-15**; body paywalled.
+
+**S35 — Hochreiter and Schmidhuber, *Long Short-Term Memory*.** Neural
+Computation 9(8), 1735–1780, 1997, doi 10.1162/neco.1997.9.8.1735;
+author-hosted copy <https://www.bioinf.jku.at/publications/older/2604.pdf>.
+New in the reference-layer batch. **Abstract, Section 1, and Section 2
+verified against the author-hosted PDF text on 2026-09-15**; the journal
+page blocks non-browser clients.
+
+**S36 — Sutskever, Vinyals, and Le, *Sequence to Sequence Learning with
+Neural Networks*.** <https://arxiv.org/abs/1409.3215> (v3, 2014-12-14).
+New in the reference-layer batch. **Abstract verified verbatim on
+2026-09-15.**
+
+**S37 — Bahdanau, Cho, and Bengio, *Neural Machine Translation by
+Jointly Learning to Align and Translate*.**
+<https://arxiv.org/abs/1409.0473> (v1 2014-09-01; v7 2016-05-19). New in
+the reference-layer batch. **Abstract and arXiv comments field verified
+verbatim on 2026-09-15.**
+
+**S38 — Radford, Narasimhan, Salimans, and Sutskever, *Improving
+Language Understanding by Generative Pre-Training*.** OpenAI, 2018,
+<https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf>.
+New in the reference-layer batch. **Abstract, Section 1, and Section 2
+verified against the PDF text on 2026-09-15.** The PDF prints no date;
+the year is anchored by the BERT paper's reference list (S11, v1 posted
+2018-10-11), verified the same day.
+
+**S39 — Christiano et al., *Deep reinforcement learning from human
+preferences*.** <https://arxiv.org/abs/1706.03741> (v1 2017-06-12; v4
+2023-02-17). New in the reference-layer batch. **Abstract verified
+verbatim on 2026-09-15.**
+
+**S40 — Wei et al., *Chain-of-Thought Prompting Elicits Reasoning in
+Large Language Models*.** <https://arxiv.org/abs/2201.11903> (v1
+2022-01-28; v6 2023-01-10). New in the reference-layer batch.
+**Abstract verified verbatim on 2026-09-15.**
+
+**S41 — Yao et al., *ReAct: Synergizing Reasoning and Acting in Language
+Models*.** <https://arxiv.org/abs/2210.03629> (v1 2022-10-06; v3
+2023-03-10). New in the reference-layer batch. **Abstract and arXiv
+comments field verified verbatim on 2026-09-15.**
+
+The reference-layer batch also re-opened S26 (the *Building effective
+agents* article) on 2026-09-15 and recorded the dated note it now
+carries (S-73). No other new sources were consulted; the milestones
+page otherwise reuses S10–S16, S19, S22–S23, S25–S26, and the glossary
+reuses existing rows only.
+
 ## Claim-by-claim
 
 | ID | Claim (short) | Source | Locator | Support | Confidence | Caveat |
@@ -257,6 +325,17 @@ on prompt caching (S-62), both on 2026-09-15.
 | S-61 | Definitions: just-in-time context, progressive disclosure, compaction, structured note-taking | S20 | Named sections | direct | high | **Accessed 2026-09-15 (PR9).** Companion to S-34 |
 | S-62 | Cached prompt prefixes still occupy the context window; caching changes cost, not counting | S17 | "Manage context with compaction" | direct | high | **Product-specific, accessed 2026-09-15 (PR9).** Companion to S-31 |
 | S-63 | Operating discipline for model use: task classification, specification, source of truth, minimal context, tools, observable verification, bounded units, handoffs, conditional prompting advice, model/effort matching, stop-and-ask, least access | — (course synthesis) | synthesis of S-08, S-31, S-32, S-34, S-50, S-51, S-54–S-56, S-57–S-62 | inference | high | No universal prompting rule asserted |
+| S-64 | Rosenblatt (1958) developed the perceptron, per its title "a probabilistic model for information storage and organization in the brain", as a hypothetical learning system; characterized as an earlier learning method by S-65 | S33 | title; bibliographic record (Crossref; PubMed); S-65 | direct | high | **Narrowed 2026-09-15:** full text not retrieved, so the page describes the paper by title and by S-65 only; no mechanism summarized; no priority claim |
+| S-65 | 1986 abstract: "a new learning procedure, back-propagation"; adjusts weights to minimize output error; hidden units come to represent features; contrasts with the "perceptron-convergence procedure" | S34 | Abstract | direct | high | **Verified 2026-09-15.** "New" is the paper's own word; CC5 usage noted on the page |
+| S-66 | LSTM: addresses "insufficient, decaying error back flow"; "a novel, efficient, gradient-based method"; reviews earlier work at length | S35 | Abstract; §1; §2 | direct | high | **Verified 2026-09-15 (author PDF).** "Novel" is the paper's own word |
+| S-67 | Seq2seq: multilayered LSTM encodes the input to a fixed-dimensional vector; another LSTM decodes the target | S36 | Abstract | direct | high | **Verified 2026-09-15.** Venue not asserted |
+| S-68 | Fixed-length vector is a bottleneck; model "(soft-)search[es]" the source for relevant parts; accepted at ICLR 2015; abstract does not use "attention" | S37 | Abstract; comments field | direct | high | **Verified 2026-09-15.** No naming or priority claim |
+| S-69 | Generative pre-training on unlabeled text followed by discriminative fine-tuning; two-stage procedure with a Transformer; names Dai et al. and Howard and Ruder as closest prior work; year anchored by BERT v1's citation | S38 (year via S11) | Abstract; §1; §2; BERT v1 reference list | direct | high | **Verified 2026-09-15.** Indirect date anchoring stated on the page |
+| S-70 | Chain-of-thought prompting: intermediate reasoning steps improve complex reasoning in sufficiently large models, elicited by a few demonstrations in the prompt | S40 | Abstract | direct | high | **Verified 2026-09-15.** CC2 applied: inference-time computation, not thought |
+| S-71 | Reward learned from human preferences between pairs of trajectory segments; solves RL tasks without access to the reward function | S39 | Abstract | direct | high | **Verified 2026-09-15.** Antecedent only; no origin claim |
+| S-72 | ReAct: reasoning traces and task-specific actions interleaved; actions interface with external sources (e.g. a Wikipedia API) | S41 | Abstract; comments field | direct | high | **Verified 2026-09-15.** ICLR year not asserted; influential formulation, not origin |
+| S-73 | The *Building effective agents* article now carries a note that its tooling landscape has changed since December 2024 | S26 | Note at top of the article | direct | high | **Accessed 2026-09-15 (PR9)** |
+| S-74 | Milestones page framing: selective timeline, no priority claims, several interacting lines of development | — (course editorial framing) | milestones.qmd | inference | high | Editorial, stated as such (compare S-18, S-20) |
 
 ## Open verification debt (carried forward from the implementation plan)
 
@@ -308,7 +387,22 @@ on prompt caching (S-62), both on 2026-09-15.
   which states that they will go stale. `short-story.qmd` adds no claim
   rows; it reuses S-05, S-07, S-08, S-12, S-14, S-19, S-22, S-28, S-29,
   S-31, S-43, S-51, S-55, and S-56.
-- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, S-45, S-55, S-56, and S-63 are marked `inference`
+- **Resolved, not open (reference-layer batch, 2026-09-15):** S-65–S-72
+  were verified against the live primary sources on 2026-09-15 (Nature
+  abstract page; author-hosted LSTM PDF; arXiv abstract pages; the GPT
+  and BERT PDFs via text extraction). **S-64 (Rosenblatt 1958) is
+  bibliographic only:** the publisher page is paywalled and no open
+  full-text copy was reachable programmatically, so the milestones page
+  quotes nothing from it and carries an explicit note; a human with
+  library access could close this by confirming the paper's own
+  description of the perceptron. The 2018 date of the GPT report (S-69)
+  is anchored indirectly, through the BERT paper's citation, because
+  the PDF prints no date. The glossary adds no claim rows; it reuses
+  existing rows only. The curated resources page carries access dates
+  and one claim ID (S-73); its descriptive fields (creator, format,
+  stated dates and caveats) were read from each resource's own page on
+  2026-09-15 and are not separately ledgered.
+- S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, S-45, S-55, S-56, S-63, and S-74 are marked `inference`
   because they are this course's own editorial framing, naming convention,
   or field characterization — not a direct claim made by a video or paper.
   This is intentional and should not be "fixed" by attributing them to a

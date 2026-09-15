@@ -1,372 +1,325 @@
 ---
 title: "Resources"
-subtitle: "Sources used so far, annotated"
+subtitle: "What to read or watch next, curated"
+toc-depth: 2
 ---
 
-Every source listed here is used to *ground* claims in the course (each
-also appears in `sources/source-map.md` and `sources/claims.csv` with
-exact locators) and is annotated as a *learning* resource in its own
-right, in case you want to go to the original. The first three anchor the
-softmax, neural-network, and why-transformers lessons; the rest were added
-for the later sections of `learn/why-transformers.qmd` and for the two
-text-to-numbers lessons.
+*This page is the course's learning library: a short, curated set of
+resources for going further, organized by the part of the course they
+extend. It is not the evidence ledger. That lives in
+`sources/source-map.md` and `sources/claims.csv`, which answer a
+different question ("what supports this factual statement?") and list
+every cited source with its exact locator. Some papers appear in both
+places, because a primary source can also be good reading;
+where that is so, the entry says why it is recommended as reading.*
 
-The full course will eventually distinguish a bounded set of evidentiary
-sources from a larger, curated resource library organized into learning
-paths. This page is the seed of that library — only what has actually been
-used so far, not a preview of the eventual full list.
+*Every link on this page was opened on 2026-09-15. Durations are given
+only where the resource's own page states them. Vendor documentation
+changes without notice: for those entries, treat the description as of
+the access date, and reread the current page rather than memorizing
+its syntax.*
 
----
+## Foundations: neural networks and learning
 
-### 3Blue1Brown, *Transformers, the tech behind LLMs*
+### 3Blue1Brown, *Neural Networks* (chapters 1–5)
 
 - **Creator:** Grant Sanderson (3Blue1Brown)
-- **Format:** video, ~27 minutes total; the relevant segment starts at
-  22:22 ("Softmax with temperature") and runs about 4 minutes
+- **Format:** video series with written adaptations; five chapters from
+  2017 ("But what is a Neural Network?", "Gradient descent, how neural
+  networks learn", "Analyzing our neural network", "What is
+  backpropagation really doing?", "Backpropagation calculus")
+- **Level:** introductory, strongly visual; no code
+- **Useful for:** seeing the multi-layer case of everything the
+  neural-networks lesson works by hand on one unit: units, layers,
+  gradient descent, and backpropagation, animated on a real
+  digit-recognition network
+- **Limitation:** the examples are image classification, not language;
+  the site's own chapter numbering restarts for its later
+  transformer lessons, so "chapter 5" is ambiguous across the two series
+- **Link:** <https://www.3blue1brown.com/lessons/neural-networks>
+  (chapter 1; each lesson links to the next)
+
+### Michael Nielsen, *Neural Networks and Deep Learning*
+
+- **Creator:** Michael Nielsen
+- **Format:** free online book, six chapters (Determination Press,
+  2015; last updated December 2019)
+- **Level:** introductory to intermediate; assumes comfort with algebra
+  and some calculus, and reads code
+- **Useful for:** a patient, complete derivation of backpropagation
+  (chapter 2) and a visual argument for why networks can represent
+  arbitrary functions (chapter 4); a strong free text for readers who
+  want the mathematics of the neural-networks lesson in full
+- **Limitation:** the code is written in Python 2.7, which is no longer
+  supported, and the book predates transformers entirely
+- **Link:** <http://neuralnetworksanddeeplearning.com/>
+
+### Andrej Karpathy, *Neural Networks: Zero to Hero*
+
+- **Creator:** Andrej Karpathy
+- **Format:** eight video lectures, building everything from scratch in
+  code; the syllabus page states each lecture's length (the first, on
+  backpropagation, is 2h25m; the GPT lecture is 1h56m; the tokenizer
+  lecture is 2h13m)
+- **Level:** intermediate; requires solid Python and introductory
+  calculus, and is meant to be followed at a keyboard
+- **Useful for:** turning the course's concepts into working code: a
+  hand-written backpropagation engine, a character-level language
+  model, a small GPT, and a byte pair encoding tokenizer
+- **Limitation:** long and hands-on; the page describes the course as
+  ongoing, so its scope may change
+- **Link:** <https://karpathy.ai/zero-to-hero.html>
+
+## Transformers and language models
+
+### 3Blue1Brown, *Transformers, the tech behind LLMs* and *Attention in transformers, step-by-step*
+
+- **Creator:** Grant Sanderson (3Blue1Brown); text adaptations by
+  Justin Sun
+- **Format:** two video lessons with written versions (Deep Learning
+  chapters 5 and 6, April 2024)
 - **Level:** introductory, strongly visual
-- **What it explains particularly well:** why softmax needs the
-  normalizing sum, and how temperature reshapes the distribution — with a
-  direct animated derivation that this course's static equations cannot
-  fully replicate
-- **Recommended start:** 22:22
-- **Why included:** the clearest available visual counterpart to the
-  softmax equation and temperature behavior taught in
-  `learn/softmax-sampling.qmd`
-- **Limitation:** does not discuss the multinomial-logit connection, or
-  where that analogy breaks down — that framing is this course's own
-  contribution, not the video's
-- **Link:** <https://www.3blue1brown.com/lessons/gpt>
+- **Useful for:** the animated counterparts of the course's softmax,
+  temperature, and attention pages: why softmax needs a normalizing
+  sum, how temperature reshapes a distribution, and how query, key, and
+  value vectors combine
+- **Limitation:** leans on the "what is this token looking for" reading
+  of attention more freely than this course does, and does not cover
+  the multinomial-logit bridge or the training objective
+- **Links:** <https://www.3blue1brown.com/lessons/gpt>,
+  <https://www.3blue1brown.com/lessons/attention>
+
+### Jay Alammar, *The Illustrated Transformer*
+
+- **Creator:** Jay Alammar
+- **Format:** illustrated blog post (June 2018; positional-encoding
+  section updated July 2020), with a companion post *The Illustrated
+  GPT-2* (August 2019) on the decoder-only case
+- **Level:** introductory to intermediate; light mathematics
+- **Useful for:** a diagram-by-diagram walk through the original
+  encoder–decoder Transformer, including multi-head attention and the
+  residual and normalization structure the attention deep dive
+  describes in words
+- **Limitation:** describes the 2017 translation model, not a modern
+  decoder-only language model; the GPT-2 post's author lists his own
+  simplifications (words and tokens used interchangeably, inference
+  shown rather than training)
+- **Links:** <https://jalammar.github.io/illustrated-transformer/>,
+  <https://jalammar.github.io/illustrated-gpt2/>
 
 ### Andrej Karpathy, *Deep Dive into LLMs like ChatGPT*
 
 - **Creator:** Andrej Karpathy
-- **Format:** video, 3 hours 31 minutes total; the relevant segment
-  ("inference") starts at 26:01 and runs about 5 minutes
-- **Level:** introductory, plain-language, no equations
-- **What it explains particularly well:** what sampling looks like inside
-  a real autoregressive generation loop — one token drawn, appended, and
-  fed back in — which grounds why "the same prompt can produce different
-  answers" in an actual running system, not just in the abstract
-- **Recommended start:** 26:01
-- **Why included:** the principal narrative anchor for this whole course;
-  this segment specifically supports the sampling and inference claims
-  used in this slice
-- **Limitation:** purely conceptual — no equations, and the segment alone
-  does not cover pretraining, post-training, or tokenization, all of which
-  are addressed elsewhere in the video and in later modules not yet built
-- **Link:** <https://www.youtube.com/watch?v=7xTGNNLPyMI&t=1561s>
+- **Format:** single long video (YouTube, published February 2025)
+- **Level:** introductory, plain language, no equations
+- **Useful for:** the whole pipeline in one sitting, from tokenization
+  through pretraining, post-training, and inference, with real
+  tokenizers and real generation loops on screen; the narrative anchor
+  for this course's short story
+- **Limitation:** no mathematics, and long enough to watch in segments
+- **Link:** <https://www.youtube.com/watch?v=7xTGNNLPyMI>
 
 ### Vaswani et al., *Attention Is All You Need*
 
-- **Creator:** Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit,
-  Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin (Google
-  Brain / Google Research / University of Toronto)
-- **Format:** paper, arXiv:1706.03762 (v7, 2023-08-02); Sections 1 and 4
-  (a few pages) are the relevant sections for this course so far
+- **Creator:** Ashish Vaswani and colleagues (Google Brain, Google
+  Research, University of Toronto)
+- **Format:** paper, arXiv:1706.03762 (v7, 2023-08-02); Sections 3 and 4
+  are the parts the course uses
 - **Level:** technical
-- **What it explains particularly well:** the precise, tabulated
-  computational trade-offs (complexity per layer, sequential operations,
-  maximum path length) between recurrent, convolutional, and self-attention
-  layers — Table 1 is the original source for every such figure used in
-  `learn/why-transformers.qmd`
-- **Recommended start:** Section 1 (Introduction) for the motivation;
-  Section 4 ("Why Self-Attention") and its Table 1 for the numbers
-- **Why included:** the primary source for the architectural claims in
-  `learn/why-transformers.qmd`; verified directly against the live paper
-  before any claim citing it was written
-- **Limitation:** written for a machine-translation encoder-decoder
-  setting, not a modern decoder-only language model, and the paper's tables
-  and figures are reproduced here only as short, attributed textual
-  descriptions, not copied images — the paper's own license
-  (arXiv's non-exclusive distribution license, not a Creative Commons
-  license) does not permit unrestricted figure reuse
+- **Useful for:** the primary source and, unusually for a primary
+  source, still a clear, short statement of the architecture: the
+  attention equations, the block structure, and Table 1's comparison of
+  recurrent and self-attention layers. Recommended as reading, not only
+  as evidence, because the course's why-transformers and attention pages
+  are built directly on it
+- **Limitation:** a machine-translation encoder–decoder model; the
+  decoder-only form used by language models gets one paragraph
 - **Link:** <https://arxiv.org/abs/1706.03762>
-
-### Devlin et al., *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding*
-
-- **Format:** paper, arXiv:1810.04805 (v2, 2019-05-24); the abstract is
-  enough for how this course uses it
-- **Level:** technical
-- **What it explains particularly well:** that one pretrained transformer
-  can be adapted to many downstream tasks with minimal task-specific
-  architecture, the pretraining-and-transfer step in
-  `learn/why-transformers.qmd`
-- **Limitation:** an encoder model, not an autoregressive language model
-- **Link:** <https://arxiv.org/abs/1810.04805>
-
-### Kaplan et al., *Scaling Laws for Neural Language Models*
-
-- **Format:** paper, arXiv:2001.08361 (v1, 2020-01-23); the abstract
-  states the result used
-- **Level:** technical
-- **What it explains particularly well:** the empirical regularity that
-  language-model loss improves systematically with model size, data, and
-  compute over a wide range
-- **Limitation:** an empirical regularity for the studied setup, not a law
-- **Link:** <https://arxiv.org/abs/2001.08361>
-
-### Brown et al., *Language Models are Few-Shot Learners*
-
-- **Format:** paper, arXiv:2005.14165 (v4, 2020-07-22); the abstract
-  states the results used
-- **Level:** technical
-- **What it explains particularly well:** that a large autoregressive
-  transformer can perform tasks from demonstrations placed in its input,
-  without any parameter updates
-- **Limitation:** reports observed performance; does not explain the
-  mechanism
-- **Link:** <https://arxiv.org/abs/2005.14165>
-
-### Sennrich, Haddow, and Birch, *Neural Machine Translation of Rare Words with Subword Units*
-
-- **Format:** paper, arXiv:1508.07909 (v5, 2016-06-10); the abstract and
-  the BPE section are short
-- **Level:** technical
-- **What it explains particularly well:** why a fixed word vocabulary
-  fails on rare and unknown words, and how repeatedly merging frequent
-  character pairs produces a subword vocabulary; the basis for
-  `learn/tokens-context.qmd` §2–§3
-- **Limitation:** written for machine translation, before byte-level
-  variants and the space and punctuation rules later tokenizers adopted
-- **Link:** <https://arxiv.org/abs/1508.07909>
-
-### Radford et al., *Language Models are Unsupervised Multitask Learners* (GPT-2)
-
-- **Format:** paper (OpenAI, 2019); Section 2.2, "Input Representation",
-  is one page
-- **Level:** technical
-- **What it explains particularly well:** the concrete reasoning behind
-  byte-level BPE and the rule that spaces may merge with a following word
-  while punctuation may not, in the authors' own words; also the source of
-  the 50,257-token vocabulary and 1,024-token context figures used in the
-  text-to-numbers lessons
-- **Limitation:** describes one 2019 tokenizer; current tokenizers differ
-  in details
-- **Link:** <https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf>
 
 ### Bengio, Ducharme, Vincent, and Jauvin, *A Neural Probabilistic Language Model*
 
+- **Creator:** Yoshua Bengio, Réjean Ducharme, Pascal Vincent, Christian
+  Jauvin
 - **Format:** paper, Journal of Machine Learning Research 3 (2003),
-  1137–1155; Sections 1 and 2 carry the ideas used
-- **Level:** technical
-- **What it explains particularly well:** the idea of learning a vector
-  for each word jointly with the model that predicts the next word, and
-  why similar words end up with similar vectors; the basis for the
-  embedding sections of `learn/how-created.qmd` and
-  `learn/tokens-context.qmd`
-- **Limitation:** the network is not a transformer, and the vocabulary is
+  1137–1155; Sections 1 and 2 carry the ideas
+- **Level:** technical, but the first two sections are readable without
+  the rest
+- **Useful for:** a clear early statement of two ideas the course
+  depends on, a learned vector per vocabulary entry and next-token
+  maximum likelihood, in a setting simple enough to see them without a
+  transformer around them
+- **Limitation:** the network is not a transformer and the vocabulary is
   words, not subword tokens
 - **Link:** <https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf>
 
-### Liu et al., *Lost in the Middle: How Language Models Use Long Contexts*
+### Hugging Face, *LLM Course*
 
-- **Format:** paper, arXiv:2307.03172 (v3, 2023-11-20); the abstract and
-  figures carry the main result
-- **Level:** technical
-- **What it explains particularly well:** empirical evidence that where a
-  relevant passage sits in a long input affects how well a model uses it
-- **Limitation:** 2023 models; the size of the effect varies by model and
-  task
-- **Link:** <https://arxiv.org/abs/2307.03172>
+- **Creator:** Hugging Face
+- **Format:** free web course, twelve chapters, with runnable code using
+  the Hugging Face libraries; originally an NLP course, since extended
+  to large language models, fine-tuning, and reasoning models
+- **Level:** intermediate; the course states that it requires good
+  Python and is best taken after an introductory deep-learning course
+- **Useful for:** working with real tokenizers, pretrained models, and
+  fine-tuning code after the conceptual lessons here
+- **Limitation:** tied to one library ecosystem, and revised
+  continuously, so chapter contents move
+- **Link:** <https://huggingface.co/learn/llm-course/chapter1/1>
 
-### Lewis et al., *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*
-
-- **Format:** paper, arXiv:2005.11401 (v4, 2021-04-12); the abstract is
-  enough for how this course uses it
-- **Level:** technical
-- **What it explains particularly well:** the idea of combining a model's
-  fixed parametric knowledge with text retrieved at request time
-- **Limitation:** the specific architecture described is one of many ways
-  to do retrieval; the course uses only the general idea
-- **Link:** <https://arxiv.org/abs/2005.11401>
-
-### Shazeer, *Fast Transformer Decoding: One Write-Head is All You Need*
-
-- **Format:** paper, arXiv:1911.02150 (v1, 2019-11-06); the abstract is
-  enough for how this course uses it
-- **Level:** technical
-- **What it explains particularly well:** that token-by-token decoding
-  stores and repeatedly reloads earlier positions' keys and values, and
-  that this is a real cost; the source for the one caching sentence in
-  `learn/training.qmd`
-- **Limitation:** the paper's own proposal (multi-query attention) is not
-  covered by this course
-- **Link:** <https://arxiv.org/abs/1911.02150>
-
-### 3Blue1Brown, *Attention in transformers, step-by-step*
-
-- **Creator:** Grant Sanderson (3Blue1Brown); chapter 6 of the *Deep
-  Learning* series
-- **Format:** video lesson; length and timestamps not verified for this
-  course
-- **Level:** introductory, strongly visual
-- **What it explains particularly well:** the query, key, and value
-  transformations and the weighted combination of values, animated on
-  actual vectors; the visual counterpart to
-  `learn/transformers-attention.qmd` §2–§5
-- **Limitation:** leans on the "what is this token looking for" reading
-  more than this course does; a learning resource, not an evidentiary
-  source for any claim
-- **Link:** <https://www.3blue1brown.com/lessons/attention>
+## Training and post-training
 
 ### Ouyang et al., *Training language models to follow instructions with human feedback*
 
+- **Creator:** Long Ouyang and colleagues (OpenAI)
 - **Format:** paper, arXiv:2203.02155 (v1, 2022-03-04); the abstract and
   Section 3 describe the recipe
 - **Level:** technical
-- **What it explains particularly well:** the supervised-demonstration,
-  reward-model, and reinforcement-learning stages of one influential
-  post-training recipe, and the evidence that post-training changes
-  rater preference far more than scale alone; the source for
-  `learn/posttraining.qmd` §3 and §5
-- **Limitation:** one provider's 2022 recipe; current recipes vary
+- **Useful for:** the primary description of the supervised, then
+  reward-model, then reinforcement-learning recipe; the paper reports
+  that, in its evaluations, outputs from a much smaller post-trained
+  model were preferred to outputs from the much larger pretrained GPT-3
+  model. Recommended as reading because Section 3 is a concrete,
+  well-labeled account of what each stage does
+- **Limitation:** one provider's 2022 recipe; current recipes vary, and
+  the paper's "RLHF" is one route, not post-training as a whole
 - **Link:** <https://arxiv.org/abs/2203.02155>
 
 ### Rafailov et al., *Direct Preference Optimization*
 
+- **Creator:** Rafael Rafailov and colleagues (Stanford)
 - **Format:** paper, arXiv:2305.18290 (v3, 2024-07-29); the introduction
   carries the idea, the body the derivation
-- **Level:** technical
-- **What it explains particularly well:** why the reward-model stage of
-  RLHF can be folded into a direct loss on preference pairs
+- **Level:** technical; the derivation needs some comfort with
+  optimization
+- **Useful for:** seeing why the separate reward model can be folded
+  into a direct loss on preference pairs; a clear demonstration that
+  preference-based post-training can be implemented without the classic
+  separate reward-model and online reinforcement-learning pipeline
 - **Limitation:** its comparison results are for the tasks and scales
   tested; it is not a verdict that one route has replaced the other
 - **Link:** <https://arxiv.org/abs/2305.18290>
 
-### Bai et al., *Constitutional AI: Harmlessness from AI Feedback*
-
-- **Format:** paper, arXiv:2212.08073 (v1, 2022-12-15); the abstract
-  states the two phases
-- **Level:** technical
-- **What it explains particularly well:** feedback generated by a model
-  under written principles, as an alternative source of preference
-  signal
-- **Limitation:** one method at one provider in 2022
-- **Link:** <https://arxiv.org/abs/2212.08073>
-
 ### DeepSeek-AI, *DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning*
 
+- **Creator:** DeepSeek-AI
 - **Format:** paper, arXiv:2501.12948 (v2, 2026-01-04); the abstract and
   introduction distinguish R1-Zero from R1
 - **Level:** technical
-- **What it explains particularly well:** reinforcement learning against
-  rule-based, checkable rewards producing longer reasoning traces, and
-  why the pure-RL model and the released multi-stage model are different
-  objects
-- **Limitation:** one lab's recipe; the traces shown are outputs, not
-  transcripts of internal computation
+- **Useful for:** a detailed public account of reinforcement
+  learning against rule-based, checkable rewards producing long
+  reasoning traces, and of why the pure-RL model and the released
+  multi-stage model are different objects
+- **Limitation:** one lab's recipe; the traces it shows are outputs, not
+  transcripts of internal computation, and other providers publish
+  less
 - **Link:** <https://arxiv.org/abs/2501.12948>
 
-### Anthropic, *Building Effective AI Agents*
+## Agents and practical use
 
+### Anthropic, *Building effective agents*
+
+- **Creator:** Erik Schluntz and Barry Zhang (Anthropic)
 - **Format:** engineering article, published 2024-12-19, accessed
   2026-09-15
 - **Level:** practitioner
-- **What it explains particularly well:** the workflow-versus-agent
-  vocabulary, a short catalogue of composable patterns, and the case for
-  the simplest system that works; the source for `learn/agents.qmd` §4
-- **Limitation:** one provider's guidance for developers; terminology
-  elsewhere differs
+- **Useful for:** the workflow-versus-agent vocabulary this course uses,
+  a short catalogue of composable patterns, and a clear case for the
+  simplest system that works
+- **Limitation:** one provider's guidance for developers; the page now
+  carries its own note that much of the tooling landscape it describes
+  has changed since December 2024 [S-73]
 - **Link:** <https://www.anthropic.com/engineering/building-effective-agents>
-
-### Anthropic, *Tool use with Claude* (API documentation)
-
-- **Format:** documentation page, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** one provider's tool-call round
-  trip end to end: definitions, the structured request, execution by the
-  developer's code, the returned result
-- **Limitation:** product-specific and revised over time
-- **Link:** <https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview>
-
-### Anthropic, Claude Code documentation (overview, skills, permissions)
-
-- **Format:** documentation pages, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** the concrete instances of
-  reusable procedural context and of software-enforced permissions used
-  in `learn/agents.qmd`
-- **Limitation:** product-specific; every detail is as of the access
-  date
-- **Links:** <https://code.claude.com/docs/en/overview>,
-  <https://code.claude.com/docs/en/skills>,
-  <https://code.claude.com/docs/en/permissions>
-
-### Anthropic, *Prompting best practices* (Claude API documentation)
-
-- **Format:** documentation page, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** one provider's current,
-  model-specific prompting guidance, organized by model, including
-  where behavior differs between model generations; used in
-  `learn/using-models-well.qmd` §9 to show that advice is
-  model-dependent
-- **Limitation:** revised with each model release; read it for the
-  model you use, on the day you use it
-- **Link:** <https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices>
-
-### OpenAI, *Prompt engineering* and *Reasoning best practices* (API documentation)
-
-- **Format:** two documentation pages, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** that prompting reasoning
-  models differs from prompting other models, with concrete
-  recommendations (brief instructions, no step-by-step prompting, try
-  without examples first) and a rationale for choosing between model
-  families
-- **Limitation:** tied to OpenAI's current model families; the pages
-  themselves recommend pinning to specific model snapshots
-- **Links:** <https://developers.openai.com/api/docs/guides/prompt-engineering>,
-  <https://developers.openai.com/api/docs/guides/reasoning-best-practices>
-
-### Google, *Prompt design strategies* (Gemini API documentation)
-
-- **Format:** documentation page, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** a third provider's default on
-  examples in prompts, which differs from the other two and makes the
-  point of `learn/using-models-well.qmd` §9 concrete
-- **Limitation:** product-specific and revised over time
-- **Link:** <https://ai.google.dev/gemini-api/docs/prompting-strategies>
-
-### Anthropic, *Best practices for Claude Code* (documentation)
-
-- **Format:** documentation page, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** verification as what lets an
-  agent session close its own loop, exploration and planning before
-  implementation, keeping durable instructions short, and when to start
-  a fresh session; the source for several habits in
-  `learn/using-models-well.qmd`
-- **Limitation:** product-specific; the habits transfer, the commands
-  do not
-- **Link:** <https://code.claude.com/docs/en/best-practices>
-
-### Anthropic, *Context windows* (Claude API documentation)
-
-- **Format:** documentation page, accessed 2026-09-15
-- **Level:** practitioner
-- **What it explains particularly well:** exactly what counts toward one
-  provider's context window and how turns accumulate; the product-specific
-  illustration in `learn/tokens-context.qmd` §8–§9
-- **Limitation:** product-specific and revised over time; figures are as
-  of the access date
-- **Link:** <https://platform.claude.com/docs/en/build-with-claude/context-windows>
 
 ### Anthropic, *Effective context engineering for AI agents*
 
-- **Format:** engineering blog post, published 2025-09-29, accessed
+- **Creator:** Anthropic Applied AI team
+- **Format:** engineering article, published 2025-09-29, accessed
   2026-09-15
 - **Level:** practitioner
-- **What it explains particularly well:** the working definition of
-  context as the tokens included when sampling, and the case for treating
-  it as a finite resource
+- **Useful for:** the working definition of context as a finite resource
+  and the named practices (just-in-time loading, progressive
+  disclosure, compaction, structured notes) that the practical guide
+  uses
 - **Limitation:** one provider's guidance about its own models, not a
-  peer-reviewed result; this course pairs it with Liu et al. above
+  peer-reviewed result; the course pairs it with the empirical study
+  cited in the tokens-and-context deep dive
 - **Link:** <https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents>
 
----
+### Lilian Weng, *LLM Powered Autonomous Agents*
 
-See `sources/source-map.md` for how each specific claim in this slice maps
-to these sources, and `sources/claims.csv` for the machine-checkable
-version of the same table.
+- **Creator:** Lilian Weng
+- **Format:** long blog post, June 2023
+- **Level:** intermediate; survey style, with references
+- **Useful for:** an independent, vendor-neutral survey of the agent
+  pattern (planning, memory, tool use) with case studies and a candid
+  section on challenges; a useful counterweight to reading only
+  provider guidance
+- **Limitation:** written in 2023, before most current agent tooling,
+  and it uses "memory" more loosely than this course, which separates
+  parameters, context, and external state
+- **Link:** <https://lilianweng.github.io/posts/2023-06-23-agent/>
+
+### Hugging Face, *AI Agents Course*
+
+- **Creator:** Hugging Face
+- **Format:** free web course, units 0–4 plus bonus units, with code in
+  several agent frameworks (smolagents, LlamaIndex, LangGraph); the
+  page estimates three to four hours of work per week
+- **Level:** intermediate; assumes basic Python and basic familiarity
+  with language models
+- **Useful for:** building the tool-call loop from this course's agents
+  lesson yourself, in more than one framework
+- **Limitation:** framework-specific code that will date; the page
+  describes itself as a living project
+- **Link:** <https://huggingface.co/learn/agents-course/unit0/introduction>
+
+### Current provider prompting guidance (Anthropic, OpenAI, Google)
+
+- **Creator:** Anthropic; OpenAI; Google
+- **Format:** three living documentation pages, all accessed 2026-09-15;
+  only Google's shows a last-updated date
+- **Level:** practitioner
+- **Useful for:** the point made in the practical guide's section on
+  prompting: read the guidance for the model you are using, on the day
+  you use it, and notice that the three providers give different
+  defaults on the same questions
+- **Limitation:** each is tied to its provider's current models and is
+  revised without notice; do not memorize their syntax
+- **Links:**
+  <https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices>,
+  <https://developers.openai.com/api/docs/guides/prompt-engineering>,
+  <https://ai.google.dev/gemini-api/docs/prompting-strategies>
+
+### Anthropic, Claude Code documentation (best practices, skills, permissions)
+
+- **Creator:** Anthropic
+- **Format:** living documentation pages, accessed 2026-09-15
+- **Level:** practitioner
+- **Useful for:** the concrete product behind the coding-agent examples
+  in the agents lesson and the practical guide: verification as
+  evidence, planning before implementing, skills as context, and
+  software-enforced permissions
+- **Limitation:** product-specific; the habits transfer, the commands
+  and modes do not, and the pages state that their patterns are not
+  fixed
+- **Links:** <https://code.claude.com/docs/en/best-practices>,
+  <https://code.claude.com/docs/en/skills>,
+  <https://code.claude.com/docs/en/permissions>
+
+## Deeper courses and reference
+
+### Stanford CS224N, *Natural Language Processing with Deep Learning*
+
+- **Creator:** Stanford University (Winter 2026 offering taught by Diyi
+  Yang and Yejin Choi)
+- **Format:** university lecture course; slides and notes are public,
+  and the course page links a complete public lecture-video playlist
+  from 2024, while the current term's videos are for enrolled students
+- **Level:** advanced undergraduate or graduate; assumes calculus,
+  linear algebra, probability, and Python
+- **Useful for:** the full academic treatment behind this course's
+  conceptual path, from word vectors and recurrent networks to
+  transformers, pretraining, and post-training, with problem sets
+- **Limitation:** substantial time commitment; the public videos lag the
+  current syllabus by a year or more
+- **Link:** <https://web.stanford.edu/class/cs224n/>

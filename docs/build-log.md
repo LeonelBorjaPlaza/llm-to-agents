@@ -834,3 +834,109 @@ accountability remain necessary. One quiz answer in
 `learn/using-models-well.qmd` (§15, repeated corrections) now presents
 the "more than twice" threshold as a heuristic. Rendered body of the
 short story measures roughly 1,500 words of main-content text plus the diagram, an 8–10 minute read.
+
+## Task: reference layer and site consolidation (2026-09-15, Batch 5)
+
+### Scope
+
+Created `milestones.qmd`, `glossary.qmd`, `_includes/_milestone-rail.qmd`,
+`scripts/check_glossary.py`, and `scripts/check_resources.py`; rewrote
+`resources.qmd` as a curated library; reorganized `_quarto.yml`'s navbar
+and `index.qmd` into Start / Learn / Deep dives / Reference tiers;
+appended reference-layer CSS to `assets/css/site.scss`; added claim rows
+S-64–S-74 and source entries S33–S41 to `sources/`; registered the two
+new checks in `scripts/verify.sh` (now 12 steps). No frozen lesson was
+edited; no contradiction requiring one was found.
+
+### Research performed (bounded)
+
+Primary sources opened on 2026-09-15 for the timeline: the Nature
+abstract page for Rumelhart, Hinton, and Williams (1986); the
+author-hosted PDF of Hochreiter and Schmidhuber (1997); the arXiv
+abstract pages for Sutskever et al. (2014), Bahdanau et al. (2014/15),
+Christiano et al. (2017), Wei et al. (2022), Yao et al. (2022), and
+Mikolov et al. (2013, checked and then omitted); the OpenAI GPT (2018)
+PDF and the BERT v1 PDF (to anchor the GPT year). Rosenblatt (1958)
+could not be opened in full text (publisher wall; no open copy reachable
+programmatically); its bibliographic record was verified via Crossref
+and PubMed and the page cites it without quotation. For the resources
+page, every listed URL was opened; stated dates, chapter counts,
+prerequisites, and caveats were read from each page, and durations are
+given only for the one resource (Karpathy's *Zero to Hero*) whose page
+states them. The *Building effective agents* article was re-opened and
+its new dated note recorded (S-73).
+
+### Selection decisions
+
+Milestones included (17): perceptron; backpropagation 1986; LSTM;
+neural probabilistic LM; seq2seq; attention for translation; subword
+units; the Transformer; pretraining and transfer (GPT, BERT, GPT-2 as
+one entry); scale and in-context behavior (scaling laws and GPT-3 as one
+entry); retrieval-augmented generation; chain-of-thought prompting;
+InstructGPT with Christiano et al. as antecedent; ReAct; DPO; the
+workflow/agent article; DeepSeek-R1. Considered and omitted: word2vec
+(the course's embedding story rests on Bengio 2003), AlexNet and GPU
+history, convolutional sequence models, FlashAttention and
+attention alternatives, open-weight model families, product launches.
+
+Resources retained (19) and removed from the previous 25-entry list:
+BERT, scaling laws, GPT-3, Sennrich, GPT-2, Liu et al., Lewis et al.,
+Shazeer, Constitutional AI, the tool-use and context-windows API pages
+(all remain in the source map and lesson "Continue learning" sections);
+the three provider prompting pages were folded into one entry and the
+Claude Code pages into one entry. Added: 3Blue1Brown's neural-networks
+series, Nielsen's book, Karpathy's *Zero to Hero*, Alammar's illustrated
+posts, the Hugging Face LLM and Agents courses, Lilian Weng's 2023 agent
+survey, and Stanford CS224N.
+
+### Verification (see the run recorded below)
+
+`bash scripts/verify.sh`: steps 1–11 pass; step 12 (offline deck check)
+fails on the pre-existing `cdn.jsdelivr.net` reference in the prototype
+deck, a known non-blocker carried forward unchanged. The root-level
+citation coverage of `scripts/check_sources.py` was confirmed by
+inspection (its `*.qmd` glob) and by a temporary negative test: an
+unregistered claim ID placed in `milestones.qmd` made the check fail and
+was then removed. Human-browser checks (navbar menus, glossary A–Z row,
+milestone rail rendering, print view) are pending a human with a
+browser.
+
+### Final correction pass before commit (2026-09-15, Batch 5)
+
+Precision and housekeeping corrections only; structure unchanged
+(17 milestones, 98 glossary entries, 19 resources). Milestones: the
+Rosenblatt entry was **narrowed** to what the title and the 1986
+abstract support (a hypothetical learning system; the
+perceptron-convergence procedure as an earlier learning method), after
+a second attempt to reach the full text failed (academia.edu and
+ResearchGate require login; the MIT Press reprint and Semantic Scholar
+pages returned 403); its earlier weight-adjustment description was
+dropped, and S-64 rewritten accordingly. "Routine use" (1986) replaced by
+"predates the Transformer by more than three decades"; Sennrich no
+longer presented as the origin of current tokenization; "the
+architecture inside current LLMs" replaced by "dominant foundation for
+many modern LLMs" on both the timeline and the glossary; "established
+the practice" (2018–19) and "capability came from scale and data as
+much as architecture" (2020) replaced by non-exclusive statements; the
+Lewis entry now distinguishes the 2020 architecture from retrieval in
+general; ReAct is "closely resembles", not "is"; the Anthropic 2024
+entry no longer claims wide adoption; DeepSeek-R1 is "a detailed,
+high-profile public case", not "the case that established". All
+retrieval and provenance commentary (paywalls, undated PDFs, copies
+"verified for this course") was moved off the public page into
+`sources/source-map.md` and this log; the GPT 2018 year remains anchored
+by the BERT v1 citation, recorded in S-69. Glossary: eleven definitions
+tightened (big-O as order of growth; BPE; compaction versus handoff;
+context window wording made product-neutral; feed-forward ordering not
+universal; gradient descent stated as the negative-gradient step;
+inference no longer says everything request-specific arrives via
+context; neural network and pretraining say "trainable parameters
+adjusted/updated"; pretraining objective stated exactly; prompt caching
+scoped to a provider feature; transformer prevalence softened).
+Resources: superlatives replaced by defensible wording; the InstructGPT
+result stated as the paper's own comparison; the DPO and DeepSeek
+descriptions narrowed; the public timestamp-debt sentence removed (the
+debt stays as G1 in the source map); the trailing changelog paragraph
+removed (its content is recorded in the Batch 5 entry above).
+`README.md` updated to the current site structure and render/preview
+commands.

@@ -1,0 +1,504 @@
+---
+title: "Milestones"
+subtitle: "How we got from early neural networks to today's language models and agents: a selective timeline for locating the course's ideas in time"
+toc-depth: 2
+---
+
+*This page is a selective intellectual timeline, not a history of
+artificial intelligence. It makes no claim to completeness. Each entry
+was chosen because it helps place a concept taught in this course in
+time; many famous systems, and many important lines of work, are left
+out because the course does not depend on them. Dates are those of the
+cited publication: an arXiv first posting, a journal issue, or a dated
+article. Where a paper was revised later, the entry says so.*
+
+*A note on wording. The history of this field is full of overlapping
+antecedents, and "first", "invented", and "discovered" are rarely safe.
+This page therefore says what a cited source did and how it described
+itself, and it uses words such as "became influential" or "helped
+establish" rather than asserting priority. Where a paper's own abstract
+calls its method new, the entry quotes that self-description rather
+than endorsing it.* [S-74]
+
+## What the timeline should make clear
+
+Read as a whole, the entries below support seven points that are easy
+to get wrong from the outside.
+
+- **Neural networks substantially predate language models.** Learning
+  machines built from adjustable units were being studied in the 1950s.
+- **Backpropagation did not arrive with transformers.** The
+  loss-gradient-update loop this course works by hand was influential
+  in neural-network training by the mid-1980s.
+- **A transformer is a neural-network architecture, not the beginning of
+  neural networks.** It is built from the same units, layers, and
+  training procedure as its predecessors, arranged differently.
+- **Attention had important precursors before 2017.** A learned,
+  weighted selection over input positions was used in translation
+  systems several years before the Transformer made it the whole
+  architecture.
+- **Large pretrained models required more than the architecture.** The
+  practice of pretraining once and reusing, the effect of scale, and
+  very large text corpora were separate developments.
+- **Post-training and agent systems are later layers.** They sit on top
+  of, or around, a pretrained model; neither is a new kind of network.
+- **Today's systems are the result of several interacting lines of
+  work**, not one isolated invention. [S-74]
+
+## The rail
+
+{{< include _includes/_milestone-rail.qmd >}}
+
+## Neural networks before language models
+
+### 1958 · The perceptron {#m-1958}
+
+**What changed.** Frank Rosenblatt's paper in *Psychological Review*
+developed the perceptron, described in its title as "a probabilistic
+model for information storage and organization in the brain", as a
+hypothetical learning system. [S-64] The 1986 backpropagation paper
+listed below names the "perceptron-convergence procedure" as an
+"earlier, simpler" learning method than its own, which locates the
+perceptron as an ancestor of the training loop this course teaches.
+[S-65]
+
+**Why it matters here.** The basic object of the neural-networks lesson,
+a unit that forms a weighted sum and passes it through a nonlinearity,
+is decades older than any language model. Nothing in the perceptron
+involves language; it is here to fix the starting point.
+
+**In the course:** [Neurons, Layers, and Learning](learn/neural-networks.qmd)
+§3–§5.
+
+**Source:** Rosenblatt, F. (1958), "The perceptron: A probabilistic
+model for information storage and organization in the brain",
+*Psychological Review* 65(6), 386–408,
+<https://doi.org/10.1037/h0042519>. The entry describes the paper by
+its title and by how the 1986 paper characterizes it; it does not
+summarize the paper's own mechanism. [S-64]
+
+### 1986 · Backpropagation becomes practically influential {#m-1986}
+
+**What changed.** Rumelhart, Hinton, and Williams described in *Nature*
+what their abstract calls "a new learning procedure, back-propagation,
+for networks of neurone-like units", which "repeatedly adjusts the
+weights of the connections in the network so as to minimize a measure
+of the difference between the actual output vector of the net and the
+desired output vector", so that hidden units "come to represent
+important features of the task domain". [S-65]
+
+**Why it matters here.** This is the loss, gradient, and update loop the
+course works through on a single unit, and this influential 1986
+formulation predates the Transformer by more than three decades. Two
+precisions. The course makes no claim about who first derived the
+gradient computation; the paper is listed for the importance of its
+formulation, and its "new" is the abstract's own word. And the 1986
+paper uses "back-propagation" more broadly, for the whole learning
+procedure that adjusts weights, whereas this course uses
+backpropagation specifically for the gradient computation and reserves
+the update for the optimizer. [S-14]
+
+**In the course:** [Neurons, Layers, and Learning](learn/neural-networks.qmd)
+§8–§10.
+
+**Source:** Rumelhart, D. E., Hinton, G. E., and Williams, R. J. (1986),
+"Learning representations by back-propagating errors", *Nature* 323,
+533–536, <https://www.nature.com/articles/323533a0>.
+
+### 1997 · Long short-term memory {#m-1997}
+
+**What changed.** Hochreiter and Schmidhuber addressed a known
+difficulty in training recurrent networks to use information across
+long time intervals, which their abstract attributes to "insufficient,
+decaying error back flow", by introducing what the abstract calls "a
+novel, efficient, gradient-based method called 'Long Short-Term
+Memory' (LSTM)". The paper reviews earlier recurrent-network work at
+length and builds on an earlier analysis of the problem. [S-66]
+
+**Why it matters here.** Recurrent networks, and LSTM in particular,
+were the established approach to sequence modeling that the Transformer
+paper compared itself against two decades later. [S-21] The sequential
+dependency the course uses to motivate self-attention is a property of
+this family: each step's summary waits for the previous one.
+
+**In the course:** [Why Transformers](learn/why-transformers.qmd) §1–§2.
+
+**Source:** Hochreiter, S., and Schmidhuber, J. (1997), "Long Short-Term
+Memory", *Neural Computation* 9(8), 1735–1780,
+<https://doi.org/10.1162/neco.1997.9.8.1735>; author-hosted copy at
+<https://www.bioinf.jku.at/publications/older/2604.pdf>.
+
+## Learning representations of language
+
+### 2003 · A neural probabilistic language model {#m-2003}
+
+**What changed.** Bengio, Ducharme, Vincent, and Jauvin proposed to
+"learn simultaneously a distributed representation for each word along
+with the probability function for word sequences": each word is mapped
+to a learned vector through a table that is "a $|V| \times m$ matrix of
+free parameters", and the network's parameters are tuned "to maximize
+the log-likelihood of the training data". [S-29] [S-41]
+
+**Why it matters here.** Two of the course's central objects are already
+here: a learned embedding table, and next-token prediction trained by
+maximum likelihood. The network is not a transformer and its vocabulary
+is words rather than subword tokens, and the course does not claim this
+was the first such model; it is a clear early statement of the
+idea.
+
+**In the course:** [From Text to Numbers](learn/how-created.qmd) §5;
+[How Pretraining Works](learn/training.qmd) §3.
+
+**Source:** Bengio, Y., Ducharme, R., Vincent, P., and Jauvin, C. (2003),
+"A Neural Probabilistic Language Model", *Journal of Machine Learning
+Research* 3, 1137–1155,
+<https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf>.
+
+### 2014 · Sequence-to-sequence learning {#m-2014}
+
+**What changed.** Sutskever, Vinyals, and Le presented "a general
+end-to-end approach to sequence learning" that "uses a multilayered
+Long Short-Term Memory (LSTM) to map the input sequence to a vector of a
+fixed dimensionality, and then another deep LSTM to decode the target
+sequence from the vector". [S-67]
+
+**Why it matters here.** This is a recurrent network generating an
+output sequence one token at a time from an encoded input, the
+encoder–decoder shape that the Transformer later kept. The single
+fixed-length vector between encoder and decoder is also the bottleneck
+that the next entry addressed.
+
+**In the course:** [Why Transformers](learn/why-transformers.qmd) §1–§3.
+
+**Source:** Sutskever, I., Vinyals, O., and Le, Q. V. (2014), "Sequence
+to Sequence Learning with Neural Networks", arXiv:1409.3215 (v1
+2014-09-10; v3 2014-12-14), <https://arxiv.org/abs/1409.3215>.
+
+### 2014–2015 · Attention for neural translation {#m-2015-attention}
+
+**What changed.** Bahdanau, Cho, and Bengio conjectured "that the use of
+a fixed-length vector is a bottleneck in improving the performance of
+this basic encoder-decoder architecture" and proposed "allowing a model
+to automatically (soft-)search for parts of a source sentence that are
+relevant to predicting a target word". The paper was posted in
+September 2014 and, per its arXiv listing, accepted at ICLR 2015.
+[S-68]
+
+**Why it matters here.** A learned, weighted selection over input
+positions, the mechanism now generally called attention, was in use
+several years before the Transformer. The 2017 architecture's
+contribution was to build the network from this mechanism rather than
+to add it to a recurrent one. The abstract itself does not use the word
+"attention".
+
+**In the course:** [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§1–§2.
+
+**Source:** Bahdanau, D., Cho, K., and Bengio, Y., "Neural Machine
+Translation by Jointly Learning to Align and Translate", arXiv:1409.0473
+(v1 2014-09-01; v7 2016-05-19), <https://arxiv.org/abs/1409.0473>.
+
+### 2015 · Subword vocabularies {#m-2015-subword}
+
+**What changed.** Sennrich, Haddow, and Birch proposed making a
+translation model "capable of open-vocabulary translation by encoding
+rare and unknown words as sequences of subword units", using "a
+segmentation based on the byte pair encoding compression algorithm".
+[S-27]
+
+**Why it matters here.** The paper helped establish subword
+tokenization as a practical way to handle open vocabularies in neural
+language systems, which is the reason a token in this course is often a
+word fragment rather than a word. Modern tokenizers use several related
+subword- and byte-based approaches, with their own rules about spaces
+and punctuation, so the course treats this as an important step rather
+than the unique origin of current tokenization.
+
+**In the course:** [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§2–§4.
+
+**Source:** Sennrich, R., Haddow, B., and Birch, A., "Neural Machine
+Translation of Rare Words with Subword Units", arXiv:1508.07909 (posted
+August 2015; v5 2016-06-10), <https://arxiv.org/abs/1508.07909>.
+
+## The transformer, pretraining, and scale
+
+### 2017 · The Transformer {#m-2017}
+
+**What changed.** Vaswani and colleagues stated that the dominant
+sequence-transduction models of the time were "based on complex
+recurrent or convolutional neural networks", with LSTM and gated
+recurrent networks "firmly established as state of the art", and
+proposed an architecture built from attention and feed-forward layers
+without recurrence, reporting it "superior in quality while being more
+parallelizable and requiring significantly less time to train" on the
+two translation tasks tested. [S-21] Removing the sequential dependency
+of recurrence is given as a central motivation. [S-16] [S-23]
+
+**Why it matters here.** Transformer architectures became the dominant
+foundation for many modern large language models, and the course's
+why-transformers lesson is built around this paper's own comparison of
+path lengths and sequential operations. Two cautions. The Transformer
+is a neural-network architecture, assembled from the units, layers, and
+training loop of the earlier entries. And its attention mechanism has
+the 2014–2015 precursor above; the paper's defining architectural move
+was to build sequence transduction around attention and feed-forward
+computation rather than recurrence or convolution.
+
+**In the course:** [Why Transformers](learn/why-transformers.qmd);
+[How Self-Attention Moves Information](learn/transformers-attention.qmd).
+
+**Source:** Vaswani, A., et al. (2017), "Attention Is All You Need",
+arXiv:1706.03762 (v1 2017-06-12; v7 2023-08-02),
+<https://arxiv.org/abs/1706.03762>.
+
+### 2018–2019 · Pretraining and transfer {#m-2018}
+
+**What changed.** Three reports helped establish transformer
+pretraining and transfer as a central recipe in natural-language
+processing. Radford, Narasimhan, Salimans, and Sutskever (2018)
+demonstrated "that large gains on these tasks can be realized by
+generative pre-training of a language model on a diverse corpus of
+unlabeled text, followed by discriminative fine-tuning on each specific
+task", using a transformer in a two-stage procedure; the paper names
+earlier pretrain-then-fine-tune work as its closest antecedent. [S-69]
+Devlin and colleagues (BERT, 2018) reported that a pretrained
+bidirectional transformer "can be fine-tuned with just one additional
+output layer" for a wide range of tasks. [S-24] Radford and colleagues
+(GPT-2, 2019) reported that language models "begin to learn these
+tasks without any explicit supervision" when trained on a large corpus
+of web text. [S-44]
+
+**Why it matters here.** The three contributions are distinct:
+generative pretraining followed by task fine-tuning; pretrained
+bidirectional representations with light task adaptation; and task
+behavior appearing without explicit task-specific supervision.
+Together they show that large-scale pretraining, data, compute, and the
+reuse of pretrained models were additional developments beyond the
+Transformer architecture itself. GPT-2 is also the source of the
+course's tokenizer figures.
+
+**In the course:** [Why Transformers](learn/why-transformers.qmd) §5;
+[How Pretraining Works](learn/training.qmd) §6.
+
+**Sources:** Radford, A., Narasimhan, K., Salimans, T., and Sutskever,
+I., "Improving Language Understanding by Generative Pre-Training"
+(OpenAI, 2018),
+<https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf>.
+Devlin, J., et al., "BERT: Pre-training of
+Deep Bidirectional Transformers for Language Understanding",
+arXiv:1810.04805 (v1 2018-10-11; v2 2019-05-24),
+<https://arxiv.org/abs/1810.04805>. Radford, A., et al., "Language
+Models are Unsupervised Multitask Learners" (OpenAI, 2019),
+<https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf>.
+
+### 2020 · Scale, and behavior from demonstrations in the input {#m-2020-scale}
+
+**What changed.** Kaplan and colleagues reported that language-model
+loss "scales as a power-law with model size, dataset size, and the
+amount of compute used for training, with some trends spanning more
+than seven orders of magnitude". [S-25] Brown and colleagues reported
+that GPT-3, "an autoregressive language model with 175 billion
+parameters", could be applied "without any gradient updates or
+fine-tuning, with tasks and few-shot demonstrations specified purely via
+text interaction", and that "scaling up language models greatly
+improves task-agnostic, few-shot performance". [S-26]
+
+**Why it matters here.** These results showed that scale, training
+data, and inference-time demonstrations were important empirical
+developments beyond the architecture itself. The second result shows
+behavior being steered by inference-time context alone, with no
+parameter change: the distinction between parameters and context that
+runs through the whole course. Both are empirical findings for the
+systems and setups studied; the course describes in-context behavior as
+observed task performance, not as learning in the training sense.
+
+**In the course:** [Why Transformers](learn/why-transformers.qmd) §5;
+[Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd) §8.
+
+**Sources:** Kaplan, J., et al., "Scaling Laws for Neural Language
+Models", arXiv:2001.08361 (v1 2020-01-23),
+<https://arxiv.org/abs/2001.08361>. Brown, T., et al., "Language Models
+are Few-Shot Learners", arXiv:2005.14165 (v4 2020-07-22),
+<https://arxiv.org/abs/2005.14165>.
+
+### 2020 · Retrieval-augmented generation {#m-2020-retrieval}
+
+**What changed.** Lewis and colleagues observed that pretrained models'
+"ability to access and precisely manipulate knowledge is still limited"
+and described models "which combine pre-trained parametric and
+non-parametric memory for language generation", the non-parametric
+memory being an index of retrievable text. [S-33]
+
+**Why it matters here.** This became an influential formulation of
+combining pretrained generation with retrieved external information.
+Modern assistants and agents use a broader range of retrieval and
+tool-based mechanisms; the course abstracts from the paper's specific
+architecture, a learned retriever paired with a generator, to the
+general idea of bringing external evidence into inference-time context,
+where it changes the inputs to one call and not the parameters.
+
+**In the course:** [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§10; [From Assistant to Agent](learn/agents.qmd) §7.
+
+**Source:** Lewis, P., et al., "Retrieval-Augmented Generation for
+Knowledge-Intensive NLP Tasks", arXiv:2005.11401 (v4 2021-04-12),
+<https://arxiv.org/abs/2005.11401>.
+
+## Post-training, tools, and agents
+
+### 2022 · Chain-of-thought prompting {#m-2022-cot}
+
+**What changed.** Wei and colleagues reported that "generating a chain of
+thought -- a series of intermediate reasoning steps -- significantly
+improves the ability of large language models to perform complex
+reasoning", elicited by providing "a few chain of thought
+demonstrations" in the prompt, with the effect appearing in
+"sufficiently large" models. [S-70]
+
+**Why it matters here.** It is an early, widely cited demonstration
+that on some difficult tasks, generating intermediate reasoning tokens
+provides additional inference-time computation and can improve
+performance. Note what it is: a prompting technique, applied at
+inference time, with no parameter change. The 2025 entry below is about
+training models to produce such traces. The course treats generated
+reasoning as output, not as a transcript of internal computation.
+
+**In the course:** [Post-training](learn/posttraining.qmd) §7;
+[Using Models Well](learn/using-models-well.qmd) §9.
+
+**Source:** Wei, J., et al., "Chain-of-Thought Prompting Elicits
+Reasoning in Large Language Models", arXiv:2201.11903 (v1 2022-01-28;
+v6 2023-01-10), <https://arxiv.org/abs/2201.11903>.
+
+### 2022 · Instruction following from human feedback {#m-2022-instructgpt}
+
+**What changed.** Ouyang and colleagues fine-tuned a pretrained model
+first on "labeler demonstrations of the desired model behavior" with
+supervised learning, then on "rankings of model outputs" using
+reinforcement learning from human feedback, and reported that outputs
+of their 1.3-billion-parameter post-trained model were preferred to
+those of the 175-billion-parameter pretrained model. [S-46] The
+preference-learning component builds on earlier reinforcement-learning
+work in which a reward was learned from "human preferences between
+pairs of trajectory segments" rather than specified by hand. [S-71]
+
+**Why it matters here.** This is the post-training layer: parameter
+updates after pretraining that shape a model into an assistant. The
+course presents it as one provider's 2022 recipe and as one route
+through a family of methods; "RLHF" names that route, not
+post-training as a whole.
+
+**In the course:** [Post-training](learn/posttraining.qmd) §3 and §5.
+
+**Sources:** Ouyang, L., et al., "Training language models to follow
+instructions with human feedback", arXiv:2203.02155 (v1 2022-03-04),
+<https://arxiv.org/abs/2203.02155>. Christiano, P., et al., "Deep
+reinforcement learning from human preferences", arXiv:1706.03741 (v1
+2017-06-12; v4 2023-02-17), <https://arxiv.org/abs/1706.03741>.
+
+### 2022 · Reasoning traces interleaved with actions {#m-2022-react}
+
+**What changed.** Yao and colleagues explored "the use of LLMs to
+generate both reasoning traces and task-specific actions in an
+interleaved manner", where actions "allow it to interface with external
+sources, such as knowledge bases or environments, to gather additional
+information", for example through a simple Wikipedia API. [S-72]
+
+**Why it matters here.** The model, action, and observation loop this
+course describes, in which the model generates a request, software
+executes it, and the observation returns to the context for the next
+step, closely resembles this pattern, and ReAct is an influential early
+formulation of it in the language-model setting. It is not claimed as
+the origin of agents; tool use and environment interaction have longer
+histories the course does not trace.
+
+**In the course:** [From Assistant to Agent](learn/agents.qmd) §2 and §5.
+
+**Source:** Yao, S., et al., "ReAct: Synergizing Reasoning and Acting in
+Language Models", arXiv:2210.03629 (v1 2022-10-06; v3 2023-03-10, the
+ICLR camera-ready version), <https://arxiv.org/abs/2210.03629>.
+
+### 2023 · Direct preference optimization {#m-2023}
+
+**What changed.** Rafailov and colleagues characterized the reward-model
+route as "a complex and often unstable procedure" and proposed updating
+the language model directly from preference pairs with a
+classification-style loss, "eliminating the need for sampling from the
+LM during fine-tuning", reporting results that matched or improved on
+the reward-model route on the tasks tested. [S-47]
+
+**Why it matters here.** It shows that preference-based post-training is
+a family with more than one implementation, which is why the course
+keeps "RLHF" and "post-training" apart. Both routes remain in use.
+
+**In the course:** [Post-training](learn/posttraining.qmd) §5.
+
+**Source:** Rafailov, R., et al., "Direct Preference Optimization: Your
+Language Model is Secretly a Reward Model", arXiv:2305.18290 (v1
+2023-05-29; v3 2024-07-29), <https://arxiv.org/abs/2305.18290>.
+
+### 2024 · Workflow versus agent {#m-2024}
+
+**What changed.** An engineering article from Anthropic distinguished
+workflows, "systems where LLMs and tools are orchestrated through
+predefined code paths", from agents, "systems where LLMs dynamically
+direct their own processes and tool usage", recommended "finding the
+simplest solution possible", and described the basic building block as
+a model augmented with retrieval, tools, and memory. [S-50] As of this
+course's access date, the article carries a note that much of the
+tooling landscape it describes has changed since December 2024. [S-73]
+
+**Why it matters here.** This is the engineering vocabulary the course
+adopts for the last step of its story. It is engineering guidance, not
+a scientific result and not a product launch, and the course states
+that "agent" terminology is not universally standardized.
+
+**In the course:** [From Assistant to Agent](learn/agents.qmd) §4.
+
+**Source:** Anthropic, "Building effective agents", published
+2024-12-19, accessed 2026-09-15,
+<https://www.anthropic.com/engineering/building-effective-agents>.
+
+### 2025 · Reinforcement learning against checkable rewards {#m-2025}
+
+**What changed.** The DeepSeek-R1 report stated that reasoning ability
+"can be incentivized through pure reinforcement learning (RL),
+obviating the need for human-labeled reasoning trajectories", using
+rule-based rewards on tasks whose answers can be checked; the resulting
+model, R1-Zero, produced steadily longer reasoning traces but suffered
+from poor readability and language mixing, and the released R1 was
+trained through a multi-stage framework combining supervised
+fine-tuning, rejection sampling, and reinforcement learning. [S-49]
+
+**Why it matters here.** It provides a detailed, high-profile public
+case in which reinforcement learning with rule-based, checkable rewards
+produced increasingly long reasoning traces, and it is the reason the
+course keeps R1-Zero (reinforcement learning without supervised
+fine-tuning as a preliminary step) and R1 (a multi-stage recipe with
+supervised stages and reinforcement learning) apart. It is one lab's
+published recipe; other providers have published less, and the course
+generalizes neither recipe to reasoning-oriented models as a class.
+Producing reasoning traces was a trained behavior here, where the 2022
+prompting entry elicited them at inference time.
+
+**In the course:** [Post-training](learn/posttraining.qmd) §7.
+
+**Source:** DeepSeek-AI, "DeepSeek-R1: Incentivizing Reasoning
+Capability in LLMs via Reinforcement Learning", arXiv:2501.12948 (v1
+2025-01-22; v2 2026-01-04), <https://arxiv.org/abs/2501.12948>.
+
+## What this timeline leaves out
+
+Several lines of development that mattered are absent because the
+course does not build on them: the hardware and software that made
+large training runs feasible; the construction and filtering of
+training corpora; convolutional networks and the vision work that
+shaped deep learning in the early 2010s; earlier word-vector methods;
+alternatives to dense attention; open-weight model families; evaluation
+methodology; and most of the commercial products through which people
+meet these systems. Omission here is a statement about the course's
+scope, not about importance. [S-74]
+
+For the meaning of any term used above, see the [glossary](glossary.qmd).
+For what to read next, see [resources](resources.qmd).

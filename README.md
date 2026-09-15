@@ -11,31 +11,35 @@ wording, and every commit.
 
 ## Status
 
-**This site is still under construction, not the finished course.** The
-website is the primary, standalone learning product; the live talk is a
-carefully selected, lower-math path through it, with no required live
-equation or demonstration (see `CLAUDE.md`'s product-hierarchy note).
+**The website is complete as a standalone learning resource; the full live
+talk is not yet built.** The website is the primary product; the live
+talk is a carefully selected, lower-math path through it, with no required
+live equation or demonstration (see `CLAUDE.md`'s product-hierarchy note).
 
 Currently present:
 
-- a minimal site shell (`index.qmd`, `resources.qmd`);
-- three complete, standalone learning modules (`learn/softmax-sampling.qmd`,
-  `learn/neural-networks.qmd`, `learn/why-transformers.qmd`);
-- three slides from an earlier prototype iteration of the talk design,
-  covering logits/softmax, training/maximum likelihood, and
-  sampling/temperature (`slides/llms-to-agents.qmd`) — left as a historical
-  checkpoint, not rebuilt to the current talk design in this batch;
-- one interactive (a softmax-and-sampling laboratory) with a no-JavaScript
-  fallback;
-- a source map and claim ledger (`sources/`) covering the sources used so
-  far;
+- **Start:** `index.qmd` and `short-story.qmd` (the whole course in about
+  ten minutes, with a link into the lesson that develops each step);
+- **Learn**, the main path in order: `learn/how-created.qmd`,
+  `learn/neural-networks.qmd`, `learn/why-transformers.qmd`,
+  `learn/training.qmd`, `learn/posttraining.qmd`, `learn/agents.qmd`,
+  `learn/using-models-well.qmd`;
+- **Deep dives**, optional technical pages: `learn/tokens-context.qmd`,
+  `learn/transformers-attention.qmd`, `learn/softmax-sampling.qmd` (the
+  last includes a softmax-and-sampling laboratory with a no-JavaScript
+  fallback);
+- **Reference:** `milestones.qmd` (a selective timeline), `glossary.qmd`,
+  and `resources.qmd` (a curated learning library, distinct from the
+  evidence ledger in `sources/`);
+- three slides from an earlier prototype iteration of the talk design
+  (`slides/llms-to-agents.qmd`), left as a historical checkpoint;
+- a source map and claim ledger (`sources/`) covering every cited claim;
 - a small local editing Skill (`.claude/skills/reader-first-course-editor/`)
   for prose polishing that preserves technical meaning and claim IDs.
 
-Not yet built: the remaining learning modules, the glossary, the full talk,
-the agent-loop interactive, and the full curated resource library. See
-`docs/prompts/01-research-and-plan.md`, `docs/site-architecture.md`, and
-`docs/live-talk-storyboard.md` for the planned design.
+Not yet built: the full talk deck matching `docs/live-talk-storyboard.md`.
+See `docs/site-architecture.md` and `docs/decisions.md` for the design
+record.
 
 ## Building
 
@@ -44,7 +48,9 @@ dependency — the plain markdown engine is used throughout; no R, Python, or
 Jupyter code cells are executed at render time.
 
 ```bash
-quarto render
+cd /projects/from-tokens-to-agents/course-site
+quarto render      # build the site and deck to _site/
+quarto preview     # serve the site locally with live reload
 ```
 
 Output goes to `_site/` (gitignored). Open `_site/index.html` or
@@ -56,34 +62,36 @@ Output goes to `_site/` (gitignored). Open `_site/index.html` or
 bash scripts/verify.sh
 ```
 
-Runs, in order: a full render, an internal-link check, a source-claim
-reconciliation check, a numerical check of the softmax fallback table, a
-numerical check of the neuron/backprop worked example, a numerical check of
-the transformer path-length worked example, and an offline-dependency check
-on the rendered slide output. See `docs/build-log.md` for the most recent
-run's results, including any check that requires a human with a real browser
-(this environment has no headless browser installed, by design — see the
-implementation plan, decision D5).
+Runs, in order: a full render, an internal-link and anchor check, a
+source-claim reconciliation check (covering every root-level and `learn/`
+page), six numerical checks of the worked examples, a glossary structure
+check, a curated-resources check, and an offline-dependency check on the
+rendered slide output. See `docs/build-log.md` for the most recent run's
+results, including any check that requires a human with a real browser
+(this environment has no headless browser installed, by design).
 
 ## Repository layout
 
 ```
 _quarto.yml              website + deck project configuration
-index.qmd                site home page
-resources.qmd            sources used so far, annotated
-learn/                    self-contained learning modules (three, so far)
+index.qmd                site home page (Start / Learn / Deep dives / Reference)
+short-story.qmd          the whole course in about ten minutes
+milestones.qmd           selective timeline (reference)
+glossary.qmd             term reference, alphabetical with stable anchors
+resources.qmd            curated learning library (reference)
+learn/                    seven main-path lessons and three optional deep dives
 slides/                   the Reveal.js deck (three slides, historical prototype)
-_includes/                shared interactive markup, reused by deck and site
+_includes/                shared markup: interactive, agent loop, checklist, milestone rail
 assets/                   CSS and JavaScript (vanilla, no build step)
 sources/                  source map and machine-checkable claim ledger
-scripts/                  verification scripts
+scripts/                  verification scripts (see scripts/verify.sh)
 docs/                     planning prompt, decisions, build log, reviews, and design docs
 .claude/skills/           local project Skill for reader-first lesson editing
 ```
 
 ## Sources and claims
 
-Every substantive factual claim in this slice carries a claim ID (e.g.
+Every substantive factual claim on the site carries a claim ID (e.g.
 `[S-01]`) that resolves in `sources/claims.csv` and is described in prose in
 `sources/source-map.md`. `scripts/check_sources.py` checks this
 mechanically in both directions: no claim ID without a source, and no unused

@@ -12,14 +12,13 @@ checks; a human reviewer approves substantive choices, final wording, and
 every commit.
 
 ::: {.callout-important}
-## This site is still under construction
+## What is built, and what is not
 
-This site currently contains **three** complete learning modules and
-**three** of the eventual talk's slides — enough to prove that the
-website, the deck, and the browser-based interactive all work together,
-offline, from one set of sources. It is not the finished course. The
-remaining modules, the full talk, and the curated resource library are
-planned but not yet built.
+The website is complete as a standalone learning resource: the short
+story, the seven main-path lessons, the three optional deep dives, and
+the reference layer (milestones, glossary, resources). The full live
+talk is not yet built; the three slides linked below are a historical
+prototype from an earlier design.
 :::
 
 ## How the two products relate
@@ -33,11 +32,14 @@ term, but carrying no required live equation and no required live
 demonstration — both live in full on the site, which the talk points to
 rather than reproduces.
 
-## Available now
+## Start here
 
 - [**The short story**](short-story.qmd) — the whole course in about ten
   minutes: one mental model from the text you type to a system that uses
   tools, with a link into the lesson that develops each step. Start here.
+
+## Learn: the main path, in order
+
 - [**From text to numbers**](learn/how-created.qmd) — what has to happen
   before a language model can learn from text: tokens, token IDs,
   embedding vectors, and next-token targets, traced through one sentence.
@@ -49,13 +51,6 @@ rather than reproduces.
   standalone module on the sequence-processing problem self-attention was
   built to solve, with a worked example checked against the original
   paper's own stated bounds.
-- [**Deep dive: how self-attention moves information**](learn/transformers-attention.qmd)
-  — optional; queries, keys, values, causal masking, multi-head
-  attention, and where attention sits inside a transformer block, with a
-  worked numerical example.
-- [**Softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
-  complete, standalone learning module, including a live softmax-and-
-  sampling laboratory and a no-JavaScript fallback.
 - [**How pretraining works**](learn/training.qmd) — the autoregressive
   objective, negative log-likelihood, the optimization loop, what
   pretraining does and does not teach, and how it differs from
@@ -73,15 +68,38 @@ rather than reproduces.
   guide: task selection, task specification, context, source of truth,
   tools, verification, bounded units, handoffs, model selection, and an
   operating checklist, each tied to a mechanism taught earlier.
+
+## Deep dives: optional technical pages
+
 - [**Deep dive: tokens, embeddings, and the context window**](learn/tokens-context.qmd)
   — optional; why models use subword units, what the embedding table does
   and does not encode, and what a finite context window implies in
   practice.
+- [**Deep dive: how self-attention moves information**](learn/transformers-attention.qmd)
+  — optional; queries, keys, values, causal masking, multi-head
+  attention, and where attention sits inside a transformer block, with a
+  worked numerical example.
+- [**Deep dive: softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
+  complete, standalone learning module, including a live softmax-and-
+  sampling laboratory and a no-JavaScript fallback.
+
+## Reference
+
+- [**Milestones**](milestones.qmd) — a selective timeline, from the
+  perceptron to reasoning-oriented reinforcement learning, for locating
+  each of the course's concepts in time.
+- [**Glossary**](glossary.qmd) — the technical terms the course uses,
+  defined as the course uses it, with the distinction most likely to
+  cause confusion and a link to the lesson that teaches it.
+- [**Resources**](resources.qmd) — a curated learning library: what to
+  read or watch next, by part of the course, with a caveat for each.
+
+## Slides
+
 - [**Slides**](slides/llms-to-agents.qmd) — three slides from an earlier
   prototype iteration of the talk design (logits and softmax, training and
   maximum likelihood, sampling and temperature). Left as a historical
   checkpoint; not rebuilt to the current talk design in this batch.
-- [**Resources**](resources.qmd) — the sources used so far, annotated.
 
 ## Sources
 

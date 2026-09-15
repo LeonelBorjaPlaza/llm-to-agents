@@ -22,14 +22,19 @@ extended here to mean no module may silently assume another module either.
 | `learn/training.qmd` | Planned, **rescoped**: since gradient descent and backpropagation basics now live in `learn/neural-networks.qmd`, this module focuses on corpus-scale maximum likelihood, the pretraining→post-training family (correction A, CC3), and the autoregressive generation loop — not re-deriving backpropagation | 10 (full), 12 (full), 14 | `learn/neural-networks.qmd` (linked) |
 | `learn/posttraining.qmd` | Planned — may be folded into `learn/training.qmd` rather than kept separate; decide when built | 14, 15 | `learn/training.qmd` (linked) |
 | `learn/agents.qmd` | Planned | 16–20 | none required; benefits from `learn/why-transformers.qmd`'s architecture vocabulary (linked) |
-| `glossary.qmd` | Planned — the concept index tying model/transformer/attention/assistant/workflow/Skill/tool/agent together explicitly | all | none |
+| `glossary.qmd` | **Built** (reference-layer batch, 2026-09-15) — alphabetical, 98 entries with stable `{#id}` anchors, each linking to the lesson that teaches it; checked by `scripts/check_glossary.py` | all | none |
+
+## Navigation tiers (reference-layer batch, 2026-09-15)
+
+The navbar exposes four tiers: **Start** (Home, The Short Story), **Learn** (the seven main-path lessons, numbered in order), **Deep dives** (the three optional technical pages), and **Reference** (Milestones, Glossary, Resources); the prototype deck is linked last as "Slides (prototype)". `index.qmd` mirrors the same tiers.
 
 ## Non-module pages
 
 | Page | Status |
 |---|---|
 | `index.qmd` | **Built** |
-| `resources.qmd` | **Built** — grows as each module adds sources |
+| `resources.qmd` | **Built**, and **re-curated** in the reference-layer batch (2026-09-15): 19 entries in five categories, distinct from the evidence ledger in `sources/`; checked by `scripts/check_resources.py` |
+| `milestones.qmd` | **Built** (reference-layer batch, 2026-09-15) — a selective 17-entry timeline with a static rail (`_includes/_milestone-rail.qmd`) reusable by the deck |
 | `slides/llms-to-agents.qmd` | **Built**, historical prototype under the superseded design; not rebuilt to the new storyboard in this batch |
 | A rebuilt full deck matching `docs/live-talk-storyboard.md` | Planned, not started |
 | `docs/practical-guide-spec.md`'s guide itself | Planned — this batch delivers the spec only, not the guide |

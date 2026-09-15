@@ -1,0 +1,1053 @@
+---
+title: "Glossary"
+subtitle: "What each term means in this course, and where it is taught"
+toc-depth: 2
+---
+
+*This page is a reference, not a lesson. It answers one question: "I met
+this term somewhere in the course; what does it mean here?" Each entry
+gives a plain definition, the distinction most likely to cause confusion,
+and the page that teaches the concept. Definitions follow the lessons;
+where a term is used differently elsewhere in machine learning or
+statistics, the entry says so.*
+
+::: {.glossary-nav}
+[A](#a) · [B](#b) · [C](#c) · [D](#d) · [E](#e) · [F](#f) · [G](#g) ·
+[H](#h) · [I](#i) · [K](#k) · [L](#l) · [M](#m) · [N](#n) · [O](#o) ·
+[P](#p) · [Q](#q) · [R](#r) · [S](#s) · [T](#t) · [U](#u) · [V](#v) ·
+[W](#w)
+:::
+
+## A {#a}
+
+### Activation function {#activation-function}
+
+The fixed nonlinear function a unit applies after its weighted sum, such
+as the logistic sigmoid, which squashes any real number into the range
+between 0 and 1. Without it, stacked layers would still compute an affine
+function of the input, so it is what lets a network represent nonlinear
+relationships. The word "activation" is also used for the value a unit
+outputs on a particular input; that value is computed from the input,
+not learned, and is not a parameter.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §4.
+See also [affine function](#affine-function), [unit](#unit).*
+
+### Adam {#adam}
+
+An optimizer that adapts the step size for each parameter using running
+averages of past gradients; the original Transformer was trained with
+it. [S-42] Like plain gradient descent, it consumes the gradients that
+backpropagation computed and performs the parameter update.
+
+*Taught in [How Pretraining Works](learn/training.qmd) §4. See also
+[optimizer](#optimizer).*
+
+### Affine function {#affine-function}
+
+A weighted sum plus a constant. Composing affine functions gives another
+affine function, however many are stacked, which is why a network needs
+a nonlinearity between layers. [S-15]
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §3.*
+
+### Agent {#agent}
+
+In this course, a system in which software repeatedly calls a model with
+an updated context, executes the tool requests the model generates under
+permission rules, and returns the observations for the next call, so
+that the model directs its own sequence of steps and tool use within
+constraints. [S-56] An agent is not a new kind of neural network: the
+model inside is an ordinary transformer, and the agentic behavior comes
+from the loop, the tools, the state, and the controls around it. The
+word has no universally fixed definition; a system whose path is mostly
+written in advance is better called a workflow. [S-50]
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §4–§6. See also
+[agent loop](#agent-loop), [workflow](#workflow).*
+
+### Agent loop {#agent-loop}
+
+The cycle that runs an agent: assemble a context from the objective and
+the current state; call the model; receive either a tool request or a
+response; check a request against permissions; execute it; place the
+observation into the context; call the model again; continue, ask the
+user, or stop. The model does not keep running between calls;
+continuity is supplied by the context and state the software maintains.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §5.*
+
+### Argmax {#argmax}
+
+The single highest-scoring candidate. Selecting the next token by argmax
+is deterministic and introduces no variation; softmax with the
+temperature approaching zero converges to it when the top score is
+unique. [S-10] Deterministic decoding can still produce unsupported
+text.
+
+*Taught in [Softmax, Sampling, and Temperature](learn/softmax-sampling.qmd)
+§4 and §6. See also [sampling](#sampling), [decoding](#decoding).*
+
+### Assistant {#assistant}
+
+The product a person actually types to: a post-trained model plus a
+system prompt, management of the conversation state, often retrieval and
+tools, safety checks, and other product logic. It is not identical to
+the model. Much of its behavior can be changed with no training run at
+all, by changing what enters the context.
+
+*Taught in [Post-training](learn/posttraining.qmd) §9. See also
+[model](#model), [system prompt](#system-prompt).*
+
+### Attention {#attention}
+
+See [self-attention](#self-attention). When this course says "attention"
+without qualification it means causal self-attention inside a
+transformer block, one mechanism among several, not the transformer as a
+whole.
+
+### Attention head {#attention-head}
+
+One instance of the self-attention computation, with its own learned
+query, key, and value matrices. A transformer layer runs several heads in
+parallel so that several attention patterns operate at once over the
+same positions; this is multi-head attention, and the heads' outputs are
+concatenated and passed through one more learned matrix. [S-37] Nothing
+in the architecture or the training objective assigns a head a fixed,
+human-readable job. [S-45]
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§6.*
+
+### Attention weight {#attention-weight}
+
+The nonnegative number, summing to one across the permitted source
+positions, that sets how much of each source's value vector is added
+into a destination position, in one head at one layer. It is a local
+mixing weight. It is not a probability that one token caused another,
+and it is not by itself an explanation of the model's output, which
+depends on every head, every layer, and the feed-forward sublayers.
+[S-45]
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§3 and §8. Not to be confused with a [weight](#weight) in the sense of a
+parameter.*
+
+### Autoregressive model {#autoregressive-model}
+
+A model that predicts each token from the tokens before it, so that the
+probability of a whole sequence is the product of one-step conditional
+probabilities. [S-40] Generation appends each selected token to the
+context and predicts the next; training evaluates every position of a
+known sequence in one forward pass under the causal mask.
+
+*Taught in [How Pretraining Works](learn/training.qmd) §1–§2.*
+
+## B {#b}
+
+### Backpropagation {#backpropagation}
+
+The procedure that computes the gradient of the loss with respect to
+every parameter, by applying the chain rule backward from the loss
+through the network in one backward sweep, reusing values saved from the
+forward pass. It computes gradients and does nothing else; a separate
+optimizer step uses those gradients to change the parameters. [S-14]
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §9.
+See also [optimizer](#optimizer).*
+
+### Base model {#base-model}
+
+A model that has been pretrained but not post-trained. Given an
+instruction it may answer it, continue it, or produce more text like it,
+because all of those follow such text somewhere in the training data.
+
+*Taught in [Post-training](learn/posttraining.qmd) §1. See also
+[assistant](#assistant).*
+
+### Bias {#bias}
+
+A parameter added to a unit's weighted sum regardless of the inputs,
+shifting the result up or down. In this course the word always means
+this parameter, not a statistical or social bias.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd)
+§2–§3.*
+
+### Big-O notation {#big-o-notation}
+
+Shorthand for an asymptotic upper order of growth as the input size $n$
+increases. In the comparisons used here, $O(n)$, $O(n^2)$, and $O(1)$
+stand for linear-order, quadratic-order, and constant-order scaling.
+The course uses it to compare recurrent and self-attention layers.
+
+*Taught in [Why Transformers](learn/why-transformers.qmd) §1.*
+
+### Byte pair encoding (BPE) {#byte-pair-encoding}
+
+A procedure for building a subword vocabulary: start from single
+characters or bytes and repeatedly merge the most frequent adjacent pair
+into a new vocabulary entry, so that frequent sequences can become
+larger vocabulary units while rarer forms can be represented from shared
+pieces. Adapted from a data-compression algorithm; it sits between
+character-level and byte-level units and whole words, and many current
+tokenizers use it or a variant, often with a byte-level base. [S-27]
+[S-28]
+
+*Taught in [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§2–§3.*
+
+## C {#c}
+
+### Causal mask {#causal-mask}
+
+The rule, applied inside self-attention before softmax, that gives zero
+weight to positions later than the current one, so a position can use
+itself and earlier positions but never later ones. [S-22] It preserves
+next-token prediction during training, when the whole sequence is
+present, and it is what lets every position's loss be computed in one
+forward pass.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§4 and [How Pretraining Works](learn/training.qmd) §2.*
+
+### Compaction {#compaction}
+
+Compressing or summarizing accumulated context into a smaller
+representation so that work can continue with less context. Some systems
+perform this automatically as the context nears its limit. [S-61] A
+handoff is a deliberate, human-written state summary that serves a
+related purpose; the two are not the same operation.
+
+*Taught in [Using Models Well](learn/using-models-well.qmd) §3. See also
+[handoff](#handoff).*
+
+### Context {#context}
+
+Everything the model conditions on for one call: the prompt,
+instructions, the conversation so far, retrieved text, tool definitions
+and tool results, supplied files, and the tokens generated so far. All
+of it is tokens in one finite sequence, and none of it changes a
+parameter. The course also calls it inference-time context, to keep it
+apart from training. [S-31]
+
+*Taught in [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§8–§9 and [How Pretraining Works](learn/training.qmd) §8. See also
+[context window](#context-window), [parameter](#parameter).*
+
+### Context engineering {#context-engineering}
+
+Managing what goes into the context at each step: the smallest set of
+high-signal tokens sufficient for the next step, loaded when a step needs
+it rather than all at the start, with stale or duplicated material
+removed. [S-34] Named practices include just-in-time loading,
+progressive disclosure, compaction, and handoffs. [S-61]
+
+*Taught in [Using Models Well](learn/using-models-well.qmd) §3.*
+
+### Context window {#context-window}
+
+The finite sequence of tokens a model can reference when producing
+output, including the output produced so far; its size is a fixed
+maximum number of tokens that differs by model. [S-31] It is distinct
+from the parameters and from the training data: each model step receives
+a finite context supplied or managed by the surrounding system, and
+products may persist information externally and supply it again on later
+steps or requests.
+
+*Taught in [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§8.*
+
+### Contextual representation {#contextual-representation}
+
+The vector at a position after the network's layers have updated it
+using the other positions. Unlike the token's embedding, which is the
+same wherever the token occurs, it depends on the surrounding text: the
+token ` bank` in "river bank" and in "central bank" starts from the same
+embedding and ends with different representations.
+
+*Taught in [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§7. See also [embedding](#embedding).*
+
+### Cross-entropy {#cross-entropy}
+
+The loss that measures how little probability a predicted distribution
+gives to the observed outcome. For a softmax distribution over a
+vocabulary it is the same quantity as the negative log-likelihood of the
+observed next token.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §7
+and [How Pretraining Works](learn/training.qmd) §3. See also
+[negative log-likelihood](#negative-log-likelihood).*
+
+## D {#d}
+
+### Decoder and encoder {#decoder-and-encoder}
+
+Two ways of using self-attention. An encoder lets every position attend
+to every other, to represent a complete input; a decoder applies the
+causal mask so that each position attends only to itself and earlier
+positions, which is what an autoregressive language model needs. [S-22]
+[S-24] When this course says "self-attention" without qualification it
+means the causal, decoder form.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§4 and [Why Transformers](learn/why-transformers.qmd) §3.*
+
+### Decoding {#decoding}
+
+The rule that selects the next token from the probability distribution
+the model produces: deterministically, by argmax, or stochastically, by
+sampling. Decoding settings such as temperature change the output
+without changing any parameter.
+
+*Taught in [Softmax, Sampling, and Temperature](learn/softmax-sampling.qmd)
+§6. See also [argmax](#argmax), [sampling](#sampling).*
+
+### Direct preference optimization (DPO) {#direct-preference-optimization}
+
+A preference-based post-training method that updates the language model
+directly from comparison pairs, using a loss that resembles ordinary
+classification, given a fixed preference dataset. It removes the
+separate reward model and the online reinforcement-learning loop of the
+classic RLHF pipeline. [S-47] Both routes remain in use.
+
+*Taught in [Post-training](learn/posttraining.qmd) §5. See also
+[reinforcement learning from human feedback](#rlhf).*
+
+### Dot product {#dot-product}
+
+The sum of the products of corresponding entries of two vectors of the
+same length, giving one number. Self-attention uses it to compare a
+query with each key.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§2–§3.*
+
+## E {#e}
+
+### Embedding {#embedding}
+
+The learned vector that a token ID selects from the embedding table, a
+matrix with one row per vocabulary entry. The entries are parameters,
+adjusted during training so that prediction improves. [S-29] They are
+not dictionary definitions, and nearness of two rows reflects
+statistical relationships in the training text rather than a property
+anyone specified.
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §5 and
+[Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd) §6.
+See also [contextual representation](#contextual-representation),
+[token ID](#token-id).*
+
+### External state {#external-state}
+
+Everything the software or the tools persist outside the model: files
+an agent writes, a repository, database rows, saved notes, stored
+summaries. It can be read back into a later context, in this task or a
+future one; doing so changes no parameter.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §7. See also
+[state](#state), [memory](#memory).*
+
+## F {#f}
+
+### Feed-forward layer (MLP) {#feed-forward-layer}
+
+One of the main computations in a transformer block: two linear
+transformations with a nonlinearity between them, applied to each
+position separately and identically, with no exchange between positions.
+[S-38] [S-19] Named architectures arrange and order the block's sublayers
+differently.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§7. See also [transformer block](#transformer-block).*
+
+### Fine-tuning {#fine-tuning}
+
+Further training of an already-trained model on new data, changing its
+parameters. Supervised instruction tuning is one form of it; work on
+pretraining and transfer showed that one pretrained model could be
+fine-tuned for many different tasks. [S-24]
+
+*Taught in [Post-training](learn/posttraining.qmd) §3 and
+[Why Transformers](learn/why-transformers.qmd) §5.*
+
+### Forward pass {#forward-pass}
+
+Running the network end to end on a given input with the current
+parameters to produce an output. During training it produces the
+predictions the loss is computed from; backpropagation then works
+backward through the same computation.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §6.*
+
+## G {#g}
+
+### Gradient {#gradient}
+
+For each parameter, how fast the loss changes for a small change in that
+parameter with the others held fixed. Computed by backpropagation; used
+by the optimizer.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §8.*
+
+### Gradient descent {#gradient-descent}
+
+The update rule that moves the parameter vector a small step, scaled by
+the learning rate, in the negative-gradient direction, the direction of
+steepest local decrease. With a sufficiently small step this is locally
+downhill; an optimizer need not update every parameter by a nonzero
+amount. Pretraining runs this loop an enormous number of times on
+mini-batches, usually with a more elaborate optimizer.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §8
+and §10, and [How Pretraining Works](learn/training.qmd) §4.*
+
+## H {#h}
+
+### Handoff {#handoff}
+
+A compact state summary written to carry work into a fresh session or a
+different model: the objective, the current state, the decisions already
+settled, the source of truth, the open issues, the next bounded unit,
+and what must not change. It replaces the transcript rather than
+preserving it.
+
+*Taught in [Using Models Well](learn/using-models-well.qmd) §8. See also
+[compaction](#compaction).*
+
+## I {#i}
+
+### In-context (few-shot) behavior {#in-context-behavior}
+
+A model performing a task from demonstrations or instructions placed in
+its input, without any parameter update. GPT-3 was reported to do this
+across many tasks, with the ability strengthening with scale. [S-26] The
+course describes it as observed task performance, not as learning in the
+training sense.
+
+*Taught in [Why Transformers](learn/why-transformers.qmd) §5.*
+
+### Inference {#inference}
+
+Using a trained model, with its parameters fixed, to produce output from
+a context. Request-specific information the model conditions on is
+supplied through inference-time context; decoding settings and
+surrounding product logic can also affect the resulting output without
+changing model parameters. Training and post-training are the only
+stages that change parameters.
+
+*Taught in [How Pretraining Works](learn/training.qmd) §8–§9.*
+
+### Inference-time context {#inference-time-context}
+
+See [context](#context).
+
+### Instruction tuning {#instruction-tuning}
+
+See [supervised fine-tuning](#supervised-fine-tuning).
+
+## K {#k}
+
+### Key {#key}
+
+In self-attention, the vector each source position is transformed into
+for comparison with the destination's query; the dot product of query
+and key gives the compatibility score. [S-36] One of three learned
+transformations, with the query and the value.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§2–§3. See also [query](#query), [value](#value).*
+
+### Key/value caching {#key-value-caching}
+
+Storing the keys and values computed for earlier positions during
+token-by-token generation and reusing them at each step instead of
+recomputing them. [S-43] An efficiency measure that leaves the
+mathematics of autoregression unchanged; cached tokens still occupy the
+context window.
+
+*Taught in [How Pretraining Works](learn/training.qmd) §9.*
+
+## L {#l}
+
+### Language model, large language model (LLM) {#language-model}
+
+A model that assigns probabilities to sequences of tokens; the ones in
+this course do so autoregressively, predicting each next token from the
+ones before it. "Large" adds only scale. In the course's vocabulary
+hierarchy, the LLM is the trained model, a transformer is its
+architecture, and self-attention and the feed-forward layer are two
+distinct mechanisms inside each transformer block. [S-19]
+
+*Taught in [The Short Story](short-story.qmd) and
+[Why Transformers](learn/why-transformers.qmd).*
+
+### Layer {#layer}
+
+A set of units computed in parallel from the same input, whose outputs
+form a vector that is the input to the next layer. [S-12] In a
+transformer the word is also used for the repeated blocks and for the
+attention and feed-forward sublayers inside them.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §5.*
+
+### Learning rate {#learning-rate}
+
+The small step size that scales each gradient-descent update.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §8.*
+
+### Logit {#logit}
+
+In this course, and in machine-learning usage generally, the raw
+pre-softmax score the network produces for each candidate token. This is
+not the same object as the statistical logit function
+$\log\big(p/(1-p)\big)$, which takes a probability and returns a real
+number: an individual multiclass score $z_i$ is not $\operatorname{logit}(p_i)$.
+The exact relationship holds only for differences,
+$\log(p_i/p_j) = (z_i - z_j)/T$. [S-09]
+
+*Taught in [Softmax, Sampling, and Temperature](learn/softmax-sampling.qmd)
+§3–§4.*
+
+### Loss {#loss}
+
+A single number measuring how poor the model's current output is under
+the training criterion; training adjusts the parameters to make it
+smaller. For a language model the loss at a position is the negative log
+of the probability given to the observed next token.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §7
+and [How Pretraining Works](learn/training.qmd) §3.*
+
+## M {#m}
+
+### Maximum likelihood {#maximum-likelihood}
+
+Choosing parameters that maximize the probability the model assigns to
+the observed training data; minimizing the summed negative
+log-likelihood is the same thing. [S-05] Pretraining is
+maximum-likelihood training, but it is not a conventional econometric
+exercise aimed at identifying interpretable structural parameters or
+reporting classical standard errors. [S-06]
+
+*Taught in [How Pretraining Works](learn/training.qmd) §3.*
+
+### Memory {#memory}
+
+An ambiguous word that should be qualified whenever it is used. Three
+different things get called memory: the model's parameters, which only
+training changes; the current context, which lasts one call; and
+persistent external state, which software stores and supplies again
+later. An assistant that "remembers" a project has been given a file or
+a store that is read back into its context; no parameter was updated.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §7 and
+[How Pretraining Works](learn/training.qmd) §8. See also
+[external state](#external-state).*
+
+### Mini-batch {#mini-batch}
+
+A small set of training sequences drawn from the training text for one
+optimization step. Its gradient is a noisy estimate of the gradient over
+all the data, which is why the procedure is called stochastic
+optimization.
+
+*Taught in [How Pretraining Works](learn/training.qmd) §4.*
+
+### Model {#model}
+
+In this course, a parameterized neural network that maps inference-time
+context to a probability distribution over the next token. Pretraining
+and post-training change it. A system prompt, retrieval, tools, and
+product logic change the assistant built around it without touching it.
+
+*Taught in [Post-training](learn/posttraining.qmd) §9. See also
+[assistant](#assistant).*
+
+### Multi-head attention {#multi-head-attention}
+
+See [attention head](#attention-head).
+
+## N {#n}
+
+### Negative log-likelihood {#negative-log-likelihood}
+
+The loss $-\log p(x_t \mid x_{<t})$: the negative logarithm of the
+probability the model gave to the token that actually came next. It is
+zero when that probability is 1 and rises without bound as the
+probability approaches zero. Summed over positions, it equals the
+negative log of the whole sequence's probability.
+
+*Taught in [How Pretraining Works](learn/training.qmd) §3. See also
+[cross-entropy](#cross-entropy), [maximum likelihood](#maximum-likelihood).*
+
+### Neural network {#neural-network}
+
+A function built from many units, each computing a weighted sum plus a
+bias followed by a nonlinearity, arranged in layers, with trainable
+parameters adjusted by training. [S-12] A transformer is
+one neural-network architecture; a language model is a trained instance
+of one.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §5
+and §11.*
+
+### Nonlinearity {#nonlinearity}
+
+See [activation function](#activation-function).
+
+### Normalization {#normalization}
+
+A step inside each transformer block that rescales the vectors so that
+their values stay in a workable range through many layers. Where it sits
+relative to the residual connection differs between named architectures:
+after the residual sum in the original Transformer, before each sublayer
+in GPT-2. [S-38] [S-39]
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§7.*
+
+## O {#o}
+
+### Optimizer {#optimizer}
+
+The rule that uses the gradients backpropagation computed to update the
+parameters: plain gradient descent, or an adaptive rule such as Adam.
+The optimizer performs the update; backpropagation does not. [S-14]
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd)
+§9–§10 and [How Pretraining Works](learn/training.qmd) §4.*
+
+## P {#p}
+
+### Parameter {#parameter}
+
+An adjustable number inside the model whose value is set by training:
+weights, biases, embedding-table entries, attention projection matrices,
+normalization scales, and the final output projection. Parameters change
+only during training and post-training; they are fixed at inference
+time. A value computed for a particular input, such as an activation or
+an attention weight, is not a parameter.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §1
+and [How Pretraining Works](learn/training.qmd) §4.*
+
+### Permissions {#permissions}
+
+The rules in the software around a model that decide which requested
+actions run automatically, which wait for approval, and which are
+refused. They are enforced by the loop regardless of what the model
+generates, and a well-behaved model is not a substitute for them. [S-54]
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §10.*
+
+### Policy {#policy}
+
+In reinforcement learning, the thing being optimized. In the
+post-training methods this course describes, the policy is the language
+model itself, whose parameters are updated to raise a reward computed on
+what it produces.
+
+*Taught in [Post-training](learn/posttraining.qmd) §5 and §7.*
+
+### Positional information {#positional-information}
+
+Whatever mechanism lets a transformer tell the order of positions apart,
+since the token embeddings alone carry none and self-attention has no
+built-in notion of order. The original Transformer added a positional
+encoding to each embedding; other architectures supply position
+information in other ways. [S-30]
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §6.*
+
+### Post-training {#post-training}
+
+Additional parameter-updating training applied after pretraining to
+shape a model's behavior, capabilities, preferences, or safety
+characteristics. It is a family of methods, including supervised
+instruction tuning, preference-based methods (through a reward model and
+reinforcement learning, or directly), model-generated feedback, and
+reinforcement learning against checkable rewards; RLHF names one route,
+not the family. [S-55] A system prompt is not post-training.
+
+*Taught in [Post-training](learn/posttraining.qmd) §2.*
+
+### Preference data {#preference-data}
+
+Judgments about which of several candidate responses to a prompt is
+preferred, collected from people, from models, or from rules, and used
+by preference-based post-training. Different from a demonstration, which
+supplies a single target response.
+
+*Taught in [Post-training](learn/posttraining.qmd) §4–§6.*
+
+### Pretraining {#pretraining}
+
+Large-scale training on the next-token objective over a very large body
+of text, updating the model's trainable parameters. [S-05] The targets
+come from the text itself. The objective rewards assigning higher
+probability to the observed continuation; independent truth verification
+is not part of the objective. [S-08]
+
+*Taught in [How Pretraining Works](learn/training.qmd).*
+
+### Prompt {#prompt}
+
+The text a user supplies for one request; part of the context. This
+course treats a prompt as a task specification: the objective, the
+source of truth, the inputs, the constraints, the required output, and
+the acceptance criteria.
+
+*Taught in [Using Models Well](learn/using-models-well.qmd) §2.*
+
+### Prompt caching {#prompt-caching}
+
+A provider feature that can reuse computation for a repeated input
+prefix, reducing processing cost or latency on later calls. In the
+implementation discussed in the course, cached input still occupies
+logical context capacity: caching changes what the tokens cost, not
+whether they count. [S-62] Pricing and caching behavior differ between
+providers.
+
+*Taught in [Using Models Well](learn/using-models-well.qmd) §11.*
+
+## Q {#q}
+
+### Query {#query}
+
+In self-attention, the vector the destination position is transformed
+into, compared by dot product with each permitted source's key. [S-36]
+It is a learned projection, not a question; reading it as "what the
+destination is looking for" is an intuition only.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§2–§3. See also [key](#key), [value](#value).*
+
+## R {#r}
+
+### Reasoning tokens (intermediate reasoning) {#reasoning-tokens}
+
+Tokens a model generates before its final answer. On some difficult
+tasks, generating intermediate reasoning tokens provides additional
+inference-time computation and can improve performance; that is the
+supported statement. [S-49] They are output produced by the same
+next-token mechanism as any other output, not a transcript of internal
+computation and not thought in the human sense.
+
+*Taught in [Post-training](learn/posttraining.qmd) §7.*
+
+### Recurrent network {#recurrent-network}
+
+A network that reads a sequence one position at a time, carrying a
+running summary, its hidden state, forward from each step to the next.
+Relating distant positions takes many sequential steps, and the
+computation cannot be parallelized within a sequence; that is what
+self-attention changed. [S-16] [S-21]
+
+*Taught in [Why Transformers](learn/why-transformers.qmd) §1–§2.*
+
+### Reinforcement learning {#reinforcement-learning}
+
+An optimization framework in which behavior is updated using a reward
+computed on what the model produced, rather than by matching a fixed
+target string. In post-training it is used with a learned reward model,
+or with rule-based rewards on tasks whose outcomes can be checked.
+
+*Taught in [Post-training](learn/posttraining.qmd) §5 and §7.*
+
+### Reinforcement learning from AI feedback (RLAIF) {#rlaif}
+
+Preference-based training in which a model, rather than a person, judges
+which of two responses is better under written principles, and a
+preference model trained on those judgments supplies the reward.
+Constitutional AI is the published example. [S-48]
+
+*Taught in [Post-training](learn/posttraining.qmd) §6.*
+
+### Reinforcement learning from human feedback (RLHF) {#rlhf}
+
+One route through preference-based post-training: train a separate
+reward model on human comparisons, then update the language model by
+reinforcement learning to score well under it while staying close to its
+starting point. [S-46] Some writers use "RLHF" for any preference-based
+post-training; this course uses it only for this route, and never as a
+name for post-training as a whole. [S-55]
+
+*Taught in [Post-training](learn/posttraining.qmd) §5. See also
+[direct preference optimization](#direct-preference-optimization),
+[reward model](#reward-model).*
+
+### Residual connection {#residual-connection}
+
+Adding each sublayer's input to its output inside a transformer block,
+so that the sublayer computes an update to the representation rather
+than a replacement for it. [S-38]
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§7.*
+
+### Retrieval {#retrieval}
+
+Fetching relevant text from an external collection, a search, a file, or
+a store and placing it in the context for the current call, so that
+generation combines the model's fixed parametric knowledge with
+information supplied at request time. [S-33] It changes the inputs to
+this request, not the parameters. The published name for one such design
+is retrieval-augmented generation.
+
+*Taught in [Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd)
+§10 and [From Assistant to Agent](learn/agents.qmd) §7.*
+
+### Reward model {#reward-model}
+
+A separate network, trained on comparison data, that takes a prompt and
+a response and outputs a score predicting how a rater would rank it;
+used as the reward signal in the classic RLHF pipeline. It is an
+imperfect stand-in for judgment, which is why the model being updated is
+kept close to its starting point.
+
+*Taught in [Post-training](learn/posttraining.qmd) §5.*
+
+## S {#s}
+
+### Sampling {#sampling}
+
+Drawing the next token at random according to the probability
+distribution the model produced, so that the same prompt can yield
+different continuations without any change to the model. [S-07]
+Contrast argmax.
+
+*Taught in [Softmax, Sampling, and Temperature](learn/softmax-sampling.qmd)
+§6.*
+
+### Scaling laws {#scaling-laws}
+
+The empirical regularity, reported for language models in 2020, that
+loss improves as a power law with model size, dataset size, and training
+compute over a wide range. [S-25] An observed regularity for the studied
+setup, not a law of nature.
+
+*Taught in [Why Transformers](learn/why-transformers.qmd) §5.*
+
+### Self-attention {#self-attention}
+
+The mechanism inside each transformer block that lets a position update
+its vector using other positions: each destination's query is compared
+with each permitted source's key, softmax turns the scores into weights,
+and the destination receives the weighted sum of the sources' values.
+[S-36] It is one of two main computations in the block, not the whole
+transformer.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§2–§3. See also [transformer block](#transformer-block).*
+
+### Skill {#skill}
+
+A reusable set of instructions, procedures, examples, or resources
+describing how to carry out a class of tasks, loaded into inference-time
+context when relevant. [S-53] It changes what the model conditions on
+for a task and leaves the parameters unchanged; it is not retraining.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §8.*
+
+### Softmax {#softmax}
+
+The fixed function that turns a list of real-valued scores into a
+probability distribution: exponentiate each score, divided by the
+temperature, and divide by the sum. Every output is positive, the order
+of the scores is preserved, and adding the same constant to all scores
+changes nothing. [S-01] Used at the output to obtain next-token
+probabilities and inside attention to obtain attention weights.
+
+*Taught in [Softmax, Sampling, and Temperature](learn/softmax-sampling.qmd)
+§4.*
+
+### Source of truth {#source-of-truth}
+
+Where the answer to a question should come from: the model's general
+knowledge, a supplied document, current documentation, a database,
+running code. Deciding it before asking tells you what belongs in the
+context and whether a tool is needed.
+
+*Taught in [Using Models Well](learn/using-models-well.qmd) §4.*
+
+### State {#state}
+
+What carries a task from one model call to the next. Three kinds are
+easy to run together: the parameters, fixed during a task; the context
+window, reassembled every call; and external state, persisted by
+software or tools.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §7.*
+
+### Supervised fine-tuning (SFT) {#supervised-fine-tuning}
+
+Post-training on pairs of a prompt and a demonstrated desired response,
+using the same next-token loss as pretraining on the response tokens;
+called instruction tuning when the pairs are instructions and answers.
+[S-46] It raises the probability of responses that resemble the
+demonstrations; it does not guarantee compliance or correctness.
+
+*Taught in [Post-training](learn/posttraining.qmd) §3.*
+
+### System prompt {#system-prompt}
+
+Instructions a product places in the context in front of the
+conversation, often carrying a persona and rules. It is inference-time
+context: it changes what the model conditions on and no parameter, so it
+is never a form of post-training.
+
+*Taught in [Post-training](learn/posttraining.qmd) §2 and §9, and
+[Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd) §9.*
+
+## T {#t}
+
+### Temperature {#temperature}
+
+A setting $T$ that divides every score before softmax. Lower values
+concentrate probability on the top-scoring tokens and approach argmax as
+$T \to 0$; higher values flatten the distribution toward uniform. [S-04]
+It changes variability, not truth, and leaves the parameters untouched.
+
+*Taught in [Softmax, Sampling, and Temperature](learn/softmax-sampling.qmd)
+§6.*
+
+### Token {#token}
+
+A unit of text drawn from a fixed vocabulary: often a whole word, but
+also a word fragment, punctuation, or another piece the tokenizer
+defines. Not the same as a word; in many commonly used tokenizers a
+leading space or a capital letter changes the token.
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §3 and
+[Tokens, Embeddings, and the Context Window](learn/tokens-context.qmd) §4.*
+
+### Token ID {#token-id}
+
+The integer index of a token in the vocabulary. An address, not a
+measurement: the network never adds or compares IDs, and numerically
+close IDs are not similar tokens.
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §4.*
+
+### Tokenizer {#tokenizer}
+
+The program that splits text into tokens according to a vocabulary and
+rules decided before training. Different model families use different
+tokenizers, so the same text can be split differently by each.
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §3.*
+
+### Tool {#tool}
+
+A capability the software around a model exposes to it: a name, a
+description, and an input schema that the model reads, plus an
+implementation that the software runs.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §2.*
+
+### Tool call {#tool-call}
+
+At the model boundary, generated output in a structured format
+requesting a tool with specified inputs. The surrounding software
+interprets that output, checks it against permissions, executes or
+routes the action, and returns the result to a later model call; the
+model does not itself run anything. [S-51]
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §2.*
+
+### Transformer {#transformer}
+
+A neural-network architecture built from repeated blocks, each
+containing self-attention and a feed-forward layer, with residual
+connections and normalization. Transformer architectures are the
+dominant foundation for many modern large language models; a transformer
+is not the beginning of neural networks, and it is not the same thing as
+attention. [S-19]
+
+*Taught in [Why Transformers](learn/why-transformers.qmd) and
+[How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§7.*
+
+### Transformer block {#transformer-block}
+
+The repeating unit of a transformer: an attention sublayer that moves
+information between positions, a feed-forward sublayer that computes on
+each position separately, plus residual connections and normalization.
+[S-38] A model stacks many blocks.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§7.*
+
+## U {#u}
+
+### Unit (neuron) {#unit}
+
+The basic computation in a neural network: a weighted sum of the inputs
+plus a bias, followed by a nonlinearity. [S-12] Often called a neuron;
+the course does not rely on the biological analogy.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd) §5.*
+
+## V {#v}
+
+### Value {#value}
+
+In self-attention, the vector each source position is transformed into
+for transfer: the destination receives the weighted sum of the values,
+weighted by the attention weights. [S-36] It is separate from the key, so
+that matching and transfer can be learned separately.
+
+*Taught in [How Self-Attention Moves Information](learn/transformers-attention.qmd)
+§2–§3. See also [query](#query), [key](#key).*
+
+### Vector {#vector}
+
+An ordered list of real numbers of a fixed length. Embeddings, queries,
+keys, values, and representations are all vectors.
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §5.*
+
+### Verification {#verification}
+
+Making success observable rather than asserted: running the tests,
+recomputing a number, rendering the document, reading the diff. A
+passing test provides evidence that the specified checks passed. It does
+not establish that the specification, research design, or resulting
+number is correct.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §9 and
+[Using Models Well](learn/using-models-well.qmd) §6.*
+
+### Vocabulary {#vocabulary}
+
+The fixed inventory of tokens a model uses, decided before training and
+then never changed; typically tens of thousands of entries (GPT-2's had
+50,257). [S-28]
+
+*Taught in [From Text to Numbers](learn/how-created.qmd) §3.*
+
+## W {#w}
+
+### Weight {#weight}
+
+A parameter that multiplies an input in a unit's weighted sum; more
+generally, any entry of a learned matrix. Not to be confused with an
+attention weight, which is computed for a particular input rather than
+learned.
+
+*Taught in [Neurons, Layers, and Learning](learn/neural-networks.qmd)
+§2–§3. See also [attention weight](#attention-weight).*
+
+### Workflow {#workflow}
+
+A system in which the model calls and tool uses follow code paths
+written in advance by a programmer; the model fills in each step but
+does not choose the steps. [S-50] Contrast agent. It is often the
+simplest system that reliably solves a task.
+
+*Taught in [From Assistant to Agent](learn/agents.qmd) §4. See also
+[agent](#agent).*
