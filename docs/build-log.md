@@ -1239,3 +1239,24 @@ only) and `dist/llms-to-agents.pdf` were produced; `dist/` is ignored by
 Git. Not tested: opening the deck from disk with the network disabled;
 every PDF page; assistive technology; the workflow itself (no remote).
 
+## Task: publication as a public review draft (2026-09-16)
+
+Owner-authorized destination: LeonelBorjaPlaza/llm-to-agents, public.
+Before publishing, the bounded release corrections were applied (the
+attention slide and guide share the bridge example; R1-Zero described as
+reinforcement learning on the pretrained base model with no supervised
+warm-up; exposed reasoning described as product-dependent; "training sets
+every weight" softened; long links wrap at phone width), the workflow
+now runs the complete `scripts/verify.sh`, claim markers render as links
+to a generated public Sources page (`sources.qmd`, from `claims.csv`, via
+`filters/course-links.lua`, with `build_sources_page.py --check` as
+verify step 15 of 16), lesson page references render as real links, and
+Home carries the review notice with a "Suggest a correction" link to the
+repository's issues. History scan before the push: no deleted files, no
+secret-pattern hits, no unexpected tracked paths; `learn/.Rhistory`
+untracked. Commit `fc3b823` pushed; Pages enabled with build type
+"workflow" through the API; run 35056786998 succeeded (build and
+deploy); live checks as recorded in `docs/release-readiness.md`. Editorial
+backlog recorded there: the Short Story could still be more intuitive,
+more naturally written, and simpler without losing precision.
+

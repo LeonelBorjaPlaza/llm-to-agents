@@ -1,4 +1,33 @@
-# Release readiness (Batch 6 candidate, 2026-09-15)
+# Release readiness (public review draft, deployed 2026-09-16)
+
+## Deployment record
+
+- Repository: <https://github.com/LeonelBorjaPlaza/llm-to-agents>, public,
+  issues enabled, default branch `main`.
+- Site: <https://leonelborjaplaza.github.io/llm-to-agents/> (GitHub Pages,
+  build type "workflow"). First successful deployment: run
+  <https://github.com/LeonelBorjaPlaza/llm-to-agents/actions/runs/35056786998>
+  on commit `fc3b823` ("Prepare public review draft"), 2026-09-16. Later
+  deployments are listed in the repository's Actions tab; each records the
+  commit it deployed.
+- Live checks performed in headless Chromium against the public address
+  on 2026-09-16: Home with the working-draft notice and the
+  "Suggest a correction" link; the Short Story with all thirteen figures
+  visible; a claim marker linking to the matching entry on the public
+  Sources page; a nested lesson with page references rendered as links;
+  glossary previews on hover and on keyboard focus; the glossary (98
+  entries); the resources page's video route; the speaking guide; the
+  25-slide presentation with its attention figure visible and its
+  closing links back to the site; no failed asset requests, no 4xx or 5xx
+  responses, no console errors; and phone-width pages (390 px) without
+  horizontal overflow. HTTP 200 confirmed for the root, the Short Story,
+  a lesson, the glossary, the Sources page, the resources page, the deck,
+  the guide, and a Reveal asset under `/llm-to-agents/`.
+- To publish an update: edit → `bash scripts/verify.sh` → commit → push
+  `main` → `gh workflow run publish.yml --repo LeonelBorjaPlaza/llm-to-agents --ref main`.
+  Deployment is manual on purpose.
+
+## Candidate checklist before deployment (2026-09-15)
 
 Factual checklist for the working-draft release candidate: the website,
 the live presentation (`slides/llms-to-agents.qmd`), and its speaking
@@ -39,11 +68,12 @@ reading the pages or rehearsing the talk.
   math plugin was disabled (`html-math-method: plain`), so the static
   offline check passes. Reveal's own scripts and styles load from the
   site's `site_libs/` folder.
-- Publication workflow prepared but not run:
-  `.github/workflows/publish.yml`, manually triggered
-  (`workflow_dispatch`), renders with Quarto 1.10.18, runs the repository
-  checks (standard-library Python only), uploads `_site/` as the Pages
-  artifact, and deploys it with the official Pages actions.
+- Publication workflow: `.github/workflows/publish.yml`, manually
+  triggered (`workflow_dispatch`), renders with Quarto 1.10.18, runs the
+  complete `scripts/verify.sh` suite (standard-library Python only),
+  uploads `_site/` as the Pages artifact, and deploys it with the official
+  Pages actions. Run successfully on 2026-09-16 (see the deployment
+  record above).
 - Privacy scan of the tracked files: no credentials, environment files,
   or private coordination material; the only personal identifier is the
   Git author name on commits.
@@ -75,37 +105,28 @@ with reviewers' feedback, not reasons to withhold the working draft.
   page was not inspected.
 - Screen-reader behavior of the figures (aria labels and descriptions
   exist; they were not tested with assistive technology).
-- The GitHub Actions workflow has not run, because no remote exists yet.
 
-## Activation steps (not performed; require authorization)
+## Activation steps (performed on 2026-09-16)
 
-1. Choose the destination repository and confirm its visibility policy.
-   Missing at the time of writing: GitHub account or organization,
-   repository name, and whether the site should live under a project path
-   (`https://<account>.github.io/<repository>/`). The site is built with
-   relative links and works under such a path without configuration
-   changes.
-2. Create the remote and push the `main` branch (`git remote add`,
-   `git push`). Not done here.
-3. In the repository settings, under Pages, set the build and deployment
-   source to "GitHub Actions".
-4. Run the workflow "Publish site to GitHub Pages" from the Actions tab
-   (it is `workflow_dispatch` only). The deploy job publishes the
-   `github-pages` environment; the URL appears in the job summary.
-5. Open the published root page and one nested page
-   (`learn/agents.html`) and confirm styles, figures, glossary previews,
-   and the link from the deck's last slide back to the site.
-6. Only then add the public URL to the site (there is no URL or QR code
-   in the materials yet, on purpose).
+1. Destination confirmed by the owner: account LeonelBorjaPlaza,
+   repository `llm-to-agents`, public.
+2. Repository created with the GitHub CLI and `main` pushed.
+3. Pages configured through the REST API with build type "workflow".
+4. Workflow "Publish site to GitHub Pages" dispatched on `main` and
+   watched to completion (build and deploy jobs succeeded).
+5. Live site verified as recorded above.
+6. Public address added to README, the deck's closing slide, and the
+   speaking guide; internal links remain relative.
 
 ## Publication review notes
 
-- Everything tracked in Git would be public in a public repository,
-  including `docs/` (planning prompts, build log, decisions, a first-learner
-  review) and `sources/` (the claim ledger). They contain no credentials
-  or private institutional material, but they are working documents;
-  decide whether they should be public before choosing repository
-  visibility.
+- Everything tracked in Git is now public, including `docs/` (planning
+  prompts, build log, decisions, a first-learner review) and `sources/`
+  (the claim ledger). Before the first push the tracked files, the
+  commits reachable from `main`, files removed in history (none), and the
+  rendered output were scanned: no credentials, tokens, environment
+  files, local settings, or private coordination material; the only
+  personal identifier is the Git author name.
 - No license file exists and no institutional logo or endorsement is
   present; neither was added, because no authorization exists.
 - Local QA artifacts (screenshots, the Playwright virtualenv) live outside

@@ -519,6 +519,7 @@ Slow down. Four consequences, one breath each. Cue: S-63.
 - [The Short Story](../short-story.qmd): this talk with the mathematics, in about twenty minutes.
 - Main path: [From Text to Numbers](../learn/how-created.qmd) · [Neurons, Layers, and Learning](../learn/neural-networks.qmd) · [Why Transformers](../learn/why-transformers.qmd) · [How Pretraining Works](../learn/training.qmd) · [Post-training](../learn/posttraining.qmd) · [From Assistant to Agent](../learn/agents.qmd) · [Using Models Well](../learn/using-models-well.qmd)
 - Reference: [Glossary](../glossary.qmd) · [Milestones](../milestones.qmd) · [Resources](../resources.qmd), including a video-first route.
+- The whole site: [leonelborjaplaza.github.io/llm-to-agents](https://leonelborjaplaza.github.io/llm-to-agents/), a working draft open to corrections.
 
 ::: {.notes}
 Point to the Short Story first, then the video route on the resources

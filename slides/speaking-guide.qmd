@@ -669,6 +669,9 @@ mathematics, in about twenty minutes. Then the seven main-path lessons in
 order, the glossary for any term used today, the milestones page for the
 history, and the resources page, which begins with a video-first route
 for people who would rather watch than read. Every factual claim on the
-site carries a citation. Leave the slide up for questions.
+site carries a citation. Read the address aloud once, since it is the one
+thing the audience will want to write down:
+leonelborjaplaza.github.io/llm-to-agents. Leave the slide up for
+questions.
 
 Deeper: [the site's home page](../index.qmd).

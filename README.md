@@ -1,5 +1,12 @@
 # From LLMs to Agents — course site
 
+**Public working draft for review:**
+<https://leonelborjaplaza.github.io/llm-to-agents/> ·
+[presentation](https://leonelborjaplaza.github.io/llm-to-agents/slides/llms-to-agents.html) ·
+[speaking guide](https://leonelborjaplaza.github.io/llm-to-agents/slides/speaking-guide.html).
+Feedback on clarity, examples, diagrams, and factual errors is welcome
+through the [issues page](https://github.com/LeonelBorjaPlaza/llm-to-agents/issues).
+
 A Quarto website and Reveal.js deck supporting a 35–40 minute conceptual talk
 and a standalone learning resource for readers who are comfortable following
 mathematical ideas but may not use them every day: *From LLMs to agents: what
@@ -55,9 +62,20 @@ quarto render      # build the site and deck to _site/
 quarto preview     # serve the site locally with live reload
 ```
 
-To publish, see `docs/release-readiness.md`: a manually triggered GitHub
-Actions workflow (`.github/workflows/publish.yml`) renders the site and
-deploys `_site/` through the GitHub Pages artifact flow.
+## Publishing an update
+
+The site is published from this repository by a manually triggered GitHub
+Actions workflow (`.github/workflows/publish.yml`), which renders the site,
+runs the complete verification suite, and deploys `_site/` through the
+GitHub Pages artifact flow. To publish a change:
+
+```
+edit → bash scripts/verify.sh → git commit → git push origin main
+      → gh workflow run publish.yml --repo LeonelBorjaPlaza/llm-to-agents --ref main
+```
+
+Nothing is deployed automatically on push. See `docs/release-readiness.md`
+for the deployment record.
 
 Output goes to `_site/` (gitignored). Open `_site/index.html` or
 `_site/slides/llms-to-agents.html` in a browser.
