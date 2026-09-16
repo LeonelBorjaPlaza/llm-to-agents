@@ -107,10 +107,10 @@ The word "agent" has no universally fixed definition, and this page
 uses it as a useful distinction rather than a natural kind. One
 vocabulary that has proved useful comes from an engineering article
 Anthropic published in December 2024, which separates two kinds of
-system. A **workflow** is a system in which "LLMs and tools are
+system. A [**workflow**](../glossary.qmd#workflow) is a system in which "LLMs and tools are
 orchestrated through predefined code paths": the sequence of model calls
 and tool uses is substantially written in advance by a programmer. An
-**agent** is a system in which "LLMs dynamically direct their own
+[**agent**](../glossary.qmd#agent) is a system in which "LLMs dynamically direct their own
 processes and tool usage, maintaining control over how they accomplish
 tasks": the model has meaningful say over which steps and tools to use
 and in what order, within constraints, in pursuit of an objective.
@@ -171,14 +171,14 @@ completion can be recognized. The **model** produces each next action
 from context. The **context** is what the model can see on a given
 call: the objective, instructions, the history of actions and
 observations, and any supplied material, subject to the finite window
-`learn/tokens-context.qmd` describes. **Tools** are the capabilities the
+`learn/tokens-context.qmd` describes. [**Tools**](../glossary.qmd#tool) are the capabilities the
 software exposes, each with a description the model reads and an
-implementation the software runs. **External state** is the world the
+implementation the software runs. [**External state**](../glossary.qmd#external-state) is the world the
 tools act on and observe: files, a repository, a database, a web page.
 A **stopping condition** says when the loop ends, whether a check
-passed, a step budget ran out, or the user was asked. **Permissions**
+passed, a step budget ran out, or the user was asked. [**Permissions**](../glossary.qmd#permissions)
 decide which requested actions are executed automatically, which need
-approval, and which are refused. **Verification** is the use of tools to
+approval, and which are refused. [**Verification**](../glossary.qmd#verification) is the use of tools to
 make success observable rather than asserted, which §9 takes up. Remove
 any one of these and the loop degrades in a predictable way: no
 objective and it wanders, no tools and it can only talk, no stopping
@@ -225,7 +225,7 @@ were. [S-31]
 Claude Code, Anthropic's coding tool, is one product-specific example of
 this pattern, as documented on 2026-09-15. A project can carry a
 `CLAUDE.md` file of persistent instructions that the tool reads at the
-start of every session, and it can define **skills**, each a folder
+start of every session, and it can define [**skills**](../glossary.qmd#skill), each a folder
 with a `SKILL.md` file of instructions and optionally scripts and
 resources. The documentation states that in a regular session skill
 descriptions are loaded into context so the model knows what is

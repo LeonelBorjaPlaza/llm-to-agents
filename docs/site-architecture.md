@@ -59,3 +59,36 @@ motivation segments (6–7) need both). Planned modules follow the
 storyboard's segment order: tokens/context, then the full attention
 derivation, then training/post-training, then agents, then the glossary
 last, once every term it indexes actually exists on the site.
+
+## Spine + Visual Pass (2026-09-15)
+
+`short-story.qmd` was rebuilt as the definitive conceptual spine: it now
+opens with the governing question (how a ChatGPT-like system is built,
+what exists after training, and what happens to your text), shows the
+whole lifecycle once, and walks it in thirteen sections (finished
+object; the smallest piece of a network; assembling the corpus; text to
+tokens to vectors; recurrent networks to the transformer, with attention
+explained before the paper is named; pretraining and the base model;
+post-training and assistant behavior; fluency and evidence;
+reasoning-oriented models in training and at inference; what happens
+when you type; parameters, context, and external state; tools and the
+agent loop, taught through one concrete tool call; the mental model),
+each ending in a "go deeper" pointer, about a twenty-minute read.
+Thirteen reusable course figures live in `_includes/_fig-*.qmd`
+(lifecycle, runnable model, tiny network, data pipeline, token to
+vector, RNN versus transformer, attention intuition, training stages,
+reasoning and inference-time computation, inference loop, three stores,
+tool round trip, and a wrapper for the agent loop), each with a stable
+`fig-*` wrapper id checked by `scripts/check_short_story_figures.py`,
+and share a five-category semantic palette defined in `assets/css/site.scss` (data, model, training,
+context, system) so the live deck can reuse them. Glossary previews are a
+progressive enhancement inlined in `_includes/_glossary-preview.html`
+(loaded on every page via `include-after-body`, so no asset path is
+needed at any page depth or site sub-path); they read the
+rendered glossary at runtime, so the glossary stays the single source of
+truth. `learn/using-models-well.qmd` gained a one-minute summary
+(`_includes/_one-minute-version.qmd`); `learn/how-created.qmd` gained a
+compact corpus subsection in §1; the main-path lessons link the first
+important occurrence of key terms to the glossary, with no wording
+changes.
+

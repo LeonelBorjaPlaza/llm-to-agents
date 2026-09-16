@@ -1,0 +1,6 @@
+<figure id="fig-agent-loop" class="course-figure" aria-labelledby="fig-agent-loop-caption">
+
+{{< include /_includes/_agent-loop.qmd >}}
+
+<figcaption id="fig-agent-loop-caption">The agent loop. The surrounding software assembles a context from the objective and the current state and calls the model; the model returns a tool request or a response; a request is checked against permission rules and executed; the observation is added to the context and the state is updated; and the model is called again until it, or the software, or the user, stops the loop. The model does not run between calls, and its parameters do not change.</figcaption>
+</figure>

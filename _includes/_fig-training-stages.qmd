@@ -1,0 +1,32 @@
+<figure id="fig-training-stages" class="course-figure" aria-labelledby="fig-stages-caption">
+<div class="training-stages" role="group" aria-label="Three training stages compared: pretraining, supervised fine-tuning, and preference- or reward-based post-training">
+<div class="stage-card sem-training">
+<h4>Pretraining</h4>
+<dl>
+<dt>Data</dt><dd>a very large curated corpus of text</dd>
+<dt>Objective</dt><dd>predict the next token at every position</dd>
+<dt>Changes</dt><dd>the model's trainable parameters θ</dd>
+<dt>Produces</dt><dd>the base model</dd>
+</dl>
+</div>
+<div class="stage-card sem-training">
+<h4>Supervised fine-tuning</h4>
+<dl>
+<dt>Data</dt><dd>curated conversations: prompt → desired response</dd>
+<dt>Objective</dt><dd>the same next-token loss, on the response tokens</dd>
+<dt>Changes</dt><dd>the same parameters θ, starting from the base model</dd>
+<dt>Produces</dt><dd>an instruction-tuned, post-trained model</dd>
+</dl>
+</div>
+<div class="stage-card sem-training">
+<h4>Preference- or reward-based</h4>
+<dl>
+<dt>Data</dt><dd>comparisons between responses, or outcomes that can be scored</dd>
+<dt>Objective</dt><dd>use preference or reward signals to further shape behavior</dd>
+<dt>Changes</dt><dd>the same parameters θ again</dd>
+<dt>Produces</dt><dd>a further post-trained model</dd>
+</dl>
+</div>
+</div>
+<figcaption id="fig-stages-caption">Every stage is training in the same mechanical sense: a loss or reward is computed on the model's output, gradients are computed, and an optimizer updates the same parameter collection θ. What differs is the data and the objective. Providers combine and vary these stages; the third column is a family of methods with different constraints, and not every deployed model passes through exactly these steps.</figcaption>
+</figure>

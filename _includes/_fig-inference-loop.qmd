@@ -1,0 +1,68 @@
+<figure id="fig-inference-loop" class="course-figure" aria-labelledby="fig-inference-loop-caption">
+<svg viewBox="0 0 720 300" role="img" aria-label="The generation loop: context, tokenizer, token IDs, embeddings, transformer blocks, logits, softmax, decoding, next token, which is appended to the context, and the loop repeats" xmlns="http://www.w3.org/2000/svg">
+  <title>What happens when you type: the token-generation loop</title>
+  <desc>Top row, left to right: context (the text so far), tokenizer, token IDs, embeddings, transformer blocks. An arrow leads down to the bottom row, which runs right to left: logits, softmax giving probabilities, decoding, next token. A return arrow carries the next token back up to the context box, labeled: the new token is appended to the context and the loop runs again. A note says the parameters are unchanged and that keys and values for earlier positions are cached and reused.</desc>
+  <g fill="#1c1c1c">
+    <rect x="20" y="30" width="120" height="60" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="80" y="55" text-anchor="middle" font-size="15" font-weight="600">context</text>
+    <text x="80" y="76" text-anchor="middle" font-size="12">the text so far</text>
+
+    <line x1="142" y1="60" x2="152" y2="60" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="150,52 160,60 150,68" fill="#6c6c6c"/>
+
+    <rect x="160" y="30" width="120" height="60" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="220" y="65" text-anchor="middle" font-size="15">tokenizer</text>
+
+    <line x1="282" y1="60" x2="292" y2="60" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="290,52 300,60 290,68" fill="#6c6c6c"/>
+
+    <rect x="300" y="30" width="120" height="60" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="360" y="65" text-anchor="middle" font-size="15">token IDs</text>
+
+    <line x1="422" y1="60" x2="432" y2="60" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="430,52 440,60 430,68" fill="#6c6c6c"/>
+
+    <rect x="440" y="30" width="120" height="60" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="500" y="65" text-anchor="middle" font-size="15">embeddings</text>
+
+    <line x1="562" y1="60" x2="572" y2="60" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="570,52 580,60 570,68" fill="#6c6c6c"/>
+
+    <rect x="580" y="30" width="120" height="60" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="640" y="55" text-anchor="middle" font-size="15">transformer</text>
+    <text x="640" y="76" text-anchor="middle" font-size="15">blocks</text>
+
+    <line x1="640" y1="92" x2="640" y2="148" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="632,146 648,146 640,160" fill="#6c6c6c"/>
+
+    <rect x="580" y="160" width="120" height="60" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="640" y="195" text-anchor="middle" font-size="15">logits</text>
+
+    <line x1="578" y1="190" x2="568" y2="190" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="570,182 560,190 570,198" fill="#6c6c6c"/>
+
+    <rect x="440" y="160" width="120" height="60" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="500" y="185" text-anchor="middle" font-size="15">softmax</text>
+    <text x="500" y="206" text-anchor="middle" font-size="13">probabilities</text>
+
+    <line x1="438" y1="190" x2="428" y2="190" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="430,182 420,190 430,198" fill="#6c6c6c"/>
+
+    <rect x="300" y="160" width="120" height="60" rx="8" fill="#eceef2" stroke="#4f5b6e" stroke-width="3"/>
+    <text x="360" y="195" text-anchor="middle" font-size="15">decoding</text>
+
+    <line x1="298" y1="190" x2="288" y2="190" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="290,182 280,190 290,198" fill="#6c6c6c"/>
+
+    <rect x="160" y="160" width="120" height="60" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="220" y="195" text-anchor="middle" font-size="15">next token</text>
+
+    <path d="M 158 190 H 80 V 102" fill="none" stroke="#2b7a35" stroke-width="3"/>
+    <polygon points="72,104 88,104 80,92" fill="#2b7a35"/>
+
+    <text x="360" y="256" text-anchor="middle" font-size="14" fill="#4a4a4a">the new token is appended to the context and the loop runs again</text>
+    <text x="360" y="280" text-anchor="middle" font-size="13" fill="#4a4a4a">parameters θ unchanged; keys and values for earlier positions are cached and reused</text>
+  </g>
+</svg>
+<figcaption id="fig-inference-loop-caption">One generation step, and the loop it belongs to. The surrounding product supplies the context; the tokenizer turns it into token IDs; each ID selects an embedding; the transformer blocks update every position; the final position's vector becomes one score per vocabulary entry (the logits); softmax turns the scores into probabilities; a decoding rule selects a token; and the token is appended to the context for the next step. Nothing in the parameters changes, and implementations typically cache the keys and values already computed for earlier positions rather than recomputing them.</figcaption>
+</figure>

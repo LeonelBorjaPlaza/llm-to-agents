@@ -68,7 +68,7 @@ as pretraining: the negative log-likelihood of the response tokens given
 the instruction (the loss `learn/training.qmd` §3 defines). The
 parameters are adjusted so that, given such an instruction, the
 demonstrated kind of response becomes more probable. This is
-**supervised fine-tuning**, or instruction tuning when the pairs are
+[**supervised fine-tuning**](../glossary.qmd#supervised-fine-tuning), or instruction tuning when the pairs are
 instructions and answers. In the InstructGPT work that made the recipe
 widely known, the first stage was exactly this: a dataset of
 labeler-written demonstrations of desired behavior, used to fine-tune a
@@ -111,12 +111,12 @@ parameters toward the preferred behavior. The members of the family
 differ in how the last step is carried out. [S-55]
 
 **The reward-model and reinforcement-learning route.** The pipeline
-usually called RLHF, reinforcement learning from human feedback, works
+usually called [RLHF](../glossary.qmd#rlhf), reinforcement learning from human feedback, works
 in two stages. Terminology here is not perfectly standardized; some
 writers use "RLHF" for any preference-based post-training. This page uses
 "classic RLHF pipeline" or "RLHF-style" for this specific route. First,
 the comparison data is used to train a separate
-**reward model**, a network that takes a prompt and a response and
+[**reward model**](../glossary.qmd#reward-model), a network that takes a prompt and a response and
 outputs a single score predicting how a human rater would rank it.
 Second, the language model is updated by reinforcement learning to
 produce responses that score highly under the reward model, while being
@@ -146,8 +146,7 @@ post-trained model still made simple mistakes. [S-46]
 
 **The direct preference optimization route.** The two-stage pipeline is
 complex to run: it requires a separate reward model and repeated
-sampling from the language model during training. Direct preference
-optimization (DPO) and related methods reach a similar goal by a
+sampling from the language model during training. [Direct preference optimization](../glossary.qmd#direct-preference-optimization) (DPO) and related methods reach a similar goal by a
 shorter path. They rewrite the same constrained objective so that, given
 a fixed preference dataset, the language model can be updated directly
 from the comparison pairs, using a loss that resembles ordinary
@@ -260,7 +259,7 @@ the finished model is the result of both.
 
 The word "model" in this course means a parameterized neural network
 that maps inference-time context to a probability distribution over the
-next token. Post-training changes that network. An **assistant**, the
+next token. Post-training changes that network. An [**assistant**](../glossary.qmd#assistant), the
 thing a person actually types to, is a product built around a model, and
 it usually adds a great deal that is not in the network: a system prompt
 carrying instructions and a persona; management of the conversation

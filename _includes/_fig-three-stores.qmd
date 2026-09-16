@@ -1,0 +1,40 @@
+<figure id="fig-three-stores" class="course-figure" aria-labelledby="fig-stores-caption">
+<svg viewBox="0 0 800 330" role="img" aria-label="Three different stores: parameters inside the model, changed only by training; the finite inference-time context supplied or managed for a model step; and external state, persisted outside the model and retrievable into a later context" xmlns="http://www.w3.org/2000/svg">
+  <title>Parameters, context, and external state</title>
+  <desc>Three boxes in a row. Left, in the model color: parameters theta, inside the model, fixed during use, changed only by training. Middle, in the context color: context, the tokens supplied for this model step, such as instructions, conversation, retrieved text, and tool results. Right, in the system color: external state, files, databases, and notes persisted outside the model. Arrows show training entering the parameters from above, and retrieval carrying external state into the context.</desc>
+  <g font-size="19" fill="#1c1c1c">
+    <text x="145" y="30" text-anchor="middle" font-size="15" fill="#b04a10" font-weight="600">training</text>
+    <text x="145" y="50" text-anchor="middle" font-size="14" fill="#b04a10">(pretraining, post-training)</text>
+    <line x1="145" y1="58" x2="145" y2="78" stroke="#b04a10" stroke-width="3"/>
+    <polygon points="136,76 154,76 145,90" fill="#b04a10"/>
+
+    <rect x="30" y="94" width="230" height="130" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="145" y="124" text-anchor="middle" font-weight="600">parameters θ</text>
+    <text x="145" y="152" text-anchor="middle" font-size="15">inside the model</text>
+    <text x="145" y="174" text-anchor="middle" font-size="15">fixed during use</text>
+    <text x="145" y="196" text-anchor="middle" font-size="15">changed only by training</text>
+
+    <rect x="275" y="94" width="250" height="130" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="400" y="124" text-anchor="middle" font-weight="600">context</text>
+    <text x="400" y="152" text-anchor="middle" font-size="14">tokens supplied for this step:</text>
+    <text x="400" y="174" text-anchor="middle" font-size="14">instructions, conversation,</text>
+    <text x="400" y="196" text-anchor="middle" font-size="14">retrieved text, tool results</text>
+
+    <rect x="540" y="94" width="230" height="130" rx="8" fill="#eceef2" stroke="#4f5b6e" stroke-width="3"/>
+    <text x="655" y="124" text-anchor="middle" font-weight="600">external state</text>
+    <text x="655" y="152" text-anchor="middle" font-size="15">files, databases, notes</text>
+    <text x="655" y="174" text-anchor="middle" font-size="15">persisted by software</text>
+    <text x="655" y="196" text-anchor="middle" font-size="15">outside the model</text>
+
+    <g stroke="#4f5b6e" stroke-width="3" fill="#4f5b6e">
+      <line x1="655" y1="256" x2="416" y2="256"/><polygon points="418,247 402,256 418,265"/>
+    </g>
+    <text x="535" y="282" text-anchor="middle" font-size="15" fill="#4a4a4a">retrieval brings external state</text>
+    <text x="535" y="302" text-anchor="middle" font-size="15" fill="#4a4a4a">into a later context</text>
+
+    <text x="145" y="262" text-anchor="middle" font-size="15" fill="#4a4a4a">the model conditions on the</text>
+    <text x="145" y="282" text-anchor="middle" font-size="15" fill="#4a4a4a">context using its parameters</text>
+  </g>
+</svg>
+<figcaption id="fig-stores-caption">Three things that are easy to run together under the word "memory". The parameters are inside the model and change only when it is trained. The context is the finite inference-time context supplied or managed for a model step. External state is whatever is persisted outside the model; it can be retrieved into a later context, which changes that step's inputs and not the parameters.</figcaption>
+</figure>

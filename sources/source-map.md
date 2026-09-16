@@ -252,6 +252,99 @@ Models*.** <https://arxiv.org/abs/2210.03629> (v1 2022-10-06; v3
 2023-03-10). New in the reference-layer batch. **Abstract and arXiv
 comments field verified verbatim on 2026-09-15.**
 
+**S42 — Penedo et al., *The FineWeb Datasets: Decanting the Web for the
+Finest Text Data at Scale*; Hugging Face FineWeb dataset card.**
+<https://arxiv.org/abs/2406.17557> (v2, 2024-10-31);
+<https://huggingface.co/datasets/HuggingFaceFW/fineweb>, **accessed
+2026-09-15**. New in the Spine + Visual Pass. Used only as one open
+example of a pretraining-data pipeline (`short-story.qmd` §3;
+`learn/how-created.qmd` §1). **Abstract verified verbatim on the arXiv
+page; the pipeline steps verified against the raw README of the dataset
+card on 2026-09-15.** Size figures deliberately not cited (the card's
+totals differ between sections updated at different times).
+
+**S43 — Stanford CS336, *Language Modeling from Scratch*.**
+<https://cs336.stanford.edu/> (Spring 2026; archived Spring 2025 page at
+`/spring2025/`), **accessed 2026-09-15**. Living university page (PR9);
+used on the resources page and as the short story's pointer for systems
+and GPU depth. Description, prerequisites, assignment list, and the
+recordings link verified on 2026-09-15.
+
+**S44 — University of Washington CSE 163, *Large Language Models*
+lesson; Steve Seitz, *Large Language Models from scratch* and *Part 2*.**
+<https://courses.cs.washington.edu/courses/cse163/25au/large-language-models/>
+(also the 25sp and 25wi variants), **accessed 2026-09-15**; videos
+<https://www.youtube.com/watch?v=lnA9DMvHtfI> and
+<https://www.youtube.com/watch?v=YDiSFS-yHwk> (channel *Graphics in 5
+Minutes*, July 2022); faculty page
+<https://www.cs.washington.edu/people/faculty/seitz/>. Lesson wording
+verified on 2026-09-15; the live YouTube pages blocked non-browser
+clients, so titles, dates, and descriptions were read from YouTube's
+oEmbed and RSS metadata and an archived copy of the first video's page.
+No durations are stated on the site.
+
+**S45 — Jay Mody, *GPT in 60 Lines of NumPy*.**
+<https://jaykmody.com/blog/gpt-from-scratch/> (2023-01-30), **accessed
+2026-09-15**. Opening paragraphs verified verbatim; inference with
+released GPT-2 weights, training discussed conceptually.
+
+**S46 — Andrej Karpathy, *[1hr Talk] Intro to Large Language Models*.**
+<https://www.youtube.com/watch?v=zjkBMFhNj_g> (published 2023-11-22;
+listed duration 59:48), **accessed 2026-09-15**. New in the Spine +
+Visual Pass. The official description and chapter list were read
+verbatim from the video page's own data; the linked slides are behind a
+login wall and were not opened, and the spoken "two files" passage was
+located only in a third-party transcript, so its figures (Llama 2 70B,
+140 GB, "about 500 lines of C") are not stated on the site.
+
+In the same pass, S1 (the 2025 *Deep Dive*) was re-verified at the level
+of its official description and chapter list (all chapter titles and
+timestamps read from the video page's own data on 2026-09-15). No
+transcript of the 2025 video was obtainable, so the G1 timestamp gap
+below remains open for spoken content; the classroom analogy (S-76) is
+verified verbatim from Karpathy's own 2025-01-30 post rather than from
+the video's audio.
+
+**S47 — Andrej Karpathy, *llama2.c* repository README.**
+<https://github.com/karpathy/llama2.c>, **accessed 2026-09-15**. New in
+the Spine + Visual Pass correction round. Direct technical support for
+the code-plus-checkpoint picture (`short-story.qmd` §1): the README
+states that the architecture is inferenced with 'one simple 700-line C
+file (run.c)' and that 'You need a model checkpoint'. Living repository;
+the site states no line count.
+
+**S48 — Anthropic, *Thinking*, *Effort*, *Extended thinking*, and
+*Steering thinking* (Claude API documentation); Anthropic, *Claude's
+extended thinking* (announcement, 2025-02-24).**
+<https://platform.claude.com/docs/en/build-with-claude/thinking>,
+<https://platform.claude.com/docs/en/build-with-claude/effort>,
+<https://platform.claude.com/docs/en/build-with-claude/extended-thinking>,
+<https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost>,
+<https://www.anthropic.com/news/visible-extended-thinking>, all
+**accessed 2026-09-15**. New in the reader-first pass. Product-specific
+(PR9); used in `short-story.qmd` §9 for one provider's description of
+reasoning before the answer, effort controls, billing of reasoning
+tokens, summaries rather than raw reasoning, interleaving with tool
+calls, and the faithfulness caveat. The current pages display no date;
+the announcement displays 2025-02-24. The pages document that the 2025
+`budget_tokens` mode is now deprecated in favor of adaptive thinking
+steered by an effort parameter; the site names no parameter.
+
+**S49 — Google, *Gemini thinking* (Gemini API documentation).**
+<https://ai.google.dev/gemini-api/docs/thinking> (page states "Last
+updated 2026-09-09 UTC"), **accessed 2026-09-15**. New in the
+reader-first pass. Product-specific (PR9); used in `short-story.qmd` §9.
+
+**S50 — OpenAI, *Reasoning models* (API documentation).**
+<https://developers.openai.com/api/docs/guides/reasoning> (the
+platform.openai.com URL redirects here), **accessed 2026-09-15**. New in
+the reader-first pass. Product-specific (PR9); used in `short-story.qmd`
+§9. The page displays no date.
+
+The reader-first pass also added S-86, a mathematical identity (an
+embedding lookup equals a one-hot vector times the embedding matrix),
+which has no external source.
+
 The reference-layer batch also re-opened S26 (the *Building effective
 agents* article) on 2026-09-15 and recorded the dated note it now
 carries (S-73). No other new sources were consulted; the milestones
@@ -336,6 +429,18 @@ reuses existing rows only.
 | S-72 | ReAct: reasoning traces and task-specific actions interleaved; actions interface with external sources (e.g. a Wikipedia API) | S41 | Abstract; comments field | direct | high | **Verified 2026-09-15.** ICLR year not asserted; influential formulation, not origin |
 | S-73 | The *Building effective agents* article now carries a note that its tooling landscape has changed since December 2024 | S26 | Note at top of the article | direct | high | **Accessed 2026-09-15 (PR9)** |
 | S-74 | Milestones page framing: selective timeline, no priority claims, several interacting lines of development | — (course editorial framing) | milestones.qmd | inference | high | Editorial, stated as such (compare S-18, S-20) |
+| S-75 | Karpathy 2023: "general-audience introduction"; runnable model as parameters plus a linked ~1000-line runner; fine-tuning "directs" hallucinations rather than fixing them; retrieved material in the context window's "working memory"; tool use as special words detected by "the code 'above'" | S46 | Official description and chapter list | direct | high | **Verified from the video page's own data 2026-09-15.** Two-file figures transcript-only and not used |
+| S-76 | Classroom analogy: exposition = pretraining; worked problems = SFT; practice problems = RL (Karpathy's own words); video chapters "supervised finetuning to reinforcement learning", "reinforcement learning" | Karpathy X post 2025-01-30; S1 chapter list | The post in full; chapter list | direct | high | **Verified verbatim (post) 2026-09-15.** In-video wording not verified; labeled as analogy (CC2) |
+| S-77 | 2025 Deep Dive: "general audience deep dive", "full training stack"; official chapter list; chapter "hallucinations, tool use, knowledge/working memory" contrasts parameters with the context window as working memory | S1 | Description; chapter list; chapter 01:20:32 | direct | medium-high | **Description and chapters verified 2026-09-15.** Spoken wording unverified; "vague recollection" paraphrased as "hazy recollection"; abstention-by-example detail third-party only |
+| S-78 | FineWeb: open Common Crawl-derived corpus; pipeline = URL filtering, trafilatura extraction, language filter, quality filters, MinHash dedup, PII formatting; open-model corpora "not publicly available" | S42 | Abstract; card 'Data processing steps' | direct | high | **Verified 2026-09-15.** Example only; sizes not cited |
+| S-79 | CS336: full lifecycle (data cleaning, transformer construction, training, evaluation); GPU/systems in prerequisites; assignments basics/systems/scaling/data/alignment-RL; public 2026 playlist | S43 | Description; prerequisites; assignments; logistics | direct | high | **Accessed 2026-09-15 (PR9)** |
+| S-80 | UW CSE 163 lesson uses two Seitz videos and Mody's post ("the inference half of" a tiny GPT-2); video descriptions and chapters; Seitz is a UW professor | S44 | Lesson page; video metadata; faculty page | direct | high | **Accessed 2026-09-15 (PR9).** Metadata via oEmbed/RSS/archive; no durations stated |
+| S-81 | Mody: GPT from scratch in ~60 lines of NumPy, loads released GPT-2 weights and generates text; training only conceptual | S45 | Opening paragraphs; Training; What Next? | direct | high | **Accessed 2026-09-15** |
+| S-82 | llama2.c README: inference with "one simple 700-line C file (run.c)"; "You need a model checkpoint" | S47 | README opening; quick start | direct | high | **Accessed 2026-09-15 (PR9).** Line count not stated on the site |
+| S-83 | Anthropic: reasoning arrives in thinking blocks before the answer; reasoning tokens billed as output and count toward max_tokens; adaptive thinking steered by effort levels (budget_tokens mode deprecated); returned text is a summary, never the raw chain of thought; interleaved thinking between tool calls; 2025 announcement: "serial test-time compute" and the faithfulness caveat | S48 | Thinking, Effort, Extended thinking, Steering thinking pages; announcement | direct | high | **Accessed 2026-09-15 (PR9).** Parameter names not stated on the site; CC2 |
+| S-84 | Google: Gemini "reasons internally before responding"; dynamic thinking by default controlled by thinking_level; full thoughts generated, summaries output; pricing = output tokens + thinking tokens | S49 | Opening; thinking_level; summaries; pricing | direct | high | **Accessed 2026-09-15 (PR9)**; page dated 2026-09-09 |
+| S-85 | OpenAI: "internal reasoning tokens before producing a response"; reasoning.effort with model-dependent values; reasoning tokens occupy the context window and are billed as output; raw reasoning not exposed, summaries available; interleaved thinking between tool calls | S50 | Opening; reasoning.effort; context window and billing; summaries; interleaving | direct | high | **Accessed 2026-09-15 (PR9)**; no date on page |
+| S-86 | Embedding lookup equals multiplying a one-hot vector by E (selects row E[i]); implementations retrieve the row | Mathematical identity | linear algebra | direct | high | Optional aside on short-story.qmd §4 |
 
 ## Open verification debt (carried forward from the implementation plan)
 
@@ -402,6 +507,17 @@ reuses existing rows only.
   and one claim ID (S-73); its descriptive fields (creator, format,
   stated dates and caveats) were read from each resource's own page on
   2026-09-15 and are not separately ledgered.
+- **Resolved, not open (Spine + Visual Pass, 2026-09-15):** S-78–S-81
+  verified against the live pages (arXiv abstract; the FineWeb dataset
+  card's raw README; the CS336, UW CSE 163, and Jay Mody pages; YouTube
+  oEmbed and RSS metadata for the Seitz videos). S-75 and S-77 rest on
+  the two Karpathy videos' official descriptions and chapter lists, read
+  from the video pages' own data; S-76 on Karpathy's own post. **Still
+  open:** no spoken-word transcript of either video could be checked
+  against the recording, so every analogy is cited to official written
+  material (descriptions, chapter titles, the post) and paraphrased where
+  only third-party notes carry the exact wording; the 2023 talk's
+  "two files" figures and slides remain unverified and are not stated.
 - S-02, S-03, S-06, S-10, S-11, S-18, S-20, S-35, S-45, S-55, S-56, S-63, and S-74 are marked `inference`
   because they are this course's own editorial framing, naming convention,
   or field characterization — not a direct claim made by a video or paper.

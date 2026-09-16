@@ -1,0 +1,12 @@
+<figure id="fig-data-pipeline" class="course-figure" aria-labelledby="fig-data-pipeline-caption">
+<ol class="lifecycle is-compact" aria-label="Preparing training data: raw sources, text extraction, filtering, deduplication, a curated corpus, tokenization, token sequences">
+<li><span class="stage sem-data">raw sources: web pages, code, books</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data">extract the main text</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data">filter by language and quality</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data">remove duplicates</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data is-object">curated corpus</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data">tokenizer</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data is-object">token sequences for training</span></li>
+</ol>
+<figcaption id="fig-data-pipeline-caption">Before any training, a corpus is built: source material is gathered from permitted sources, the main text is extracted from its raw form, documents are filtered by language and quality, duplicates are removed, and the surviving text is tokenized into the sequences the model will be trained on. The steps and their order vary between corpora; this is the general shape.</figcaption>
+</figure>

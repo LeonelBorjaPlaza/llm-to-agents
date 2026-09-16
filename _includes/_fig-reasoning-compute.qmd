@@ -1,0 +1,33 @@
+<figure id="fig-reasoning-compute" class="course-figure" aria-labelledby="fig-reasoning-compute-caption">
+<div class="fig-rows" role="group" aria-label="Three inference paths: an immediate response; more inference-time reasoning before the answer; reasoning interleaved with tool use">
+<div class="fig-row">
+<span class="row-label">immediate response</span>
+<ol class="lifecycle is-compact">
+<li><span class="stage sem-context">prompt</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model is-object">answer</span></li>
+</ol>
+</div>
+<div class="fig-row">
+<span class="row-label">more inference-time reasoning</span>
+<ol class="lifecycle is-compact">
+<li><span class="stage sem-context">prompt</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model">intermediate reasoning tokens</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model">more intermediate reasoning</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model is-object">answer</span></li>
+</ol>
+</div>
+<div class="fig-row">
+<span class="row-label">reasoning with tools</span>
+<ol class="lifecycle is-compact">
+<li><span class="stage sem-context">prompt</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model">reasoning</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model">tool request</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-system">software runs the tool</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-context">observation enters context</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model">reasoning</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model is-object">answer</span></li>
+</ol>
+</div>
+</div>
+<figcaption id="fig-reasoning-compute-caption">Three ways one trained model can be used at inference time. In every row the parameters stay fixed. In the second row the model generates intermediate reasoning tokens before its answer, which is additional inference-time computation by the same next-token mechanism, not a change to the model and not human thought. In the third row the model's reasoning produces a tool request; the software outside the model executes it, and the observation returns to the context for further reasoning.</figcaption>
+</figure>

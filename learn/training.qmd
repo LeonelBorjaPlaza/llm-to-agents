@@ -11,7 +11,7 @@ there for the derivation.*
 
 ## 1. The objective
 
-An autoregressive language model predicts each token from the tokens that
+An [autoregressive](../glossary.qmd#autoregressive-model) language model predicts each token from the tokens that
 came before it. That single sentence is the whole training objective, and
 the rest of this page unpacks it.
 
@@ -80,7 +80,7 @@ in advance.
 
 At each position the transformer's final layer produces one raw score
 per vocabulary entry; machine-learning literature calls these scores
-logits. Softmax maps them into a probability distribution over the
+[logits](../glossary.qmd#logit). [Softmax](../glossary.qmd#softmax) maps them into a probability distribution over the
 vocabulary, exactly as `learn/softmax-sampling.qmd` works through. [S-05]
 [S-30] The observed next token, the target, picks out one entry of that
 distribution. Write $p_\theta(x_t \mid x_{<t})$ for the probability the
@@ -92,7 +92,7 @@ L_t = -\log p_\theta(x_t \mid x_{<t})
 $$
 
 the negative logarithm of the probability given to the correct token. This
-is the **negative log-likelihood**, and for a distribution produced by
+is the [**negative log-likelihood**](../glossary.qmd#negative-log-likelihood), and for a distribution produced by
 softmax it is the same quantity as the cross-entropy loss that
 `learn/neural-networks.qmd` uses for its single unit, now with a
 vocabulary-sized set of categories instead of two. A few values show its
@@ -128,7 +128,7 @@ uncertainty about a model's outputs is impossible to measure. [S-06]
 Pretraining is the loop that `learn/neural-networks.qmd` runs once on a
 single unit, run an enormous number of times on the whole network:
 
-1. sample a **mini-batch**, a small set of token sequences drawn from the
+1. sample a [**mini-batch**](../glossary.qmd#mini-batch), a small set of token sequences drawn from the
    training text;
 2. run a forward pass on each sequence, producing a distribution over the
    next token at every position;
@@ -137,7 +137,7 @@ single unit, run an enormous number of times on the whole network:
 5. run **backpropagation**, which computes the gradient of the batch loss
    with respect to every trainable parameter, that is, how the loss would
    change with a small change in each parameter, at the current values;
-6. let the **optimizer** use those gradients to update the parameters;
+6. let the [**optimizer**](../glossary.qmd#optimizer) use those gradients to update the parameters;
 7. repeat with the next mini-batch.
 
 Two points from the single-unit lesson carry over unchanged. First,
@@ -254,10 +254,10 @@ checks add, is the subject of later pages.
 Three different things happen to a model over its life, and only two of
 them change its parameters.
 
-**Pretraining** is this page: large-scale training on the next-token
-objective, changing every trainable parameter.
+[**Pretraining**](../glossary.qmd#pretraining) is this page: large-scale training on the next-token
+objective, updating the model's trainable parameters.
 
-**Post-training** also changes parameters, using further training with
+[**Post-training**](../glossary.qmd#post-training) also changes parameters, using further training with
 different data and objectives. It is a family of methods rather than one
 fixed procedure: supervised training on demonstrations of desired
 behavior, optimization toward human or model preferences, reinforcement
@@ -265,7 +265,7 @@ learning, and safety or behavior shaping are all members of it. A later
 lesson covers them; this page only marks that they, too, are parameter
 changes.
 
-**Inference-time context** changes no parameter at all. Instructions,
+[**Inference-time context**](../glossary.qmd#context) changes no parameter at all. Instructions,
 the conversation so far, retrieved documents, tool results, and files or
 other state supplied to the current call are tokens in the context
 window, as `learn/tokens-context.qmd` describes; they shape this call's

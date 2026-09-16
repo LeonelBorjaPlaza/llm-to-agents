@@ -940,3 +940,234 @@ debt stays as G1 in the source map); the trailing changelog paragraph
 removed (its content is recorded in the Batch 5 entry above).
 `README.md` updated to the current site structure and render/preview
 commands.
+
+## Task: Spine + Visual Pass (2026-09-15, after commit d8600d0)
+
+### Scope
+
+Rebuilt `short-story.qmd` as the definitive conceptual spine (13 numbered
+sections plus an opening that states the governing question and shows
+the whole lifecycle); created six reusable figures in `_includes/`
+(`_fig-lifecycle.qmd`, `_fig-runnable-model.qmd`, `_fig-tiny-network.qmd`,
+`_fig-rnn-vs-transformer.qmd`, `_fig-training-stages.qmd`,
+`_fig-three-stores.qmd`; the agent loop is reused); added a five-category
+semantic palette and figure, callout, summary, tooltip, and home-page
+styles to `assets/css/site.scss`; added glossary previews
+(a small script loaded site-wide through `_includes/_glossary-preview.html`
+and `_quarto.yml`'s `include-after-body`; originally an external file in
+`assets/js/`, inlined in the final visual pass so that it needs no asset
+path); added `_includes/_one-minute-version.qmd` and a
+"The one-minute version" section at the top of
+`learn/using-models-well.qmd`; added a compact corpus subsection to §1 of
+`learn/how-created.qmd`; linked the first important occurrence of 39 key
+terms on the seven main-path pages to the glossary with no wording
+changes (the neural-networks lesson keeps its CRLF line endings); put the
+lifecycle figure and palette-coded tier rules on the home page; added a
+video-first route and three resource entries (Karpathy 2023, Seitz with
+Mody, CS336), bringing the library to 22, the configured maximum; added
+claim rows S-75–S-81 and source entries S42–S46. No deep-dive page was
+edited. Nothing committed.
+
+### Short Story structure before and after
+
+Before (10 sections): you type text → vectors enter a neural network →
+the transformer → scores → why the probabilities are good → assistant →
+context → tools → the loop → mental model.
+
+After: the question this course answers (with the lifecycle figure) →
+1 what the finished object is → 2 the basic computation → 3 the corpus →
+4 text becomes numbers → 5 recurrent networks to the transformer →
+6 pretraining makes the base model → 7 post-training makes the
+assistant → 8 fluency, abstention, and evidence → 9 reasoning-oriented
+RL → 10 what happens when you type → 11 parameters, context, and
+external state → 12 tools and the agent loop → 13 the mental model.
+
+### Research and what was verified
+
+Karpathy 2023 (*Intro to Large Language Models*): official description
+and chapter list verified from the video page's own data; the linked
+slides are behind a login wall; the spoken "two files / 140 GB / 500
+lines of C" passage exists only in a third-party transcript and is not
+stated on the site (the site cites the code-plus-parameters framing to
+the "LLM Inference" chapter and the description's linked ~1000-line
+runner). Karpathy 2025 (*Deep Dive*): official description and chapter
+list verified; no transcript obtainable; the classroom analogy is
+verified verbatim from Karpathy's own 2025-01-30 post; the memory
+analogy's "working memory" phrase is confirmed by the official chapter
+title and by the 2023 description, while "vague recollection" is
+third-party only and is paraphrased. CS336, the UW CSE 163 lesson, the
+Seitz videos (via oEmbed, RSS, and an archived page; live YouTube pages
+blocked), Jay Mody's post, and FineWeb (arXiv abstract plus the dataset
+card's raw README) verified on 2026-09-15. MIT 6.S191 was evaluated and
+not added (no lecture specifically on language models in its 2026
+offering).
+
+### Verification (this pass)
+
+`bash scripts/verify.sh`: steps 1–11 pass; step 12 (offline deck) fails
+on the pre-existing CDN reference, unchanged. Internal links: 1,086
+checked, all resolve, including every glossary anchor linked from the
+short story and lessons. The preview script's assumptions were mirrored
+in Python against the rendered glossary: all 54 distinct glossary ids
+linked site-wide have a `section.level3` with an `h3` and a first `p`.
+**Browser checks not performed** (no browser in this environment): the
+hover and keyboard-focus previews, the click-through, the no-JavaScript
+fallback, figure legibility at laptop and phone widths, the home page,
+and the rail remain release QA for a human.
+
+### Correction pass on the Spine + Visual Pass (2026-09-15, before commit)
+
+Precision and consistency corrections only; structure unchanged.
+Short story: parameter count stated as a large learned collection
+("modern large models contain billions"), not a definition; the
+code-plus-checkpoint picture now cites the `llama2.c` README (S-82) as
+direct support, with the 2023 talk kept as pedagogical attribution, no
+runner line count, and "everything the model knows" replaced by
+"the information the model learned during training is distributed across
+them"; corpus disclosure stated as "often not publicly disclosed, varies
+across models and providers" (same fix in `learn/how-created.qmd` §1);
+recurrent networks "became established and highly influential
+approaches"; backpropagation "computes the gradient of the loss with
+respect to the trainable parameters"; "training code is known and
+short" replaced by "architecture and optimization procedure are
+specified in code; training discovers the parameter values"; base model
+"not specifically optimized to behave as a conversational assistant";
+post-training data stated for published recipes with Constitutional AI
+and DeepSeek-R1 as examples; "smaller" data replaced by "more targeted
+data and feedback"; the hallucination section restated as a careful
+sequence (pretraining does not verify truth; post-training makes
+question-answering more likely; a well-formed answer can outrun
+parametric information; recipes can encourage abstention, calibration,
+truthfulness, or tool use; post-training did not create the possibility
+of unsupported answers); retrieval described as grounding in inspectable
+evidence that still has to be evaluated, with "deserves more trust"
+removed; reasoning RL described as checkable outcomes supplying reward
+without a learned reward model for that component; decoding described as
+deterministic or stochastic, with sampling as one reason for run-to-run
+variation; context and persistence stated product-neutrally; the memory
+analogy attributes only "working memory" to Karpathy and marks the
+long-term-recall half as the course's own analogy; the mental model and
+the opening use "request-specific information the model conditions on"
+plus the decoding-and-product-logic clause. Consistency edits authorized
+for this round: `learn/why-transformers.qmd` §1's big-O sentence now
+reads "on the order of the input size" and "bounded by a constant",
+matching the glossary; `learn/training.qmd` §8 now says "updating the
+model's trainable parameters". Reading-time references to the short
+story updated from ten to fifteen minutes in `index.qmd`, `README.md`,
+and the prerequisites note of `learn/using-models-well.qmd`; historical
+log entries left as written. Resources: "strongest", "fastest", and
+"shortest" replaced by "recommended", "compact", and "short". A full
+review patch including the untracked new files was written to
+`/tmp/spine-visual-pass-full.patch` using `git add -N` followed by
+`git reset`; nothing staged or committed.
+
+### Final visual-and-interaction correction pass (2026-09-15, before commit)
+
+Fixes from external review of the full patch, including direct
+rendering of the new SVGs. RNN-versus-transformer figure: the
+direction sentence now reads "information from token 1 reaches token 5
+only through 4 sequential steps"; the attention arcs were moved beneath
+the position boxes so no arc crosses a heading; the parallelism note is
+scoped to training on a known sequence; viewBox 640×330 → 640×420.
+Runnable-model figure: viewBox 640×300 → 720×340, wider boxes, smaller
+headings, "billions of them, stored as a checkpoint" → "learned values
+stored in a checkpoint", inference line split in two. Tiny-network
+figure: viewBox 640×230 → 680×230, labels shortened to "inputs /
+learned W, b / nonlinearity / output", note "in this toy unit, training
+changes W and b", caption "A basic neural-network building block" with
+"Larger networks combine many learned transformations and nonlinear
+operations". Three-stores figure: viewBox 640×300 → 800×330, all labels
+moved inside their boxes, context box relabeled "context: tokens
+supplied for this step", aria and caption wording made product-neutral.
+Training-stages figure: "the model's trainable parameters θ",
+"an instruction-tuned, post-trained model", "use preference or reward
+signals to further shape behavior", "a further post-trained model", and
+a caption sentence that not every deployed model passes through exactly
+these steps. Lifecycle: "assistant model" → "post-trained model", and
+the single green stage split into "inference-time context" (context
+color) and "tools, external state, and the loop" (system color), with
+the caption stating that retrieval brings information into the context.
+Narrow-width CSS: each lifecycle `li` is now a column so the stage and
+its downward arrow stack. Short story: opening says post-training
+shapes "a post-trained, assistant-oriented model, around which a
+product builds the assistant"; §7 retitled "Post-training shapes
+assistant behavior"; two "assistant model" phrases → "post-trained
+model"; §2 says larger networks combine many learned transformations
+and nonlinear operations; §5 scopes parallel computation to training on
+a known sequence. Glossary previews: the script is now inlined in
+`_includes/_glossary-preview.html` (external `assets/js/` file removed)
+so it needs no asset path at any page depth or site sub-path; keyboard
+focus previews no longer depend on hover capability (mouse listeners
+are conditional on `(hover: hover)`, focus after a touch tap is ignored
+via pointer type, keyboard focus always previews); the tooltip clamps
+left and right, flips above the term when there is no room below, and
+repositions on resize as well as scroll; helper text "Open glossary:
+click the term or press Enter". Added `scripts/check_asset_paths.py`
+(fails on any `src`/`href="/assets/"` in rendered pages) as verify step
+12 of 13. A conservative static text-extent check (0.56 em per glyph,
+0.6 em bold, run from the scratchpad) reports no label leaving its box
+or the viewBox and no arc crossing a text band; this is not a
+substitute for browser QA. The stray review artifact
+`spine-visual-pass.patch` was deleted from the repository root.
+
+## Task: reader-first and visual completion pass on the Short Story (2026-09-15, before the freeze)
+
+### Scope
+
+Rewrote `short-story.qmd` (13 sections plus the opening; about 4,100
+words of prose, roughly a twenty-minute read) to the reader-first
+standard, and completed its figure sequence. New includes:
+`_fig-data-pipeline.qmd`, `_fig-token-to-vector.qmd`,
+`_fig-attention-intuition.qmd`, `_fig-reasoning-compute.qmd`,
+`_fig-inference-loop.qmd`, `_fig-tool-roundtrip.qmd`, and
+`_fig-agent-loop.qmd` (a captioned wrapper around the existing
+`_agent-loop.qmd`). Every figure now carries a stable `fig-*` wrapper
+id; `scripts/check_short_story_figures.py` (verify step 13 of 14) fails
+if any of the thirteen required ids is missing from the rendered page,
+if they render out of narrative order, or if a `_fig-*.qmd` include is
+unused. Added `.fig-rows` styles for the reasoning figure. Reading-time
+references updated from fifteen to twenty minutes in the subtitle,
+`index.qmd`, `README.md`, and the prerequisites note of
+`learn/using-models-well.qmd`. Review artifacts removed from the
+repository root. No lesson prose was edited.
+
+### Section order after revision
+
+The question (opening answer plus the lifecycle figure) → 1 What the
+finished object is → 2 The smallest piece of a neural network → 3
+Assembling the text the model learns from → 4 From text to tokens to
+vectors → 5 From recurrent networks to the transformer → 6 Pretraining
+makes the base model → 7 Post-training shapes assistant behavior → 8
+Fluency, abstention, and evidence → 9 Reasoning-oriented models:
+training, and thinking longer at inference → 10 What happens when you
+type → 11 Parameters, context, and external state → 12 Tools, and the
+loop that makes an agentic system → 13 The mental model.
+
+### Research
+
+Reasoning-model inference mechanics verified on 2026-09-15 against
+Anthropic's current Thinking, Effort, Extended thinking, and Steering
+thinking pages plus the 2025 announcement; Google's Gemini thinking page
+(dated 2026-09-09 by the page); and OpenAI's Reasoning models page (the
+platform.openai.com URL redirects to developers.openai.com). All three
+describe reasoning generated before the answer, a control for how much,
+and reasoning tokens counted and billed like output; all three return at
+most a summary rather than the raw reasoning; Anthropic and OpenAI
+describe interleaving with tool calls; only Anthropic's 2025
+announcement makes an explicit faithfulness statement. The site names no
+parameter and generalizes only the shared shape (S-83–S-85). Anthropic's
+current pages document the 2025 budget-based mode as deprecated in
+favor of adaptive thinking with an effort setting, which is why the site
+says "a reasoning-effort setting or a thinking level" and nothing more
+specific.
+
+### Static figure checks
+
+The scratchpad text-extent check (0.56 em per glyph, 0.6 em bold, 6 px
+padding) reports no label leaving its box or the viewBox in any of the
+eight SVG figures; the row-based figures (lifecycle, data pipeline,
+reasoning, training stages) are responsive HTML. This is not a
+substitute for browser QA, which remains pending for the home page, the
+Short Story and its thirteen figures at laptop and phone widths, the
+glossary previews, the video-first route, and the one-minute summary.
+

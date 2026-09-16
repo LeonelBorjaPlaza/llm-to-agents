@@ -1,0 +1,57 @@
+<figure id="fig-attention-intuition" class="course-figure" aria-labelledby="fig-attention-intuition-caption">
+<svg viewBox="0 0 720 350" role="img" aria-label="Attention at one position: the destination token 'it' assigns an illustrative weight to each permitted source position, the weights sum to one, and the destination receives a weighted combination of the sources' value vectors" xmlns="http://www.w3.org/2000/svg">
+  <title>What one attention head computes</title>
+  <desc>Seven token boxes in a row: The, animal, crossed, the, street, because, it. The last token, it, is the destination. Under each token is an illustrative attention weight: The 0.02, animal 0.55, crossed 0.05, the 0.02, street 0.11, because 0.20, it 0.05, summing to one. Lines from every token converge on a box labeled weighted combination of value vectors, whose thickness reflects the weight, and an arrow leads to a box labeled updated representation of it. A note says this is one head in one layer; real models run many heads and many layers.</desc>
+  <g fill="#1c1c1c">
+    <text x="648" y="28" text-anchor="middle" font-size="12" fill="#5b3fa0" font-weight="600">destination</text>
+
+    <rect x="31" y="40" width="82" height="44" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="2.5"/>
+    <text x="72" y="68" text-anchor="middle" font-size="15">The</text>
+    <rect x="127" y="40" width="82" height="44" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="2.5"/>
+    <text x="168" y="68" text-anchor="middle" font-size="15">animal</text>
+    <rect x="223" y="40" width="82" height="44" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="2.5"/>
+    <text x="264" y="68" text-anchor="middle" font-size="15">crossed</text>
+    <rect x="319" y="40" width="82" height="44" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="2.5"/>
+    <text x="360" y="68" text-anchor="middle" font-size="15">the</text>
+    <rect x="415" y="40" width="82" height="44" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="2.5"/>
+    <text x="456" y="68" text-anchor="middle" font-size="15">street</text>
+    <rect x="511" y="40" width="82" height="44" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="2.5"/>
+    <text x="552" y="68" text-anchor="middle" font-size="15">because</text>
+    <rect x="607" y="40" width="82" height="44" rx="6" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3.5"/>
+    <text x="648" y="68" text-anchor="middle" font-size="15" font-weight="600">it</text>
+
+    <g font-size="15" text-anchor="middle">
+      <text x="72" y="108">0.02</text>
+      <text x="168" y="108" font-weight="600">0.55</text>
+      <text x="264" y="108">0.05</text>
+      <text x="360" y="108">0.02</text>
+      <text x="456" y="108">0.11</text>
+      <text x="552" y="108" font-weight="600">0.20</text>
+      <text x="648" y="108">0.05</text>
+    </g>
+    <text x="360" y="132" text-anchor="middle" font-size="13" fill="#4a4a4a">illustrative attention weights for the destination “it” (they sum to 1.00)</text>
+
+    <g stroke="#5b3fa0" fill="none" stroke-linecap="round">
+      <line x1="72" y1="114" x2="300" y2="190" stroke-width="1.2"/>
+      <line x1="168" y1="114" x2="320" y2="190" stroke-width="4.5"/>
+      <line x1="264" y1="114" x2="340" y2="190" stroke-width="1.4"/>
+      <line x1="360" y1="114" x2="360" y2="190" stroke-width="1.2"/>
+      <line x1="456" y1="114" x2="380" y2="190" stroke-width="1.8"/>
+      <line x1="552" y1="114" x2="400" y2="190" stroke-width="2.6"/>
+      <line x1="648" y1="114" x2="420" y2="190" stroke-width="1.4"/>
+    </g>
+
+    <rect x="210" y="192" width="300" height="44" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="360" y="220" text-anchor="middle" font-size="13">weighted combination of value vectors</text>
+
+    <line x1="360" y1="238" x2="360" y2="258" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="352,256 368,256 360,270" fill="#6c6c6c"/>
+
+    <rect x="200" y="272" width="320" height="44" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="360" y="300" text-anchor="middle" font-size="15">updated representation of “it”</text>
+
+    <text x="360" y="340" text-anchor="middle" font-size="13" fill="#4a4a4a">one head in one layer; real models run many heads and many layers</text>
+  </g>
+</svg>
+<figcaption id="fig-attention-intuition-caption">One attention head, for one destination position. The model computes a weight for each permitted source position (here every position up to and including "it"), the weights are nonnegative and sum to one, and the destination receives the weighted combination of the sources' value vectors, which becomes its updated representation. The weights are illustrative. They are local mixing weights inside one head at one layer, not a complete or causal explanation of the model's output; real models run many heads in parallel and stack many layers.</figcaption>
+</figure>

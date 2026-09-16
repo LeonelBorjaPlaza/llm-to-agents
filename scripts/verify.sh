@@ -12,7 +12,7 @@ cd "$(dirname "$0")/.." || exit 1
 
 FAIL=0
 
-echo "== 1/12: quarto render =="
+echo "== 1/14: quarto render =="
 if quarto render; then
     echo "PASS: quarto render"
 else
@@ -21,7 +21,7 @@ else
 fi
 echo
 
-echo "== 2/12: internal links =="
+echo "== 2/14: internal links =="
 if python3 scripts/check_links.py; then
     :
 else
@@ -29,7 +29,7 @@ else
 fi
 echo
 
-echo "== 3/12: source-claim reconciliation =="
+echo "== 3/14: source-claim reconciliation =="
 if python3 scripts/check_sources.py; then
     :
 else
@@ -37,7 +37,7 @@ else
 fi
 echo
 
-echo "== 4/12: softmax numerical reference =="
+echo "== 4/14: softmax numerical reference =="
 if python3 scripts/check_softmax_reference.py; then
     :
 else
@@ -45,7 +45,7 @@ else
 fi
 echo
 
-echo "== 5/12: neuron/backprop numerical example =="
+echo "== 5/14: neuron/backprop numerical example =="
 if python3 scripts/check_neuron_example.py; then
     :
 else
@@ -53,7 +53,7 @@ else
 fi
 echo
 
-echo "== 6/12: transformer path-length numerical example =="
+echo "== 6/14: transformer path-length numerical example =="
 if python3 scripts/check_transformer_path_lengths.py; then
     :
 else
@@ -61,7 +61,7 @@ else
 fi
 echo
 
-echo "== 7/12: BPE and context-budget examples =="
+echo "== 7/14: BPE and context-budget examples =="
 if python3 scripts/check_bpe_example.py; then
     :
 else
@@ -69,7 +69,7 @@ else
 fi
 echo
 
-echo "== 8/12: attention numerical example =="
+echo "== 8/14: attention numerical example =="
 if python3 scripts/check_attention_example.py; then
     :
 else
@@ -77,7 +77,7 @@ else
 fi
 echo
 
-echo "== 9/12: training likelihood example =="
+echo "== 9/14: training likelihood example =="
 if python3 scripts/check_training_example.py; then
     :
 else
@@ -85,7 +85,7 @@ else
 fi
 echo
 
-echo "== 10/12: glossary structure and links =="
+echo "== 10/14: glossary structure and links =="
 if python3 scripts/check_glossary.py; then
     :
 else
@@ -93,7 +93,7 @@ else
 fi
 echo
 
-echo "== 11/12: curated resources fields and bounds =="
+echo "== 11/14: curated resources fields and bounds =="
 if python3 scripts/check_resources.py; then
     :
 else
@@ -101,7 +101,23 @@ else
 fi
 echo
 
-echo "== 12/12: offline presentation check (static) =="
+echo "== 12/14: origin-root asset paths in rendered pages =="
+if python3 scripts/check_asset_paths.py; then
+    :
+else
+    FAIL=1
+fi
+echo
+
+echo "== 13/14: short-story figures render and every figure include is used =="
+if python3 scripts/check_short_story_figures.py; then
+    :
+else
+    FAIL=1
+fi
+echo
+
+echo "== 14/14: offline presentation check (static) =="
 if python3 scripts/check_offline.py; then
     :
 else

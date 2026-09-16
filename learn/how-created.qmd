@@ -23,14 +23,33 @@ network can *improve*: numbers that training is allowed to adjust so that
 they become useful for prediction, rather than fixed codes chosen by a
 person. Those two requirements are met by three steps, taken in order:
 
-1. split the text into units drawn from a fixed inventory (**tokens**);
-2. replace each unit by its index in that inventory (**token IDs**);
+1. split the text into units drawn from a fixed inventory ([**tokens**](../glossary.qmd#token));
+2. replace each unit by its index in that inventory ([**token IDs**](../glossary.qmd#token-id));
 3. replace each index by a list of adjustable numbers looked up from a
-   table (**embedding vectors**).
+   table ([**embedding vectors**](../glossary.qmd#embedding)).
 
 The rest of this page follows one short sentence through those three
 steps, then explains what the network is asked to do with the result and
 where training takes over.
+
+### Before any of this: assembling the training text
+
+The sentence in §2 stands in for an enormous body of text, and that body
+does not arrive ready-made. Before tokenization there is a data
+pipeline: source material is gathered from web pages, code, books, and
+other permitted sources; the main text is extracted from its raw form;
+documents are filtered by language and by quality rules; duplicates are
+removed; and only the surviving text is handed to the tokenizer. In
+short, raw source material → curated corpus → tokenizer → tokens. One
+open, documented example of such a pipeline is Hugging Face's FineWeb
+dataset, built from Common Crawl web snapshots by URL filtering, text
+extraction, language filtering, quality filtering, and deduplication.
+[S-78] It is one open example of the kind of work involved, not a
+description of any particular model's corpus: complete training corpora
+for closed models are often not publicly disclosed, the level of
+disclosure varies across models and providers, corpora differ between
+models, and "trained on the internet" is shorthand for a curated
+selection, not a literal description.
 
 ## 2. A small example
 
@@ -45,9 +64,9 @@ network is trained to predict.
 ## 3. Splitting text into tokens
 
 The first step cuts the text into pieces. The pieces come from a fixed
-inventory, called the **vocabulary**, that is decided once, before
+inventory, called the [**vocabulary**](../glossary.qmd#vocabulary), that is decided once, before
 training, and then used unchanged for all text the model ever sees. The
-program that does the cutting is the **tokenizer**. The pieces it produces
+program that does the cutting is the [**tokenizer**](../glossary.qmd#tokenizer). The pieces it produces
 are tokens, and they are often whole words, but not always: a common word
 may be one token, a rare or long word may be split into several, and in
 many commonly used tokenizers spaces and punctuation influence the split.
@@ -132,7 +151,7 @@ example, with $d = 3$ and made-up entries:
 
 Where do these numbers come from? Not from a dictionary. Nothing in the
 row for ` bridge` encodes "a structure carrying a road over a river". The
-entries of $E$ are **parameters** of the model, in exactly the sense that
+entries of $E$ are [**parameters**](../glossary.qmd#parameter) of the model, in exactly the sense that
 the weights and biases of a unit are parameters: they start as arbitrary
 values and are adjusted by training, together with every other parameter,
 so that the network's predictions improve. The idea of learning a vector

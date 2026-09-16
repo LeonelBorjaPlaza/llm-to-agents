@@ -4,10 +4,14 @@ subtitle: "Turning what the course has taught into working habits: task selectio
 ---
 
 *Prerequisites: none strictly, but this page assumes the mental model
-that `short-story.qmd` gives in ten minutes and that the lessons develop
+that `short-story.qmd` gives in about twenty minutes and that the lessons develop
 in full: a model predicts tokens from a finite context; training set its
 parameters; tools and loops around it can act on the world. Each claim
 below links to the page that establishes it.*
+
+## The one-minute version
+
+{{< include ../_includes/_one-minute-version.qmd >}}
 
 ## The central principle
 
@@ -105,8 +109,7 @@ tools can retrieve or observe external information and place the
 relevant results into later context. `learn/tokens-context.qmd` explains
 the window: finite, holding instructions, conversation, supplied files,
 tool results, and generated output together. [S-31] Managing what goes
-into it is the practical skill the industry has come to call **context
-engineering**, and the question it asks for every step is simple: what
+into it is the practical skill the industry has come to call [**context engineering**](../glossary.qmd#context-engineering), and the question it asks for every step is simple: what
 information actually needs to be in context now?
 
 The guiding principle is the smallest high-signal context that is
@@ -137,7 +140,7 @@ disclosure**. [S-61] Retrieve the relevant part of an archive rather
 than pasting the archive. Remove context that has become stale or is
 duplicated. When a long session becomes unwieldy, summarize its state
 into a compact form and continue from that, which is called
-**compaction** when the system does it automatically and a **handoff**
+[**compaction**](../glossary.qmd#compaction) when the system does it automatically and a **handoff**
 when you do it deliberately (§8). [S-61] And when the existing history
 is more noise than signal, start a fresh session with a clean
 specification. These are general practices; how a particular product
@@ -366,7 +369,7 @@ In API and agent workflows, cost and latency deserve attention, for
 structural reasons. The context may be sent with every call, and a tool
 loop makes many calls; long outputs accumulate into later inputs;
 stronger models and higher effort cost more per token. One mechanism
-that helps is **prompt caching**, in which a provider stores a repeated
+that helps is [**prompt caching**](../glossary.qmd#prompt-caching), in which a provider stores a repeated
 prefix of the input so that it is cheaper and faster to process on later
 calls. It should be understood precisely: Anthropic's documentation
 states that cached prompt prefixes still occupy the context window, and

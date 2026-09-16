@@ -19,7 +19,7 @@ live equation or demonstration (see `CLAUDE.md`'s product-hierarchy note).
 Currently present:
 
 - **Start:** `index.qmd` and `short-story.qmd` (the whole course in about
-  ten minutes, with a link into the lesson that develops each step);
+  twenty minutes, with a link into the lesson that develops each step);
 - **Learn**, the main path in order: `learn/how-created.qmd`,
   `learn/neural-networks.qmd`, `learn/why-transformers.qmd`,
   `learn/training.qmd`, `learn/posttraining.qmd`, `learn/agents.qmd`,
@@ -75,13 +75,13 @@ results, including any check that requires a human with a real browser
 ```
 _quarto.yml              website + deck project configuration
 index.qmd                site home page (Start / Learn / Deep dives / Reference)
-short-story.qmd          the whole course in about ten minutes
+short-story.qmd          the whole course in about twenty minutes
 milestones.qmd           selective timeline (reference)
 glossary.qmd             term reference, alphabetical with stable anchors
 resources.qmd            curated learning library (reference)
 learn/                    seven main-path lessons and three optional deep dives
 slides/                   the Reveal.js deck (three slides, historical prototype)
-_includes/                shared markup: interactive, agent loop, checklist, milestone rail
+_includes/                shared markup: interactive, agent loop, checklist, milestone rail, course figures
 assets/                   CSS and JavaScript (vanilla, no build step)
 sources/                  source map and machine-checkable claim ledger
 scripts/                  verification scripts (see scripts/verify.sh)

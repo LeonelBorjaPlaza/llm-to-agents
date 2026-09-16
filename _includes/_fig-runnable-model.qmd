@@ -1,0 +1,28 @@
+<figure id="fig-runnable-model" class="course-figure" aria-labelledby="fig-runnable-caption">
+<svg viewBox="0 0 720 340" role="img" aria-label="A runnable model: code that implements the computation, plus a checkpoint of learned parameters, together perform inference" xmlns="http://www.w3.org/2000/svg">
+  <title>What a runnable model is</title>
+  <desc>Two boxes side by side. The left box, labeled architecture and runner code, says how to compute. The right box, labeled learned parameters theta, holds learned values stored in a checkpoint. A plus sign joins them; an arrow leads down to a third box labeled model inference, which takes context in and gives a next-token distribution out, with theta unchanged.</desc>
+  <g font-size="20" fill="#1c1c1c">
+    <rect x="30" y="30" width="300" height="120" rx="8" fill="#eceef2" stroke="#4f5b6e" stroke-width="3"/>
+    <text x="180" y="66" text-anchor="middle" font-size="18" font-weight="600">architecture / runner code</text>
+    <text x="180" y="98" text-anchor="middle" font-size="16">how to compute:</text>
+    <text x="180" y="124" text-anchor="middle" font-size="16">sums, nonlinearities, attention</text>
+
+    <text x="360" y="98" text-anchor="middle" font-size="40" fill="#6c6c6c">+</text>
+
+    <rect x="390" y="30" width="300" height="120" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="540" y="66" text-anchor="middle" font-size="18" font-weight="600">learned parameters θ</text>
+    <text x="540" y="98" text-anchor="middle" font-size="16">learned values stored</text>
+    <text x="540" y="124" text-anchor="middle" font-size="16">in a checkpoint</text>
+
+    <line x1="360" y1="160" x2="360" y2="206" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="350,204 370,204 360,220" fill="#6c6c6c"/>
+
+    <rect x="140" y="226" width="440" height="100" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="360" y="256" text-anchor="middle" font-size="18" font-weight="600">model inference</text>
+    <text x="360" y="284" text-anchor="middle" font-size="16">context in → next-token distribution out</text>
+    <text x="360" y="308" text-anchor="middle" font-size="16">parameters θ unchanged</text>
+  </g>
+</svg>
+<figcaption id="fig-runnable-caption">Stripped of product infrastructure, a runnable open model is code that implements the network's computation plus a checkpoint holding the learned parameters. Inference runs the code with those parameters fixed. This framing follows Karpathy's 2023 general-audience talk; it is an intuition about what the object is, not a rule that every deployed product consists of exactly two files.</figcaption>
+</figure>

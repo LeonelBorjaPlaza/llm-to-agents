@@ -1,0 +1,59 @@
+<figure id="fig-rnn-transformer" class="course-figure" aria-labelledby="fig-rnn-caption">
+<svg viewBox="0 0 640 420" role="img" aria-label="Recurrent processing passes a running state from token to token in sequence; a transformer lets each position read directly from permitted earlier positions through attention" xmlns="http://www.w3.org/2000/svg">
+  <title>Recurrent sequence processing versus attention</title>
+  <desc>Top row, labeled recurrent network: five token boxes joined by single arrows from each to the next, so information from token 1 reaches token 5 only by passing through tokens 2, 3, and 4. Bottom row, labeled transformer with causal attention: five position boxes, with arcs drawn beneath them from each later position back to every earlier position, showing that position 5 can read positions 1 to 4 directly in one layer. A note states that during training on a known sequence, positions within a layer are computed in parallel.</desc>
+  <g font-size="19" fill="#1c1c1c">
+    <text x="20" y="32" font-weight="600">Recurrent network: state passed one step at a time</text>
+    <g>
+      <rect x="20" y="50" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="65" y="80" text-anchor="middle">token 1</text>
+      <rect x="150" y="50" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="195" y="80" text-anchor="middle">token 2</text>
+      <rect x="280" y="50" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="325" y="80" text-anchor="middle">token 3</text>
+      <rect x="410" y="50" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="455" y="80" text-anchor="middle">token 4</text>
+      <rect x="540" y="50" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="585" y="80" text-anchor="middle">token 5</text>
+      <g stroke="#5b3fa0" stroke-width="3" fill="#5b3fa0">
+        <line x1="112" y1="73" x2="136" y2="73"/><polygon points="134,66 148,73 134,80"/>
+        <line x1="242" y1="73" x2="266" y2="73"/><polygon points="264,66 278,73 264,80"/>
+        <line x1="372" y1="73" x2="396" y2="73"/><polygon points="394,66 408,73 394,80"/>
+        <line x1="502" y1="73" x2="526" y2="73"/><polygon points="524,66 538,73 524,80"/>
+      </g>
+      <text x="325" y="126" text-anchor="middle" font-size="15" fill="#4a4a4a">information from token 1 reaches token 5 only through 4 sequential steps</text>
+    </g>
+
+    <text x="20" y="176" font-weight="600">Transformer: direct attention to earlier positions</text>
+    <g>
+      <rect x="20" y="194" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="65" y="224" text-anchor="middle">pos. 1</text>
+      <rect x="150" y="194" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="195" y="224" text-anchor="middle">pos. 2</text>
+      <rect x="280" y="194" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="325" y="224" text-anchor="middle">pos. 3</text>
+      <rect x="410" y="194" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="455" y="224" text-anchor="middle">pos. 4</text>
+      <rect x="540" y="194" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+      <text x="585" y="224" text-anchor="middle">pos. 5</text>
+      <!-- arcs run beneath the boxes, from each later position back to each earlier one -->
+      <g fill="none" stroke="#5b3fa0" stroke-width="2.5">
+        <path d="M 195 242 Q 130 286 65 242"/>
+        <path d="M 325 242 Q 260 286 195 242"/>
+        <path d="M 325 242 Q 195 330 65 242"/>
+        <path d="M 455 242 Q 390 286 325 242"/>
+        <path d="M 455 242 Q 325 330 195 242"/>
+        <path d="M 455 242 Q 260 374 65 242"/>
+        <path d="M 585 242 Q 520 286 455 242"/>
+        <path d="M 585 242 Q 455 330 325 242"/>
+        <path d="M 585 242 Q 390 374 195 242"/>
+        <path d="M 585 242 Q 325 418 65 242"/>
+      </g>
+      <text x="325" y="360" text-anchor="middle" font-size="15" fill="#4a4a4a">each position reads its permitted earlier positions in one layer</text>
+      <text x="325" y="382" text-anchor="middle" font-size="15" fill="#4a4a4a">during training on a known sequence,</text>
+      <text x="325" y="404" text-anchor="middle" font-size="15" fill="#4a4a4a">positions within a layer are computed in parallel</text>
+    </g>
+  </g>
+</svg>
+<figcaption id="fig-rnn-caption">Top: a recurrent network carries a running state from each token to the next, so relating distant positions takes many sequential steps, and step by step is the only order available. Bottom: in a transformer, self-attention lets each position read directly from the positions it is permitted to use (in a causal language model, itself and earlier ones), and during training on a known sequence the positions within a layer are computed in parallel; generation still proceeds one token at a time. Direct connection is a property of the architecture; whether training learns to use it well for a given task is a separate question.</figcaption>
+</figure>

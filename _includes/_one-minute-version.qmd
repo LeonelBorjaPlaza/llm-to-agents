@@ -1,0 +1,20 @@
+::: {.one-minute}
+1. **Define the task.** State the objective, the required output, and
+   what a finished result looks like.
+2. **Name the source of truth.** Decide where the answer should come
+   from before asking: the model's general knowledge, a supplied
+   document, current documentation, a database, running code.
+3. **Supply only the context that helps.** The smallest set of
+   high-signal tokens sufficient for the next step; remove what is
+   stale or duplicated.
+4. **Use tools instead of guessing when the answer depends on the
+   world.** Current facts, private data, exact arithmetic, file
+   contents, real actions.
+5. **Define how success will be checked.** Make the result observable:
+   a test run, a recomputed number, a rendered document, a diff. A
+   passing check establishes only what it tested.
+6. **Keep human judgment where checks cannot settle the conclusion.**
+   Research design, causal interpretation, consequential decisions.
+
+The rest of this page explains why.
+:::

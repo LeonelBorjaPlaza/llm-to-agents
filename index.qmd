@@ -21,6 +21,10 @@ talk is not yet built; the three slides linked below are a historical
 prototype from an earlier design.
 :::
 
+The course follows one route, and every page belongs to one stage of it:
+
+{{< include _includes/_fig-lifecycle.qmd >}}
+
 ## How the two products relate
 
 **The website is the primary, standalone learning product.** Someone who
@@ -34,12 +38,15 @@ rather than reproduces.
 
 ## Start here
 
-- [**The short story**](short-story.qmd) — the whole course in about ten
-  minutes: one mental model from the text you type to a system that uses
+::: {.entry-tier .sem-data}
+- [**The short story**](short-story.qmd) — the whole course in about
+  twenty minutes: one mental model from the text you type to a system that uses
   tools, with a link into the lesson that develops each step. Start here.
+:::
 
 ## Learn: the main path, in order
 
+::: {.entry-tier .sem-training}
 - [**From text to numbers**](learn/how-created.qmd) — what has to happen
   before a language model can learn from text: tokens, token IDs,
   embedding vectors, and next-token targets, traced through one sentence.
@@ -68,9 +75,11 @@ rather than reproduces.
   guide: task selection, task specification, context, source of truth,
   tools, verification, bounded units, handoffs, model selection, and an
   operating checklist, each tied to a mechanism taught earlier.
+:::
 
 ## Deep dives: optional technical pages
 
+::: {.entry-tier .sem-model}
 - [**Deep dive: tokens, embeddings, and the context window**](learn/tokens-context.qmd)
   — optional; why models use subword units, what the embedding table does
   and does not encode, and what a finite context window implies in
@@ -82,9 +91,11 @@ rather than reproduces.
 - [**Deep dive: softmax, sampling, and temperature**](learn/softmax-sampling.qmd) — a
   complete, standalone learning module, including a live softmax-and-
   sampling laboratory and a no-JavaScript fallback.
+:::
 
 ## Reference
 
+::: {.entry-tier .sem-system}
 - [**Milestones**](milestones.qmd) — a selective timeline, from the
   perceptron to reasoning-oriented reinforcement learning, for locating
   each of the course's concepts in time.
@@ -93,6 +104,7 @@ rather than reproduces.
   cause confusion and a link to the lesson that teaches it.
 - [**Resources**](resources.qmd) — a curated learning library: what to
   read or watch next, by part of the course, with a caveat for each.
+:::
 
 ## Slides
 

@@ -1,0 +1,22 @@
+<figure id="fig-lifecycle" class="course-figure" aria-labelledby="fig-lifecycle-caption">
+<ol class="lifecycle" aria-label="The lifecycle of a language model, from raw data to an agentic system">
+<li><span class="stage sem-data">raw data</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data">curated training corpus</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-data">tokenizer</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-training">pretraining</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model is-object">base model</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-training">post-training</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-model is-object">post-trained model</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-context">inference-time context</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-system">tools, external state, and the loop</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
+<li><span class="stage sem-system is-object">agentic system</span></li>
+</ol>
+<div class="sem-legend" aria-hidden="true">
+<span class="sem-data">data and inputs</span>
+<span class="sem-training">training (changes parameters)</span>
+<span class="sem-model">the model itself</span>
+<span class="sem-context">inference-time context</span>
+<span class="sem-system">software around the model</span>
+</div>
+<figcaption id="fig-lifecycle-caption">The whole route in one line: raw data is curated into a training corpus and tokenized; pretraining produces a base model; post-training produces the post-trained model that products build on. At use time, the surrounding system supplies the model's inference-time context, and software outside the model adds tools, external state, and retrieval, which brings information into that context; software that calls the model in a loop with those pieces is an agentic system. Colors mark the five kinds of thing involved: data, training, the model, context, and the software around it.</figcaption>
+</figure>

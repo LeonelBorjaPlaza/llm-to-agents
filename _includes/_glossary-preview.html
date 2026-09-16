@@ -1,0 +1,163 @@
+<!-- Glossary hover/focus previews: a progressive enhancement, inlined here
+     so that it needs no asset path and works at any page depth and under
+     any site sub-path (local preview, domain root, or /some/prefix/).
+     Definitions are read from the rendered glossary page at runtime, so
+     glossary.qmd remains the single source of truth; nothing is copied
+     into this script. Without JavaScript, or on failure, every glossary
+     link is an ordinary link. -->
+<script>
+(function () {
+  "use strict";
+  if (typeof window.fetch !== "function" || typeof DOMParser === "undefined") {
+    return;
+  }
+
+  var PATTERN = /glossary\.html#([A-Za-z0-9_-]+)$/;
+  var links = [];
+  var all = document.querySelectorAll("a[href]");
+  for (var i = 0; i < all.length; i++) {
+    var m = PATTERN.exec(all[i].getAttribute("href"));
+    if (m) {
+      all[i].setAttribute("data-glossary-id", m[1]);
+      all[i].classList.add("glossary-term");
+      links.push(all[i]);
+    }
+  }
+  if (links.length === 0) {
+    return;
+  }
+
+  // The glossary URL is taken from the first glossary link on this page,
+  // which Quarto has already resolved relative to this page.
+  var glossaryUrl = links[0].getAttribute("href").replace(/#.*$/, "");
+  var loading = null;
+
+  function loadGlossary() {
+    if (loading) {
+      return loading;
+    }
+    loading = fetch(glossaryUrl, { credentials: "same-origin" })
+      .then(function (r) {
+        if (!r.ok) { throw new Error("glossary fetch failed: " + r.status); }
+        return r.text();
+      })
+      .then(function (html) {
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var map = {};
+        var sections = doc.querySelectorAll("section.level3[id]");
+        for (var k = 0; k < sections.length; k++) {
+          var h = sections[k].querySelector("h3");
+          var p = sections[k].querySelector("p");
+          if (h && p) {
+            map[sections[k].id] = {
+              term: h.textContent.trim(),
+              text: p.textContent.replace(/\s+/g, " ").trim()
+            };
+          }
+        }
+        return map;
+      })
+      .catch(function () { return {}; });
+    return loading;
+  }
+
+  var tip = document.createElement("div");
+  tip.className = "glossary-tooltip";
+  tip.id = "glossary-tooltip";
+  tip.setAttribute("role", "tooltip");
+  tip.hidden = true;
+  document.body.appendChild(tip);
+
+  var current = null;
+
+  function place(link) {
+    var rect = link.getBoundingClientRect();
+    var doc = document.documentElement;
+    var scrollX = window.pageXOffset || doc.scrollLeft;
+    var scrollY = window.pageYOffset || doc.scrollTop;
+    var viewW = doc.clientWidth;
+    var viewH = window.innerHeight || doc.clientHeight;
+    tip.style.left = "0px";
+    tip.style.top = "0px";
+    var width = tip.offsetWidth;
+    var height = tip.offsetHeight;
+    var margin = 8;
+    var left = rect.left + scrollX;
+    var maxLeft = scrollX + viewW - width - margin;
+    if (left > maxLeft) { left = maxLeft; }
+    if (left < scrollX + margin) { left = scrollX + margin; }
+    var spaceBelow = viewH - rect.bottom;
+    var spaceAbove = rect.top;
+    var top;
+    if (spaceBelow >= height + 6 || spaceBelow >= spaceAbove) {
+      top = rect.bottom + scrollY + 6;
+    } else {
+      top = rect.top + scrollY - height - 6;
+    }
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+
+  function show(link) {
+    var id = link.getAttribute("data-glossary-id");
+    current = link;
+    loadGlossary().then(function (map) {
+      if (current !== link) { return; }
+      var entry = map[id];
+      if (!entry) { return; }
+      tip.textContent = "";
+      var term = document.createElement("span");
+      term.className = "term";
+      term.textContent = entry.term;
+      var body = document.createElement("span");
+      body.textContent = entry.text;
+      var more = document.createElement("span");
+      more.className = "more";
+      more.textContent = "Open glossary: click the term or press Enter";
+      tip.appendChild(term);
+      tip.appendChild(body);
+      tip.appendChild(more);
+      tip.hidden = false;
+      link.setAttribute("aria-describedby", tip.id);
+      place(link);
+    });
+  }
+
+  function hide() {
+    if (current) { current.removeAttribute("aria-describedby"); }
+    current = null;
+    tip.hidden = true;
+  }
+
+  // Input modality: a focus caused by a touch tap should not open a
+  // preview (the tap is a navigation), while keyboard focus always should.
+  var lastPointerType = "";
+  document.addEventListener("pointerdown", function (e) {
+    lastPointerType = e.pointerType || "";
+  }, true);
+
+  var canHover = !!(window.matchMedia && window.matchMedia("(hover: hover)").matches);
+
+  for (var j = 0; j < links.length; j++) {
+    (function (link) {
+      if (canHover) {
+        link.addEventListener("mouseenter", function () { show(link); });
+        link.addEventListener("mouseleave", hide);
+      }
+      link.addEventListener("focus", function () {
+        if (lastPointerType === "touch") { lastPointerType = ""; return; }
+        show(link);
+      });
+      link.addEventListener("blur", hide);
+    })(links[j]);
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { hide(); }
+  });
+  function reposition() {
+    if (current && !tip.hidden) { place(current); }
+  }
+  window.addEventListener("scroll", reposition, { passive: true });
+  window.addEventListener("resize", reposition);
+})();
+</script>

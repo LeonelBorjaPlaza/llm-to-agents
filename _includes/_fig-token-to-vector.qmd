@@ -1,0 +1,80 @@
+<figure id="fig-token-vector" class="course-figure" aria-labelledby="fig-token-vector-caption">
+<svg viewBox="0 0 720 360" role="img" aria-label="A token is replaced by an ID, the ID selects one row of the embedding table, and that row is a vector of learned numbers; later, transformer blocks turn the same starting embedding into different contextual representations depending on the surrounding text" xmlns="http://www.w3.org/2000/svg">
+  <title>From token ID to vector to contextual representation</title>
+  <desc>Top row: the token bank becomes token ID 3912; the ID selects row 3912 of the embedding table E; that row is the vector E of 3912, shown with illustrative values 0.18, minus 0.42, 0.07 and so on. Bottom row: the same starting embedding for the token bank enters transformer blocks in two different sentences, the river bank and the central bank, and comes out as two different contextual vectors, A and B.</desc>
+  <g fill="#1c1c1c">
+    <rect x="20" y="40" width="100" height="54" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="70" y="73" text-anchor="middle" font-size="19">“bank”</text>
+
+    <line x1="122" y1="67" x2="150" y2="67" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="148,59 160,67 148,75" fill="#6c6c6c"/>
+
+    <rect x="160" y="40" width="120" height="54" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="220" y="61" text-anchor="middle" font-size="14">token ID</text>
+    <text x="220" y="84" text-anchor="middle" font-size="19" font-weight="600">3912</text>
+
+    <line x1="282" y1="67" x2="310" y2="67" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="308,59 320,67 308,75" fill="#6c6c6c"/>
+
+    <rect x="320" y="22" width="150" height="112" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="395" y="42" text-anchor="middle" font-size="13" font-weight="600">embedding table E</text>
+    <rect x="335" y="52" width="120" height="12" fill="#ffffff" stroke="#b8a9dc" stroke-width="1"/>
+    <rect x="335" y="68" width="120" height="12" fill="#ffffff" stroke="#b8a9dc" stroke-width="1"/>
+    <rect x="335" y="84" width="120" height="12" fill="#ffffff" stroke="#5b3fa0" stroke-width="2.5"/>
+    <text x="395" y="94" text-anchor="middle" font-size="11" fill="#5b3fa0">row 3912</text>
+    <rect x="335" y="100" width="120" height="12" fill="#ffffff" stroke="#b8a9dc" stroke-width="1"/>
+    <rect x="335" y="116" width="120" height="12" fill="#ffffff" stroke="#b8a9dc" stroke-width="1"/>
+
+    <line x1="472" y1="90" x2="500" y2="90" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="498,82 510,90 498,98" fill="#6c6c6c"/>
+
+    <rect x="510" y="62" width="190" height="56" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="605" y="84" text-anchor="middle" font-size="14">E[3912] =</text>
+    <text x="605" y="106" text-anchor="middle" font-size="14">(0.18, −0.42, 0.07, …)</text>
+
+    <text x="360" y="158" text-anchor="middle" font-size="14" fill="#4a4a4a">the ID is an address; the row it selects is a vector of learned numbers</text>
+    <text x="360" y="176" text-anchor="middle" font-size="14" fill="#4a4a4a">(illustrative values)</text>
+
+    <rect x="20" y="230" width="200" height="54" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="120" y="252" text-anchor="middle" font-size="14">same starting embedding</text>
+    <text x="120" y="272" text-anchor="middle" font-size="14">for the token “ bank”</text>
+
+    <line x1="222" y1="257" x2="258" y2="226" stroke="#6c6c6c" stroke-width="2.5"/>
+    <polygon points="252,219 268,218 260,232" fill="#6c6c6c"/>
+    <line x1="222" y1="257" x2="258" y2="288" stroke="#6c6c6c" stroke-width="2.5"/>
+    <polygon points="252,295 268,296 260,282" fill="#6c6c6c"/>
+
+    <rect x="270" y="200" width="180" height="44" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="360" y="227" text-anchor="middle" font-size="14">in “the river bank”</text>
+    <rect x="270" y="270" width="180" height="44" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="360" y="297" text-anchor="middle" font-size="14">in “the central bank”</text>
+
+    <line x1="452" y1="222" x2="462" y2="222" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="460,214 472,222 460,230" fill="#6c6c6c"/>
+    <line x1="452" y1="292" x2="462" y2="292" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="460,284 472,292 460,300" fill="#6c6c6c"/>
+
+    <rect x="474" y="200" width="96" height="44" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="522" y="219" text-anchor="middle" font-size="13">transformer</text>
+    <text x="522" y="236" text-anchor="middle" font-size="13">blocks</text>
+    <rect x="474" y="270" width="96" height="44" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="522" y="289" text-anchor="middle" font-size="13">transformer</text>
+    <text x="522" y="306" text-anchor="middle" font-size="13">blocks</text>
+
+    <line x1="572" y1="222" x2="582" y2="222" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="580,214 592,222 580,230" fill="#6c6c6c"/>
+    <line x1="572" y1="292" x2="582" y2="292" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="580,284 592,292 580,300" fill="#6c6c6c"/>
+
+    <rect x="594" y="200" width="110" height="44" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="649" y="219" text-anchor="middle" font-size="13">contextual</text>
+    <text x="649" y="236" text-anchor="middle" font-size="13">vector A</text>
+    <rect x="594" y="270" width="110" height="44" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="649" y="289" text-anchor="middle" font-size="13">contextual</text>
+    <text x="649" y="306" text-anchor="middle" font-size="13">vector B</text>
+
+    <text x="360" y="346" text-anchor="middle" font-size="14" fill="#4a4a4a">same ID and same initial embedding; different contextual representations</text>
+  </g>
+</svg>
+<figcaption id="fig-token-vector-caption">Top: a token becomes an ID, the ID selects one row of the learned embedding table, and that row is the vector the network actually computes with. The ID is only an address; the values shown are illustrative. Bottom: the same starting embedding for " bank" enters the transformer blocks in two different sentences and comes out as two different context-dependent vectors, because the blocks update each position using the positions around it.</figcaption>
+</figure>

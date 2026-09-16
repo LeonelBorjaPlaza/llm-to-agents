@@ -23,7 +23,7 @@ right weighted sum by hand in advance.
 
 The general answer is a function whose shape is controlled by a large set
 of adjustable numbers, fit to data by a training procedure rather than
-specified by a person. Those adjustable numbers are called **parameters**,
+specified by a person. Those adjustable numbers are called [**parameters**](../glossary.qmd#parameter),
 such as weights and biases; the whole adjustable function is often written
 $f_\theta$, where $\theta$ stands for the entire collection of parameters.
 Everything in this lesson is about what that function is built from, and
@@ -67,7 +67,7 @@ needed for real flexibility.
 ## 4. Nonlinearities
 
 That something is a fixed function that is not a straight line, applied
-to $a$ — a **nonlinearity**, also called an **activation function**. A
+to $a$ — a **nonlinearity**, also called an [**activation function**](../glossary.qmd#activation-function). A
 classic choice is the logistic sigmoid,
 
 $$
@@ -88,7 +88,7 @@ that no weighted sum alone can reach. [S-15]
 ## 5. Units and layers
 
 The full computation above — weighted sum, plus bias, then a
-nonlinearity — is a **unit**. This computational unit is often called a
+nonlinearity — is a [**unit**](../glossary.qmd#unit). This computational unit is often called a
 neuron, a historical analogy we will not rely on here. A **layer**
 computes several units in parallel from the same input, each with its own
 weights and bias; their outputs form a vector, and that vector is the
@@ -100,7 +100,7 @@ many neural networks. [S-12]
 ## 6. The forward pass
 
 Computing $a$, then $\hat y = \sigma(a)$, from a given input and a given
-set of parameters, is what this lesson calls a **forward pass**: running
+set of parameters, is what this lesson calls a [**forward pass**](../glossary.qmd#forward-pass): running
 the unit (or a whole network of units) end to end, to produce an output
 from an input. The numerical computation in §§3–4 was one forward pass
 through one unit.
@@ -112,7 +112,7 @@ the current output is under the chosen training criterion. Suppose the
 *target* output for this example is $y = 1$ (the unit should have produced
 something close to 1, but computed 0.231475 instead — see §4). A standard
 way to measure that gap for a probability-valued output is the
-cross-entropy **loss**:
+cross-entropy [**loss**](../glossary.qmd#loss):
 
 $$
 L = -\big[y \log \hat y + (1-y)\log(1-\hat y)\big] = -\log \hat y
@@ -131,7 +131,7 @@ to work.
 ## 8. Gradient descent
 
 Training adjusts $w_1$, $w_2$, and $b$ to make the loss $L$ from §7
-smaller. For that, it needs the **gradient**: for each parameter, how fast
+smaller. For that, it needs the [**gradient**](../glossary.qmd#gradient): for each parameter, how fast
 the loss changes for a small change in that parameter, the others held
 fixed. The general update rule, for any parameter $\theta$ and a small
 step size (the **learning rate**) $\eta$, is:
@@ -150,7 +150,7 @@ with many layers — that is backpropagation's job, next.
 
 ## 9. Backpropagation
 
-**Backpropagation** is the procedure that computes the gradient from §8
+[**Backpropagation**](../glossary.qmd#backpropagation) is the procedure that computes the gradient from §8
 for every parameter in a multi-layer network — applying the chain rule
 from calculus backward from the loss, one layer at a time, in a single
 backward pass that reuses values saved from the forward pass. It does

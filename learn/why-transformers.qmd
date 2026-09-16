@@ -14,7 +14,7 @@ that is a separate lesson.
 
 ## 1. The problem being solved
 
-Before transformers, **recurrent** networks were among the established
+Before transformers, [**recurrent**](../glossary.qmd#recurrent-network) networks were among the established
 approaches to sequence modeling (a sentence, a time series), with long
 short-term memory (LSTM) networks and other gated variants especially
 prominent. Convolutional sequence models were another important approach.
@@ -33,9 +33,9 @@ Two consequences follow:
   is available.
 
 Computer-science writing summarizes "how many steps does this take, as the
-input grows?" with a shorthand called **big-O notation**: $O(n)$ means the
-number of steps grows in direct proportion to the input size $n$; $O(1)$
-means it stays constant, however large $n$ gets. This lesson uses that
+input grows?" with a shorthand called [**big-O notation**](../glossary.qmd#big-o-notation): $O(n)$ means the
+count grows on the order of the input size $n$; $O(1)$ means it stays
+bounded by a constant as $n$ grows. This lesson uses that
 shorthand alongside a plain-language restatement each time.
 
 ## 2. Recurrence and its sequential dependency
@@ -67,7 +67,7 @@ the general growth pattern across several sequence lengths.
 Self-attention lets a position read directly from other positions in a
 single layer, rather than relaying information through the positions in
 between. Which positions are permitted depends on the setting. In an
-**encoder** (bidirectional self-attention), every position may attend to
+[**encoder**](../glossary.qmd#decoder-and-encoder) (bidirectional self-attention), every position may attend to
 every other position. In the **decoder** used by an autoregressive
 language model, a position can attend to itself and earlier positions,
 but not future positions. During training, this causal masking prevents
