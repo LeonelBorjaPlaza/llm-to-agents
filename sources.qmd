@@ -1,0 +1,1049 @@
+---
+title: "Sources"
+subtitle: "Every factual claim on this site, with the evidence behind it"
+toc: false
+---
+
+*Claims on this site carry a marker such as S-05 that links here. Each
+entry gives the claim as the course states it, the source, where in the
+source it is supported, whether the support is direct or a course
+inference, a confidence level, and any caveat. The machine-checked
+ledger is `sources/claims.csv` in the repository; `sources/source-map.md`
+describes each source in prose. This page is generated from the ledger.*
+
+86 claims.
+
+::: {.sources-list}
+
+### S-01 {#s-01}
+
+**Claim.** Softmax is invariant to a constant shift applied to every logit; only relative logit values matter.
+
+**Source.** Mathematical identity
+
+**Where.** Verified numerically by scripts/check\_softmax\_reference.py
+
+**Support.** direct; confidence high.
+
+**Caveat.** Purely mathematical; not attributed to a video source. Checked by script, not by citation.
+
+### S-02 {#s-02}
+
+**Claim.** Softmax uses the same probability mapping as multinomial/conditional logit; the language model as a whole is not a multinomial-logit model.
+
+**Source.** Mathematical identity / standard discrete-choice definition
+
+**Where.** Functional-form comparison (PR1)
+
+**Support.** inference; confidence high.
+
+**Caveat.** Comparison of functional form only; not a claim about model structure, estimation, or interpretability of the network.
+
+### S-03 {#s-03}
+
+**Claim.** For fixed logits, the algebraic odds-ratio property associated with IIA survives; it carries no behavioral random-utility, structural, or welfare interpretation here.
+
+**Source.** Mathematical identity
+
+**Where.** Algebraic derivation (PR7)
+
+**Support.** inference; confidence high.
+
+**Caveat.** Algebraic property only. Explicitly not a random-utility or structural claim.
+
+### S-04 {#s-04}
+
+**Claim.** Temperature rescales logits before softmax normalization; as T approaches 0 the distribution converges to argmax when there is a unique highest logit; as T approaches infinity the distribution approaches uniform.
+
+**Source.** 3Blue1Brown, "Transformers, the tech behind LLMs"
+
+**Where.** Video, ~22:22, "Softmax with temperature"
+
+**Support.** direct; confidence high.
+
+**Caveat.** The tie case for T to 0 is stated on this site; not necessarily discussed at this timestamp in the video.
+
+### S-05 {#s-05}
+
+**Claim.** At each token position the model defines a categorical probability distribution through softmax; training maximizes the conditional likelihood of the observed next tokens across the corpus, equivalently minimizing negative log likelihood (cross-entropy).
+
+**Source.** Andrej Karpathy, "Deep Dive into LLMs like ChatGPT"
+
+**Where.** Video, ~20:11, "neural network internals"
+
+**Support.** direct; confidence high.
+
+**Caveat.** The video demonstrates this via a concrete walkthrough; the maximum-likelihood framing in econometric language is this course's own standard restatement.
+
+### S-06 {#s-06}
+
+**Claim.** This is maximum-likelihood training, but it is not a conventional econometric exercise aimed at identifying interpretable structural parameters or reporting classical standard errors. This does not imply uncertainty measures are mathematically impossible.
+
+**Source.** None (editorial/pedagogical correction)
+
+**Where.** Precision rule PR2, adopted at external review
+
+**Support.** inference; confidence high.
+
+**Caveat.** An explicit correction to prevent over-claiming an econometric interpretation of the training objective.
+
+### S-07 {#s-07}
+
+**Claim.** Sampling produces different continuations from the same prompt without changing model parameters, shown inside a real autoregressive generation loop.
+
+**Source.** Andrej Karpathy, "Deep Dive into LLMs like ChatGPT"
+
+**Where.** Video, ~26:01, "inference"
+
+**Support.** direct; confidence high.
+
+### S-08 {#s-08}
+
+**Claim.** The training objective rewards plausible continuation rather than independent verification of truth; parameters encode statistical regularities rather than a directly queryable source record; without grounding, a plausible continuation can be unsupported or false; deterministic decoding can also produce unsupported claims.
+
+**Source.** Andrej Karpathy, "Deep Dive into LLMs like ChatGPT" (general hallucination discussion)
+
+**Where.** Video, ~1:20:32, "hallucinations, tool use, knowledge/memory"
+
+**Support.** inference; confidence medium-high.
+
+**Caveat.** Our own synthesized explanation (correction CC1, adopted at external review), grounded in the video's general hallucination discussion, not a verbatim claim from it. This timestamp has not been independently re-verified in this slice (tracked as gap G1 in the implementation plan) and should be reverified before any Stage 2 publication.
+
+### S-09 {#s-09}
+
+**Claim.** In this course, 'logit' means the network's raw, pre-softmax real-valued score. This is not the same object as the statistics/econometrics logit function, logit(p) = log(p/(1-p)), the log-odds transform of an already-computed probability. The relationship is exact only for differences: under softmax with temperature T, log(p\_i/p\_j) = (z\_i - z\_j)/T, and for exactly two candidates logit(p\_1) = (z\_1 - z\_2)/T, which reduces to z\_1 - z\_2 only at T = 1. An individual multiclass score z\_i is not logit(p\_i).
+
+**Source.** Mathematical definition
+
+**Where.** Definitional comparison plus the algebraic identity log(p\_i/p\_j) = (z\_i - z\_j)/T, which follows directly from the softmax formula; verified numerically at T=1 for the module's five-token example (log(p\_1/p\_2) = 1.0 = z\_1 - z\_2).
+
+**Support.** direct; confidence high.
+
+**Caveat.** Terminological clarification; both definitions are independently verifiable standard usage, not attributed to one external source. Corrected 2026-09-15: an earlier wording said the two 'share a name and a family resemblance, not an object', which understated the exact two-candidate relationship.
+
+### S-10 {#s-10}
+
+**Claim.** Softmax is named by contrast with the hard argmax (picking the single top-scoring candidate and giving it everything): softmax returns a whole probability distribution rather than the maximum value or its index, is smooth and differentiable everywhere, and approaches the argmax's one-hot choice in the T-to-0 limit derived in this module.
+
+**Source.** Mathematical identity / standard ML terminology
+
+**Where.** Naming convention; verifiable directly from the T-to-0 limit already derived in this module's temperature section.
+
+**Support.** inference; confidence high.
+
+**Caveat.** Naming convention, not a citation to one paper or video. Corrected 2026-09-15: earlier wording said 'max/argmax'; softmax is the smooth counterpart of the one-hot argmax indicator, not of the maximum value (the smooth counterpart of the maximum value is log-sum-exp).
+
+### S-11 {#s-11}
+
+**Claim.** 'Temperature' is borrowed from the statistical-mechanics Boltzmann distribution, p\_i proportional to exp(-E\_i/(kT)): high T flattens the distribution over states, low T concentrates it on the lowest-energy state. Softmax-with-temperature has the same structure, with a logit playing the role of a negative energy.
+
+**Source.** Standard statistical mechanics (Boltzmann distribution)
+
+**Where.** General physics identity, independently verifiable in any statistical-mechanics reference.
+
+**Support.** inference; confidence high.
+
+**Caveat.** Not attributed to S1 or S2 in this repository's source set; this etymology has not been independently confirmed as explicitly stated in either video.
+
+### S-12 {#s-12}
+
+**Claim.** A neuron or unit computes a weighted sum of its inputs plus a bias, then applies a nonlinearity; a layer is a set of such units computed from the same inputs. Deep learning's general premise is to build a complex function from many small, tunable, differentiable pieces like this, layered together, and let training adjust the parameters.
+
+**Source.** 3Blue1Brown, "Transformers, the tech behind LLMs"
+
+**Where.** Video, ~7:20, "the premise of deep learning"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Timestamp reused from this repository's already-approved source list; not independently re-verified against the live video in this session (same open gap as S-04/S-05/S-07/S-08, tracked as G1).
+
+### S-13 {#s-13}
+
+**Claim.** A single unit with a weighted-sum-plus-bias pre-activation, a logistic-sigmoid nonlinearity, and cross-entropy loss is mathematically identical in functional form to binary logistic regression; for this composition the gradient of the loss with respect to the pre-activation simplifies to (y-hat minus y).
+
+**Source.** Mathematical identity
+
+**Where.** Verified numerically by scripts/check\_neuron\_example.py
+
+**Support.** direct; confidence high.
+
+**Caveat.** Purely mathematical; not attributed to a video source.
+
+### S-14 {#s-14}
+
+**Claim.** Backpropagation computes the gradient of the loss with respect to every parameter via the chain rule in one backward sweep; it does not, by itself, change any parameter. A separate optimizer step (e.g. plain gradient descent, or a more sophisticated rule such as Adam) uses those gradients to update the parameters.
+
+**Source.** Mathematical identity / standard definition
+
+**Where.** Correction CC5 (adopted at external review); verified numerically by scripts/check\_neuron\_example.py
+
+**Support.** inference; confidence high.
+
+**Caveat.** Distinguishes two logically separate steps sometimes conflated in casual description; standard in any optimization or deep-learning reference.
+
+### S-15 {#s-15}
+
+**Claim.** Composing affine layers (weighted sum plus bias), with no nonlinearity, yields a function that is itself affine in the input regardless of depth; a nonlinear activation breaks that restriction and allows a multi-layer network to represent nonlinear relationships an affine model cannot.
+
+**Source.** Mathematical identity
+
+**Where.** Linear algebra: composition of affine maps is affine.
+
+**Support.** direct; confidence high.
+
+**Caveat.** Reworded 2026-09-15 from 'linear' to 'affine' because the lesson's layers carry biases.
+
+### S-16 {#s-16}
+
+**Claim.** Vaswani et al., Table 1, reports for a Recurrent layer: complexity per layer O(n times d-squared), a minimum of O(n) sequential operations, and a maximum path length of O(n), where n is sequence length and d is representation dimension. Section 1 states that this sequential dependency 'precludes parallelization within training examples.' For a toy chain of n=8 positions, the maximum path length between the two most distant positions is 7 sequential steps and processing the sequence once requires 8 sequential steps -- this course's own concrete instantiation of the paper's O(n) bound, not a number stated by the paper itself.
+
+**Source.** Vaswani et al., "Attention Is All You Need" (arxiv.org/abs/1706.03762, v7, 2023-08-02)
+
+**Where.** Section 1 (paragraph 2) and Section 4 ("Why Self-Attention"), Table 1, Recurrent row
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified directly against the live paper (PDF) on 2026-09-14. The n=8 concrete figures are this course's own arithmetic instantiation of the stated asymptotic bound, checked by scripts/check\_transformer\_path\_lengths.py.
+
+### S-17 {#s-17}
+
+**Claim.** Vaswani et al., Table 1, reports for a Self-Attention layer: complexity per layer O(n-squared times d), O(1) sequential operations, and O(1) maximum path length -- a self-attention layer connects any two positions with a constant number of sequentially executed operations, independent of their distance. Section 4 states the reason path length matters: 'The shorter these paths between any combination of positions in the input and output sequences, the easier it is to learn long-range dependencies.' The O(n-squared times d) figure is self-attention's arithmetic cost per layer, not a claim about any particular implementation's memory use.
+
+**Source.** Vaswani et al., "Attention Is All You Need"
+
+**Where.** Section 4 ("Why Self-Attention"), Table 1, Self-Attention row, and the paragraph following the three desiderata
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified directly against the live paper (PDF) on 2026-09-14; the Section 4 'shorter these paths' sentence verified verbatim against the arXiv HTML (v7) on 2026-09-14. The n=8 concrete figures are this course's own arithmetic instantiation, checked by scripts/check\_transformer\_path\_lengths.py. No implementation-memory claim is made from this row; FlashAttention and similar techniques are out of scope for this batch (see docs/decisions.md). Under causal masking the constant path holds for every permitted (earlier-to-later) pair, which is what an autoregressive model needs.
+
+### S-18 {#s-18}
+
+**Claim.** The quadratic-in-sequence-length arithmetic cost of standard dense self-attention (S-17) is a real and frequently-cited limitation, and has motivated a range of alternative approaches -- for example sparse or local attention patterns, linear-attention variants, and state-space models -- as an active area of ongoing research. This course does not evaluate or endorse any specific alternative.
+
+**Source.** General field characterization
+
+**Where.** Editorial synthesis, not tied to one paper or video
+
+**Support.** inference; confidence medium.
+
+**Caveat.** Deliberately generic and unattributed to a specific source, to avoid an unsupported priority ('first') claim or citing a technique (e.g. FlashAttention) not otherwise used or verified in this batch.
+
+### S-19 {#s-19}
+
+**Claim.** An LLM is the trained model; a transformer is a specific neural-network architecture; inside each transformer block, self-attention is one mechanism (it moves information between positions) and a feed-forward/MLP layer is another (it performs per-position nonlinear computation) -- two distinct components of the same repeating block.
+
+**Source.** 3Blue1Brown, "Transformers, the tech behind LLMs"; Vaswani et al., "Attention Is All You Need"
+
+**Where.** 3Blue1Brown video ~3:03, "inside a transformer"; Vaswani et al. Section 3.1 ("The first is a multi-head self-attention mechanism, and the second is a simple, position-wise fully connected feed-forward network")
+
+**Support.** direct; confidence high.
+
+**Caveat.** The Vaswani locator was verified directly against the live paper (PDF) on 2026-09-14. The 3Blue1Brown timestamp is reused from the existing source list and carries the same open-gap caveat as G1.
+
+### S-20 {#s-20}
+
+**Claim.** Transformer prevalence for large language models was not caused by one property or one paper; it emerged from the combination of the architectural advantages (S-16, S-17, S-23), the original design's reported empirical success (S-21), and subsequent empirical successes in pretraining and transfer (S-24), scaling (S-25), and in-context behavior (S-26). Software and hardware stacks increasingly supporting transformer training and deployment is an observation about the field, not a result from any one source.
+
+**Source.** General field characterization / editorial synthesis
+
+**Where.** Synthesis of the cited primary sources; the ecosystem sentence is unattributed
+
+**Support.** inference; confidence medium.
+
+**Caveat.** Rewritten 2026-09-15; an earlier version framed this as an 'investment flywheel', which was too causal and too confident. No inevitability claim; no 'first' claim; path dependence and ecosystem lock-in are not quantified.
+
+### S-21 {#s-21}
+
+**Claim.** Vaswani et al. state that the dominant sequence-transduction models of the time were 'based on complex recurrent or convolutional neural networks', that recurrent networks -- 'long short-term memory and gated recurrent neural networks in particular' -- had been 'firmly established as state of the art approaches in sequence modeling and transduction problems', and that the Transformer was 'superior in quality while being more parallelizable and requiring significantly less time to train' on the two machine-translation tasks reported.
+
+**Source.** Vaswani et al., "Attention Is All You Need" (arxiv.org/abs/1706.03762, v7, 2023-08-02)
+
+**Where.** Abstract (sentences 1 and 4); Section 1, paragraph 1
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-14. The quality claim is the paper's own reported result on its two translation tasks, not a general ranking of architectures.
+
+### S-22 {#s-22}
+
+**Claim.** In the Transformer decoder, self-attention is masked so that a position cannot attend to subsequent (future) positions, preserving the auto-regressive property; the lesson restates this as 'a position can attend to itself and earlier positions, but not future positions.'
+
+**Source.** Vaswani et al., "Attention Is All You Need"
+
+**Where.** Section 3.2.3 ("Applications of Attention in our Model"), decoder self-attention paragraph; implementation described as masking out (setting to minus infinity) the illegal connections in the softmax input
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the arXiv HTML (v7) on 2026-09-14. Stated in the paper's own 'subsequent positions' terms; no strict-versus-inclusive indexing claim is made.
+
+### S-23 {#s-23}
+
+**Claim.** Vaswani et al. state that dot-product attention 'can be implemented using highly optimized matrix multiplication code' and that the Transformer architecture 'allows for significantly more parallelization' than recurrent models.
+
+**Source.** Vaswani et al., "Attention Is All You Need"
+
+**Where.** Section 3.2.1 ("Scaled Dot-Product Attention"); Section 1, final paragraph
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-14. This row replaces an earlier unsourced statement that GPUs and TPUs were 'built specifically' for such operations; no hardware-design claim is made.
+
+### S-24 {#s-24}
+
+**Claim.** BERT pretrains deep bidirectional Transformer representations from unlabeled text, and the pretrained model 'can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications.'
+
+**Source.** Devlin et al., "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" (arxiv.org/abs/1810.04805, v2, 2019-05-24)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv abstract page on 2026-09-15. Used only for the pretraining-and-transfer layer of the 'why prevalent' explanation; BERT is an encoder model, not an autoregressive language model.
+
+### S-25 {#s-25}
+
+**Claim.** Kaplan et al. report that language-model loss 'scales as a power-law with model size, dataset size, and the amount of compute used for training, with some trends spanning more than seven orders of magnitude', and that other architectural details such as width or depth 'have minimal effects within a wide range.'
+
+**Source.** Kaplan et al., "Scaling Laws for Neural Language Models" (arxiv.org/abs/2001.08361, v1, 2020-01-23)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv abstract page on 2026-09-15. An empirical regularity over the studied range and setup, not a law of nature; the lesson says 'improved systematically with scale', not 'predictably forever'.
+
+### S-26 {#s-26}
+
+**Claim.** Brown et al. report that 'scaling up language models greatly improves task-agnostic, few-shot performance'; GPT-3 is 'an autoregressive language model with 175 billion parameters', and 'for all tasks, GPT-3 is applied without any gradient updates or fine-tuning, with tasks and few-shot demonstrations specified purely via text interaction with the model.'
+
+**Source.** Brown et al., "Language Models are Few-Shot Learners" (arxiv.org/abs/2005.14165, v4, 2020-07-22)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv abstract page on 2026-09-15. Correction CC2 applies: in-context behavior is described as observed task performance from demonstrations in the input, not as thinking or learning in the human sense.
+
+### S-27 {#s-27}
+
+**Claim.** Sennrich, Haddow, and Birch proposed making a neural machine-translation model 'capable of open-vocabulary translation by encoding rare and unknown words as sequences of subword units', using 'a segmentation based on the byte pair encoding compression algorithm' -- the BPE procedure starts from characters and repeatedly merges the most frequent adjacent pair into a new vocabulary entry.
+
+**Source.** Sennrich, Haddow, and Birch, "Neural Machine Translation of Rare Words with Subword Units" (arxiv.org/abs/1508.07909, v5, 2016-06-10)
+
+**Where.** Abstract; the merge procedure is the paper's Section 3.2
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim against the arXiv abstract page on 2026-09-15. The merge procedure summary is the standard description; the toy example in learn/tokens-context.qmd is this course's own, checked by scripts/check\_bpe\_example.py. No 'first' claim is made.
+
+### S-28 {#s-28}
+
+**Claim.** Radford et al. (GPT-2), Section 2.2: byte-level language models were 'not competitive with word-level LMs on large scale datasets' at the time; BPE is 'a practical middle ground between character and word level language modeling which effectively interpolates between word level inputs for frequent symbol sequences and character level inputs for infrequent symbol sequences'; a byte-level BPE 'only requires a base vocabulary of size 256'; '32,000 to 64,000 token vocabularies \[are\] often used with BPE'; naive BPE produced many versions of common words 'since they occur in many variations such as dog. dog! dog?', so the authors 'prevent BPE from merging across character categories for any byte sequence' with 'an exception for spaces'; the model's vocabulary is 50,257 and its context size 1024 tokens.
+
+**Source.** Radford, Wu, Child, Luan, Amodei, and Sutskever, "Language Models are Unsupervised Multitask Learners" (OpenAI, 2019; cdn.openai.com/better-language-models/language\_models\_are\_unsupervised\_multitask\_learners.pdf)
+
+**Where.** Section 2.2 ("Input Representation"); Section 2.3 ("Model") for the vocabulary size 50,257 and context size 1024
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the PDF text (pdftotext extraction) on 2026-09-15. All figures are this one 2019 tokenizer's; the course states that other model families differ (PR4).
+
+### S-29 {#s-29}
+
+**Claim.** Bengio, Ducharme, Vincent, and Jauvin (2003) 'propose to learn simultaneously a distributed representation for each word along with the probability function for word sequences'; the mapping C from a word index to its feature vector 'is represented by a |V| x m matrix of free parameters'; generalization is obtained because 'similar' words 'are expected to have a similar feature vector' and 'a sequence of never-before-seen words gets high probability if it is made of words similar (in their distributed representation) to words in an already seen sentence'; the experiments used m = 30, 60, or 100 features.
+
+**Source.** Bengio, Ducharme, Vincent, and Jauvin, "A Neural Probabilistic Language Model", Journal of Machine Learning Research 3 (2003), 1137-1155
+
+**Where.** Abstract; Section 1.1; Section 2 (definition of C)
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the JMLR PDF text on 2026-09-15. Used for the idea of a learned embedding table and for why similarity structure emerges; the course does not claim this was the first such model.
+
+### S-30 {#s-30}
+
+**Claim.** Vaswani et al., Section 3.4: 'we use learned embeddings to convert the input tokens and output tokens to vectors of dimension d\_model', 'the usual learned linear transformation and softmax function to convert the decoder output to predicted next-token probabilities', and the same weight matrix is shared between the embedding layers and the pre-softmax transformation. Section 3.5: 'Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject some information about the relative or absolute position of the tokens in the sequence.'
+
+**Source.** Vaswani et al., "Attention Is All You Need" (arxiv.org/abs/1706.03762, v7, 2023-08-02)
+
+**Where.** Section 3.4 ("Embeddings and Softmax"); Section 3.5 ("Positional Encoding"), first sentence
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-15. The specific positional-encoding formula is not used by the course.
+
+### S-31 {#s-31}
+
+**Claim.** Anthropic's Claude API documentation defines the context window as 'all the text a language model can reference when generating a response, including the response itself', distinct from the training corpus; states that 'more context isn't automatically better' and that 'as token count grows, accuracy and recall degrade, a phenomenon known as context rot'; states that everything in a request counts toward the window (system prompt, every message including tool results, images and documents, tool definitions) and that generated output counts too; states that across turns 'each user message and assistant response accumulates within the context window'; and lists context windows of up to 1M tokens depending on the model.
+
+**Source.** Anthropic, "Context windows" (platform.claude.com/docs/en/build-with-claude/context-windows), accessed 2026-09-15
+
+**Where.** Sections "How the context window works" and "Context window sizes by model"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9): the definitions and counting rules are one provider's, and the size figure will change. The course uses the definition and counting rules as an illustration, labeled as such, and does not present them as universal.
+
+### S-32 {#s-32}
+
+**Claim.** Liu et al. (2023) found, for language models given long input contexts, that 'performance is often highest when relevant information occurs at the beginning or end of the input context, and significantly degrades when models must access relevant information in the middle of long contexts'.
+
+**Source.** Liu, Lin, Hewitt, Paranjape, Bevilacqua, Petroni, and Liang, "Lost in the Middle: How Language Models Use Long Contexts" (arxiv.org/abs/2307.03172, v3, 2023-11-20)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15. An empirical finding for the models and tasks studied in 2023; the course phrases it as 'one empirical study found', not as a general law.
+
+### S-33 {#s-33}
+
+**Claim.** Lewis et al. (2020) state that pre-trained language models' 'ability to access and precisely manipulate knowledge is still limited', and introduce retrieval-augmented generation as 'models which combine pre-trained parametric and non-parametric memory for language generation', the non-parametric memory being a retrieved index of text.
+
+**Source.** Lewis et al., "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (arxiv.org/abs/2005.11401, v4, 2021-04-12)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15. Used only for the general idea that retrieval places external text into the current inference's context.
+
+### S-34 {#s-34}
+
+**Claim.** Anthropic's engineering guidance (2025-09-29) defines context as 'the set of tokens included when sampling from a large-language model', states that 'as the number of tokens in the context window increases, the model's ability to accurately recall information from that context decreases', that context 'must be treated as a finite resource with diminishing marginal returns', and that good context engineering 'means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome'.
+
+**Source.** Anthropic, "Effective context engineering for AI agents" (anthropic.com/engineering/effective-context-engineering-for-ai-agents, published 2025-09-29), accessed 2026-09-15
+
+**Where.** Opening sections ("Context engineering vs. prompt engineering"; "Why context engineering is important")
+
+**Support.** direct; confidence medium-high.
+
+**Caveat.** Vendor guidance, not a peer-reviewed result (PR9): the course attributes it as one provider's statement at the access date and pairs it with the empirical source S-32.
+
+### S-35 {#s-35}
+
+**Claim.** Because a model receives tokens, not characters, it has no direct access to the letters inside a token; this helps explain why spelling, character counting, and some string operations can be awkward for language models, but it is not the sole cause of every such failure.
+
+**Source.** None (course inference from the tokenization mechanism; precision rule PR4)
+
+**Where.** Inference from S-27/S-28: a token is a vocabulary entry, frequently a whole word or word fragment, and the network receives one vector per token
+
+**Support.** inference; confidence medium.
+
+**Caveat.** Course synthesis, phrased per PR4. No source is claimed to state this directly, and no specific model's behavior on a specific word is asserted.
+
+### S-36 {#s-36}
+
+**Claim.** Vaswani et al. define an attention function as 'mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors', with the output 'computed as a weighted sum of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key'; scaled dot-product attention computes 'the dot products of the query with all keys, divide\[s\] each by sqrt(d\_k), and appl\[ies\] a softmax function to obtain the weights on the values', i.e. Attention(Q,K,V) = softmax(QK^T/sqrt(d\_k))V; the scaling is motivated because 'for large values of d\_k, the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients'.
+
+**Source.** Vaswani et al., "Attention Is All You Need" (arxiv.org/abs/1706.03762, v7, 2023-08-02)
+
+**Where.** Section 3.2 (opening paragraph); Section 3.2.1 ("Scaled Dot-Product Attention"), definition and the paragraph on scaling
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-15. The per-position notation q\_i, k\_j, v\_j, s\_ij, a\_ij, y\_i on the lesson page is this course's rewriting of the paper's matrix form; the toy numbers are the course's own, checked by scripts/check\_attention\_example.py.
+
+### S-37 {#s-37}
+
+**Claim.** Vaswani et al., Section 3.2.2: multi-head attention runs h parallel attention heads with separate learned projections, concatenates their outputs and applies a further learned matrix, MultiHead(Q,K,V) = Concat(head\_1,...,head\_h)W^O; it 'allows the model to jointly attend to information from different representation subspaces at different positions'; the paper uses h = 8 heads with d\_k = d\_v = d\_model/h = 64.
+
+**Source.** Vaswani et al., "Attention Is All You Need"
+
+**Where.** Section 3.2.2 ("Multi-Head Attention")
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-15. Per CC4, the course states only that several attention patterns operate in parallel; it does not attribute stable semantic roles to individual heads.
+
+### S-38 {#s-38}
+
+**Claim.** Vaswani et al.: each encoder/decoder layer has 'a residual connection around each of the two sub-layers, followed by layer normalization', so 'the output of each sub-layer is LayerNorm(x + Sublayer(x))' (Section 3.1); the position-wise feed-forward network 'is applied to each position separately and identically' and 'consists of two linear transformations with a ReLU activation in between' (Section 3.3).
+
+**Source.** Vaswani et al., "Attention Is All You Need"
+
+**Where.** Section 3.1 ("Encoder and Decoder Stacks"); Section 3.3 ("Position-wise Feed-Forward Networks")
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-15. The post-normalization ordering is presented as the original Transformer's, not as universal (see S-39).
+
+### S-39 {#s-39}
+
+**Claim.** In GPT-2, 'layer normalization was moved to the input of each sub-block, similar to a pre-activation residual network, and an additional layer normalization was added after the final self-attention block' -- a pre-normalization arrangement that differs from the original Transformer's post-normalization.
+
+**Source.** Radford, Wu, Child, Luan, Amodei, and Sutskever, "Language Models are Unsupervised Multitask Learners" (OpenAI, 2019)
+
+**Where.** Section 2.3 ("Model")
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the PDF text (pdftotext) on 2026-09-15. Used only to establish that the residual/normalization ordering varies between named architectures.
+
+### S-40 {#s-40}
+
+**Claim.** Radford et al. (GPT-2), Section 2: 'Language modeling is usually framed as unsupervised distribution estimation from a set of examples ... each composed of variable length sequences of symbols'; 'since language has a natural sequential ordering, it is common to factorize the joint probabilities over symbols as the product of conditional probabilities', p(x) = prod\_n p(s\_n | s\_1, ..., s\_\{n-1\}), which 'allows for tractable sampling from and estimation of p(x)'.
+
+**Source.** Radford, Wu, Child, Luan, Amodei, and Sutskever, "Language Models are Unsupervised Multitask Learners" (OpenAI, 2019)
+
+**Where.** Section 2 ("Approach"), first paragraph and Equation 1
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the PDF text (pdftotext) on 2026-09-15. The factorization is a general identity for any joint distribution over a sequence; the paper's contribution here is the framing, which the course cites for that purpose.
+
+### S-41 {#s-41}
+
+**Claim.** Bengio et al. (2003): 'the probability function is expressed as a product of conditional probabilities of the next word given the previous ones', implemented by a neural network, and 'this function has parameters that can be iteratively tuned in order to maximize the log-likelihood of the training data or a regularized criterion'.
+
+**Source.** Bengio, Ducharme, Vincent, and Jauvin, "A Neural Probabilistic Language Model", Journal of Machine Learning Research 3 (2003), 1137-1155
+
+**Where.** Section 1.1
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the JMLR PDF text on 2026-09-15. Companion to S-29 (the same paper's learned word vectors); this row covers the objective.
+
+### S-42 {#s-42}
+
+**Claim.** Vaswani et al. trained the Transformer with the Adam optimizer ('We used the Adam optimizer with beta\_1 = 0.9, beta\_2 = 0.98 and epsilon = 10^-9').
+
+**Source.** Vaswani et al., "Attention Is All You Need"
+
+**Where.** Section 5.3 ("Optimizer")
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv HTML (v7) on 2026-09-15. The course's one-clause description of Adam (adaptive per-parameter step sizes from running averages of past gradients) is standard and is not attributed to this paper; the paper is cited only for the fact that Adam was used. 'Like most models since' is course characterization, not a cited count.
+
+### S-43 {#s-43}
+
+**Claim.** Shazeer (2019) describes incremental (token-by-token) Transformer inference as 'often slow, due to the memory-bandwidth cost of repeatedly loading the large "keys" and "values" tensors', i.e. the keys and values of earlier positions are stored and reloaded at each decoding step rather than recomputed.
+
+**Source.** Shazeer, "Fast Transformer Decoding: One Write-Head is All You Need" (arxiv.org/abs/1911.02150, v1, 2019-11-06)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15. Cited only to support that key/value reuse across decoding steps is a standard implementation practice with a recognized cost (PR3); the paper's proposed remedy (multi-query attention) is not discussed by the course.
+
+### S-44 {#s-44}
+
+**Claim.** Radford et al. (GPT-2), abstract: 'We demonstrate that language models begin to learn these tasks without any explicit supervision when trained on a new dataset of millions of webpages called WebText' -- the tasks being question answering, machine translation, reading comprehension, and summarization named in the preceding sentence.
+
+**Source.** Radford, Wu, Child, Luan, Amodei, and Sutskever, "Language Models are Unsupervised Multitask Learners" (OpenAI, 2019)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the PDF text (pdftotext) on 2026-09-15. Used, together with S-26, for the statement that prediction-only training can produce task behavior; the course does not claim to know where such capabilities are stored in the parameters.
+
+### S-45 {#s-45}
+
+**Claim.** Attention weights determine how value vectors are combined inside one head at one layer; they are not automatically explanations of the model's output, probabilities that one token caused another, or human-readable importance scores. Individual attention heads do not in general have stable, guaranteed, human-interpretable roles.
+
+**Source.** None (course caution; correction CC4)
+
+**Where.** Follows from the definition in S-36/S-37: the weights are an intermediate quantity of one sublayer, and the model's output depends on every head, every layer, the feed-forward sublayers, and the residual stream
+
+**Support.** inference; confidence medium-high.
+
+**Caveat.** Course inference, stated as a caution rather than a cited finding. No interpretability literature is cited or surveyed; the course makes no claim about what heads do beyond what the architecture defines.
+
+### S-46 {#s-46}
+
+**Claim.** Ouyang et al. (InstructGPT): 'we collect a dataset of labeler demonstrations of the desired model behavior, which we use to fine-tune GPT-3 using supervised learning. We then collect a dataset of rankings of model outputs, which we use to further fine-tune this supervised model using reinforcement learning from human feedback'; 'outputs from the 1.3B parameter InstructGPT model are preferred to outputs from the 175B GPT-3, despite having 100x fewer parameters'; 'InstructGPT still makes simple mistakes'.
+
+**Source.** Ouyang et al., "Training language models to follow instructions with human feedback" (arxiv.org/abs/2203.02155, v1, 2022-03-04)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15. Used for the supervised-then-preference recipe and the size comparison; the course presents it as one provider's 2022 recipe, not a universal one (CC3).
+
+### S-47 {#s-47}
+
+**Claim.** Rafailov et al.: RLHF is 'a complex and often unstable procedure, first fitting a reward model that reflects the human preferences, and then fine-tuning the large unsupervised LM using reinforcement learning to maximize this estimated reward without drifting too far from the original model'; DPO is 'stable, performant, and computationally lightweight, eliminating the need for sampling from the LM during fine-tuning or performing significant hyperparameter tuning'; 'fine-tuning with DPO exceeds PPO-based RLHF in ability to control sentiment of generations, and matches or improves response quality in summarization and single-turn dialogue'.
+
+**Source.** Rafailov et al., "Direct Preference Optimization: Your Language Model is Secretly a Reward Model" (arxiv.org/abs/2305.18290, v3, 2024-07-29; first submitted 2023-05-29)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15. The course cites the comparison result as holding for the tasks tested, not as a general verdict, and does not claim DPO has replaced RLHF.
+
+### S-48 {#s-48}
+
+**Claim.** Bai et al. (Constitutional AI): 'The only human oversight is provided through a list of rules or principles'; 'In the supervised phase we sample from an initial model, then generate self-critiques and revisions, and then finetune the original model on revised responses. In the RL phase, we sample from the finetuned model, use a model to evaluate which of the two samples is better, and then train a preference model from this dataset of AI preferences. We then train with RL using the preference model as the reward signal, i.e. we use RL from AI Feedback (RLAIF)'.
+
+**Source.** Bai et al., "Constitutional AI: Harmlessness from AI Feedback" (arxiv.org/abs/2212.08073, v1, 2022-12-15)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15. Used only to show that feedback can be model-generated under written principles; not presented as every provider's method.
+
+### S-49 {#s-49}
+
+**Claim.** DeepSeek-AI (DeepSeek-R1 report): reasoning abilities 'can be incentivized through pure reinforcement learning (RL), obviating the need for human-labeled reasoning trajectories' (DeepSeek-R1-Zero, trained without supervised fine-tuning as a preliminary step); for reasoning tasks the authors 'employ rule-based rewards' and 'abstain from applying neural reward models'; R1-Zero 'exhibits a steady increase in thinking time throughout training' and generates 'hundreds to thousands of tokens' of reasoning; it 'faces challenges such as poor readability and language mixing'; DeepSeek-R1 is 'a model trained through a multi-stage learning framework that integrates rejection sampling, reinforcement learning, and supervised fine-tuning'.
+
+**Source.** DeepSeek-AI, "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" (arxiv.org/abs/2501.12948, v2, 2026-01-04; first submitted 2025-01-22)
+
+**Where.** Abstract and Section 1 (Introduction), arXiv HTML rendering
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified against the arXiv HTML on 2026-09-15. The course keeps R1-Zero (pure RL, per the report's own phrase) and R1 (multi-stage) distinct, cites the report for one lab's recipe only, and applies CC2: longer reasoning traces are a trained behavior providing inference-time computation, not a transcript of internal computation.
+
+### S-50 {#s-50}
+
+**Claim.** Anthropic's engineering article defines workflows as 'systems where LLMs and tools are orchestrated through predefined code paths' and agents as 'systems where LLMs dynamically direct their own processes and tool usage, maintaining control over how they accomplish tasks'; recommends 'finding the simplest solution possible, and only increasing complexity when needed', noting that 'agentic systems often trade latency and cost for better task performance'; states that the basic building block is an LLM enhanced with retrieval, tools, and memory; that agents must 'gain "ground truth" from the environment at each step (such as tool call results or code execution)' and 'can then pause for human feedback at checkpoints'; and that 'the autonomous nature of agents means higher costs, and the potential for compounding errors', recommending 'extensive testing in sandboxed environments, along with the appropriate guardrails'.
+
+**Source.** Anthropic, "Building Effective AI Agents" (anthropic.com/engineering/building-effective-agents, published 2024-12-19), accessed 2026-09-15
+
+**Where.** Sections "What are agents?", "When (and when not) to use agents", "The augmented LLM", "Agents"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Vendor engineering guidance (PR9): the course uses its workflow/agent vocabulary as one useful distinction and states that the term has no universally fixed definition.
+
+### S-51 {#s-51}
+
+**Claim.** Anthropic's tool-use documentation: 'Claude determines when to call a tool based on the user's request and the tool's description. It then returns a structured call that your application executes (client tools) or that Anthropic executes (server tools)'; client tools 'run in your application ... Your code executes the operation and sends back a tool\_result'; a user-defined tool is passed with a name, description, and input\_schema.
+
+**Source.** Anthropic, "Tool use with Claude" (platform.claude.com/docs/en/agents-and-tools/tool-use/overview), accessed 2026-09-15
+
+**Where.** Opening paragraph; "How tool use works"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). Used as one concrete instance of the general division of labor stated in PR5: at the model boundary a tool call is generated structured output that surrounding software interprets and executes.
+
+### S-52 {#s-52}
+
+**Claim.** Claude Code's documentation describes it as 'an agentic coding tool that reads your codebase, edits files, runs commands, and integrates with your development tools', available in the terminal, IDE, desktop app, and browser; it 'works directly with git', staging changes, writing commit messages, creating branches, and opening pull requests; 'CLAUDE.md is a markdown file you add to your project root that Claude Code reads at the start of every session'; skills 'package repeatable workflows'.
+
+**Source.** Anthropic, "Claude Code overview" (code.claude.com/docs/en/overview), accessed 2026-09-15
+
+**Where.** Page summary; "What you can do" ("Create commits and pull requests"; "Customize with instructions, skills, and hooks")
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). The course uses it only as one current example of a coding agent after the generic mechanism is established.
+
+### S-53 {#s-53}
+
+**Claim.** Claude Code skills documentation: 'Create a SKILL.md file with instructions, and Claude adds it to its toolkit'; 'In a regular session, skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked'; 'Where you save a skill decides which sessions load it', with personal, project, plugin, and managed locations.
+
+**Source.** Anthropic, "Extend Claude with skills" (code.claude.com/docs/en/skills), accessed 2026-09-15
+
+**Where.** Opening section; loading behavior; skill locations table
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). Used to illustrate that reusable procedures are loaded into inference-time context and do not retrain the model.
+
+### S-54 {#s-54}
+
+**Claim.** Claude Code permissions documentation: 'Claude Code uses a tiered permission system to balance power and safety'; in Manual mode read-only tools such as file reads need no approval within the working directory; Bash commands require approval 'except a built-in set of read-only commands'; file modification requires approval; 'Deny rules prevent Claude Code from using the specified tool' and rules are evaluated 'deny, then ask, then allow'; several permission modes exist, including a plan mode in which 'Claude reads files and runs read-only shell commands to explore but doesn't edit your source files'.
+
+**Source.** Anthropic, "Configure permissions" (code.claude.com/docs/en/permissions), accessed 2026-09-15
+
+**Where.** "Permission system" table; "Permission modes"; permission rule precedence
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). The course cites the shape (approval decided by software under user-controlled rules), not the specific modes, as the durable point.
+
+### S-55 {#s-55}
+
+**Claim.** Post-training is additional parameter-updating training applied after pretraining to shape a model's behavior, capabilities, preferences, or safety characteristics; it is a family of methods (supervised instruction tuning; preference-based methods, implemented via a reward model plus reinforcement learning or via direct preference optimization; feedback generated by models or rules; reinforcement learning against checkable rewards) rather than one universal recipe, and RLHF names one route rather than the family.
+
+**Source.** None (course synthesis; correction CC3)
+
+**Where.** Synthesis of S-46 (supervised then RLHF), S-47 (DPO), S-48 (AI feedback), S-49 (RL against rule-based rewards)
+
+**Support.** inference; confidence high.
+
+**Caveat.** Course definition and taxonomy, stated as such. No source is claimed to state the taxonomy itself; each member is sourced individually.
+
+### S-56 {#s-56}
+
+**Claim.** An agent, in this course's usage, is a system in which software repeatedly invokes a model with updated context and state, executes the tool requests the model generates under permission rules, and returns observations for the next call; the model does not run continuously between calls, and agentic capability comes from the combination of objective, model, context, tools, external state, stopping condition, permissions, and verification rather than from a distinct neural-network architecture.
+
+**Source.** None (course synthesis)
+
+**Where.** Synthesis of S-50 (workflow/agent vocabulary; augmented LLM; ground truth per step) and S-51 (tool-call round trip)
+
+**Support.** inference; confidence high.
+
+**Caveat.** Course synthesis, stated as such; the page also states that 'agent' has no universally fixed definition.
+
+### S-57 {#s-57}
+
+**Claim.** Anthropic's prompting guidance for current Claude models states: 'Claude responds well to clear, explicit instructions'; 'Providing context or motivation behind your instructions ... can help Claude better understand your goals'; 'Examples are one of the most reliable ways to steer Claude's output format, tone, and structure' (with a tip to 'Include 3-5 examples for best results'), listed among techniques for all current models; 'XML tags help Claude parse complex prompts unambiguously'; in the extended-thinking section, 'Prefer general instructions over prescriptive steps. A prompt like "think thoroughly" often produces better reasoning than a hand-written step-by-step plan', with 'Manual chain-of-thought (CoT) prompting as a fallback' when thinking is off; 'Remove over-prompting'; and 'Starting with Claude 4.6 models ... prefilled responses ... on the last assistant turn are no longer supported'. The page opens with model-specific guidance and ends with migration considerations.
+
+**Source.** Anthropic, "Prompting best practices" (platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), accessed 2026-09-15
+
+**Where.** Sections "Be clear and direct", "Add context to improve performance", "Use examples effectively", "Structure prompts with XML tags", "Leverage thinking", "Overthinking and excessive thoroughness", "Migrating away from prefilled responses"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product- and model-specific, access-dated (PR9). The course cites these only as one provider's current guidance to illustrate that recommendations differ by model and date; none is elevated to a universal rule.
+
+### S-58 {#s-58}
+
+**Claim.** OpenAI's prompting guidance states that 'there are some differences to consider when prompting a reasoning model versus prompting a GPT model. Generally speaking, reasoning models will provide better results on tasks with only high-level guidance'; recommends 'pinning your production applications to specific model snapshots ... to ensure consistent behavior'; states on the same page that a GPT (non-reasoning) model will 'perform best with explicit instructions to create a specific output' and that 'you can help the model understand logical boundaries of your prompt and context data using a combination of Markdown formatting and XML tags'; and its separate reasoning best practices guide states that 'the models excel at understanding and responding to brief, clear instructions', that 'since these models perform reasoning internally, prompting them to "think step by step" or "explain your reasoning" is unnecessary', that 'reasoning models often don't need few-shot examples ... so try to write prompts without examples first', to 'use delimiters like markdown, XML tags, and section titles', and that GPT models fit when 'speed and cost are the most important factors' while reasoning models fit when 'accuracy and reliability are the most important factors'.
+
+**Source.** OpenAI, "Prompt engineering" and "Reasoning best practices" (developers.openai.com/api/docs/guides/prompt-engineering; developers.openai.com/api/docs/guides/reasoning-best-practices), accessed 2026-09-15
+
+**Where.** Both pages, quoted sections
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product- and model-specific, access-dated (PR9). Cited only to show that guidance differs across providers and model families; not used to rank models.
+
+### S-59 {#s-59}
+
+**Claim.** Google's Gemini prompt design guidance states: 'An effective and efficient way to customize model behavior is to provide it with clear and specific instructions'; 'We recommend to always include few-shot examples in your prompts. Prompts without few-shot examples are likely to be less effective'; 'Prompt design can sometimes require a few iterations'.
+
+**Source.** Google, "Prompt design strategies" (ai.google.dev/gemini-api/docs/prompting-strategies), accessed 2026-09-15
+
+**Where.** Quoted sections
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific, access-dated (PR9). Cited only as one provider's current default on examples, contrasted with S-57 and S-58.
+
+### S-60 {#s-60}
+
+**Claim.** Anthropic's Claude Code best-practices guidance states: 'Give Claude a check it can run: tests, a build, a screenshot to compare'; 'Have Claude show evidence rather than asserting success'; 'If you can't verify it, don't ship it'; recommends separating exploration and planning from implementation, with planning 'most useful when you're uncertain about the approach, when the change modifies multiple files, or when you're unfamiliar with the code', and 'if you could describe the diff in one sentence, skip the plan'; recommends keeping CLAUDE.md short and including only what applies broadly; recommends '/clear' between unrelated tasks; and states that 'if you've corrected Claude more than twice on the same issue in one session, the context is cluttered with failed approaches ... A clean session with a better prompt almost always outperforms a long session with accumulated corrections'.
+
+**Source.** Anthropic, "Best practices for Claude Code" (code.claude.com/docs/en/best-practices), accessed 2026-09-15
+
+**Where.** Sections "Give Claude a way to verify its work", "Explore first, then plan, then code", "Write an effective CLAUDE.md", "Course-correct early and often", "Avoid common failure patterns"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific, access-dated (PR9). The course cites the habits (verification, bounded planning, fresh sessions) and not the product commands.
+
+### S-61 {#s-61}
+
+**Claim.** Anthropic's context-engineering guidance describes 'just in time' context as agents that 'maintain lightweight identifiers (file paths, stored queries, web links, etc.) and use these references to dynamically load data into context at runtime using tools'; progressive disclosure as allowing 'agents to incrementally discover relevant context through exploration. Each interaction yields context that informs the next decision'; compaction as 'the practice of taking a conversation nearing the context window limit, summarizing its contents, and reinitiating a new context window with the summary'; and structured note-taking as 'a technique where the agent regularly writes notes persisted to memory outside of the context window'.
+
+**Source.** Anthropic, "Effective context engineering for AI agents" (anthropic.com/engineering/effective-context-engineering-for-ai-agents, published 2025-09-29), accessed 2026-09-15
+
+**Where.** Sections "Context retrieval and agentic search" and "Context engineering for long-horizon tasks"
+
+**Support.** direct; confidence high.
+
+**Caveat.** Vendor guidance, access-dated (PR9). Companion to S-34 (same article, other quotes). The course uses the definitions and states that implementations differ by product.
+
+### S-62 {#s-62}
+
+**Claim.** Anthropic's context-window documentation states: 'Cached prompt prefixes still occupy the context window: prompt caching changes what you pay for those tokens, not whether they count.'
+
+**Source.** Anthropic, "Context windows" (platform.claude.com/docs/en/build-with-claude/context-windows), accessed 2026-09-15
+
+**Where.** Section "Manage context with compaction", final sentence
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific, access-dated (PR9). Companion to S-31 (same page). Used to state precisely what prompt caching does and does not change.
+
+### S-63 {#s-63}
+
+**Claim.** A practical operating discipline for model use: classify the task (draft/transformation; tools-and-verification; judgment that must stay with a person); specify the task (objective, source of truth, inputs, context, constraints, output, acceptance criteria, behavior when evidence is missing); decide the source of truth before asking; supply the smallest sufficient high-signal context; use a tool where the answer depends on the world; verify observably and treat a passing check as establishing only what it tested; work in bounded units with stop conditions; hand off with a compact state summary; treat prompting advice as model-, task-, and date-dependent; match model and effort to the difficulty and value of the decision; stop and ask when ambiguity materially affects correctness or consequences; grant least necessary access.
+
+**Source.** None (course synthesis)
+
+**Where.** Synthesis of the mechanisms established in the course (S-08, S-31, S-32, S-34, S-50, S-51, S-54, S-55, S-56) and the access-dated vendor guidance (S-57–S-62)
+
+**Support.** inference; confidence high.
+
+**Caveat.** Course synthesis, stated as such; each supporting mechanism and each vendor statement is sourced individually. No universal prompting rule is asserted.
+
+### S-64 {#s-64}
+
+**Claim.** Rosenblatt (1958) developed the perceptron, described in the paper's title as 'a probabilistic model for information storage and organization in the brain', as a hypothetical learning system; the paper appeared in Psychological Review 65(6), 386-408 (doi 10.1037/h0042519). The milestones page describes it only by its title and by the 1986 backpropagation paper's characterization of the 'perceptron-convergence procedure' as an earlier, simpler learning method (S-65); it does not summarize the paper's own mechanism.
+
+**Source.** Rosenblatt, F., "The perceptron: A probabilistic model for information storage and organization in the brain", Psychological Review 65(6), 1958, 386-408, doi 10.1037/h0042519
+
+**Where.** Title and bibliographic record (Crossref record for the DOI; PubMed PMID 13602029), verified 2026-09-15; characterization as an earlier learning method from S-65
+
+**Support.** direct; confidence high.
+
+**Caveat.** Narrowed on 2026-09-15 (final Batch 5 pass): the publisher page is JavaScript-rendered and paywalled, no open full-text copy was reachable programmatically (academia.edu and ResearchGate require login; MIT Press reprint and Semantic Scholar pages returned 403), so the claim rests only on the verified bibliographic record (title, author, venue, year) and on S-65. An earlier draft described the perceptron's weight-adjustment procedure; that description was removed rather than left resting on uninspected text. No priority claim is made (PR10).
+
+### S-65 {#s-65}
+
+**Claim.** Rumelhart, Hinton, and Williams (1986) describe, in their abstract, 'a new learning procedure, back-propagation, for networks of neurone-like units' which 'repeatedly adjusts the weights of the connections in the network so as to minimize a measure of the difference between the actual output vector of the net and the desired output vector', so that hidden units 'come to represent important features of the task domain'; the abstract contrasts it with 'earlier, simpler methods such as the perceptron-convergence procedure'.
+
+**Source.** Rumelhart, D. E., Hinton, G. E., and Williams, R. J., "Learning representations by back-propagating errors", Nature 323, 533-536, published 1986-10-09 (nature.com/articles/323533a0)
+
+**Where.** Abstract (in full)
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-15; the body is paywalled and was not read. The 'new' is the paper's self-description; the course makes no claim about who first derived the gradient computation (PR10) and lists the paper as the formulation that became widely influential. Per CC5, the course notes that its own usage reserves 'backpropagation' for the gradient computation, while the 1986 abstract describes the whole weight-adjusting procedure.
+
+### S-66 {#s-66}
+
+**Claim.** Hochreiter and Schmidhuber (1997): 'Learning to store information over extended time intervals via recurrent backpropagation takes a very long time, mostly due to insufficient, decaying error back flow. We briefly review Hochreiter's 1991 analysis of this problem, then address it by introducing a novel, efficient, gradient-based method called "Long Short-Term Memory" (LSTM).' The paper reviews earlier recurrent-network work at length (its Section 2, 'Previous work').
+
+**Source.** Hochreiter, S., and Schmidhuber, J., "Long Short-Term Memory", Neural Computation 9(8), 1735-1780, 1997, doi 10.1162/neco.1997.9.8.1735; author-hosted copy at bioinf.jku.at/publications/older/2604.pdf
+
+**Where.** Abstract; Section 1 ('The remedy'); Section 2 ('Previous work')
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified on 2026-09-15 against the author-hosted PDF (text extracted with pdftotext; dropped ligatures restored). The journal page returned HTTP 403 to non-browser clients, so the typeset abstract's exact wording was not compared. 'Novel' is the paper's self-description; no priority claim is made by the course (PR10).
+
+### S-67 {#s-67}
+
+**Claim.** Sutskever, Vinyals, and Le (2014) 'present a general end-to-end approach to sequence learning that makes minimal assumptions on the sequence structure'; their method 'uses a multilayered Long Short-Term Memory (LSTM) to map the input sequence to a vector of a fixed dimensionality, and then another deep LSTM to decode the target sequence from the vector'.
+
+**Source.** Sutskever, I., Vinyals, O., and Le, Q. V., "Sequence to Sequence Learning with Neural Networks" (arxiv.org/abs/1409.3215, v1 2014-09-10, v3 2014-12-14)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim against the arXiv abstract page on 2026-09-15. The venue is not stated on the arXiv page and is not asserted by the course. Used for the encoder-decoder shape and the fixed-length-vector bottleneck that S-68 addresses.
+
+### S-68 {#s-68}
+
+**Claim.** Bahdanau, Cho, and Bengio 'conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly'; the arXiv listing's comments field states 'Accepted at ICLR 2015 as oral presentation'; the abstract does not use the word 'attention'.
+
+**Source.** Bahdanau, D., Cho, K., and Bengio, Y., "Neural Machine Translation by Jointly Learning to Align and Translate" (arxiv.org/abs/1409.0473, v1 2014-09-01, v7 2016-05-19)
+
+**Where.** Abstract; arXiv comments field
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified verbatim against the arXiv abstract page on 2026-09-15. The course calls the mechanism 'the one now generally called attention' as a description of current usage, not as a claim that this paper named it or was the first to use it (PR10).
+
+### S-69 {#s-69}
+
+**Claim.** Radford, Narasimhan, Salimans, and Sutskever 'demonstrate that large gains on these tasks can be realized by generative pre-training of a language model on a diverse corpus of unlabeled text, followed by discriminative fine-tuning on each specific task', using 'a two-stage training procedure' with a Transformer, and name earlier pretrain-then-fine-tune work (Dai et al.; Howard and Ruder) as 'the closest line of work to ours'. The PDF prints no date ('Preprint. Work in progress.'); the year 2018 is taken from the BERT paper's citation of it ('Radford et al., 2018 ... Technical report, OpenAI'), BERT v1 having been posted 2018-10-11.
+
+**Source.** Radford, A., Narasimhan, K., Salimans, T., and Sutskever, I., "Improving Language Understanding by Generative Pre-Training" (OpenAI; cdn.openai.com/research-covers/language-unsupervised/language\_understanding\_paper.pdf); year from Devlin et al., arxiv.org/abs/1810.04805v1, reference list
+
+**Where.** Abstract; Section 1; Section 2 ('Related Work'); BERT v1 reference list and arXiv v1 date
+
+**Support.** direct; confidence high.
+
+**Caveat.** Verified on 2026-09-15 against the PDF text (pdftotext) and the BERT v1 PDF text and arXiv listing. The date anchoring is indirect and stated as such on the page; no priority claim is made and the paper's own antecedents are named (PR10).
+
+### S-70 {#s-70}
+
+**Claim.** Wei et al. 'explore how generating a chain of thought -- a series of intermediate reasoning steps -- significantly improves the ability of large language models to perform complex reasoning', showing 'how such reasoning abilities emerge naturally in sufficiently large language models via a simple method called chain of thought prompting, where a few chain of thought demonstrations are provided as exemplars in prompting'.
+
+**Source.** Wei, J., et al., "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models" (arxiv.org/abs/2201.11903, v1 2022-01-28, v6 2023-01-10)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim against the arXiv abstract page on 2026-09-15. Correction CC2 applies: the course restates the result as intermediate reasoning tokens providing additional inference-time computation that can improve performance on some difficult tasks, an inference-time technique with no parameter change; it does not adopt the abstract's 'reasoning abilities emerge' framing as a claim about thought.
+
+### S-71 {#s-71}
+
+**Claim.** Christiano et al. (2017) 'explore goals defined in terms of (non-expert) human preferences between pairs of trajectory segments' and show 'that this approach can effectively solve complex RL tasks without access to the reward function'.
+
+**Source.** Christiano, P., Leike, J., Brown, T. B., Martic, M., Legg, S., and Amodei, D., "Deep reinforcement learning from human preferences" (arxiv.org/abs/1706.03741, v1 2017-06-12, v4 2023-02-17)
+
+**Where.** Abstract
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim against the arXiv abstract page on 2026-09-15. Cited only as an earlier reinforcement-learning antecedent of learning a reward from human comparisons; the course does not claim it is the origin of RLHF (PR10).
+
+### S-72 {#s-72}
+
+**Claim.** Yao et al. 'explore the use of LLMs to generate both reasoning traces and task-specific actions in an interleaved manner', where 'actions allow it to interface with external sources, such as knowledge bases or environments, to gather additional information', demonstrated on question answering and fact verification 'by interacting with a simple Wikipedia API'.
+
+**Source.** Yao, S., et al., "ReAct: Synergizing Reasoning and Acting in Language Models" (arxiv.org/abs/2210.03629, v1 2022-10-06, v3 2023-03-10, described in its comments field as the ICLR camera-ready version)
+
+**Where.** Abstract; arXiv comments field
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim against the arXiv abstract page on 2026-09-15. The ICLR year is not stated in the comments field and is not asserted. Listed as an influential early formulation of the observe-act loop in the language-model setting, not as its origin (PR10).
+
+### S-73 {#s-73}
+
+**Claim.** As of 2026-09-15, Anthropic's 'Building effective agents' article carries a note stating that much of the tooling landscape described in the post has changed since December 2024 and pointing readers to the provider's current approach.
+
+**Source.** Anthropic, "Building effective agents" (anthropic.com/engineering/building-effective-agents, published 2024-12-19), accessed 2026-09-15
+
+**Where.** Note displayed at the top of the article
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). Cited so that the milestones and resources pages record that the article's own authors flag it as partly dated, while its workflow/agent vocabulary (S-50) is the part the course uses.
+
+### S-74 {#s-74}
+
+**Claim.** The milestones page is a selective intellectual timeline, not a history of artificial intelligence, chosen to locate the course's concepts in time; it makes no priority ('first', 'invented') claims and quotes papers' self-descriptions where they call a method new; and it presents today's systems as the result of several interacting lines of development (neural units and learning rules; backpropagation; recurrent sequence models; learned word representations; attention; the transformer; pretraining and transfer; scale; post-training; retrieval and tool use; reasoning-oriented training) rather than one isolated invention.
+
+**Source.** None (course editorial framing)
+
+**Where.** Selection principle and framing stated on milestones.qmd; each entry's factual content is sourced by its own row (S-64 to S-73 and the reused rows named on the page)
+
+**Support.** inference; confidence high.
+
+**Caveat.** Editorial framing, stated as such (compare S-18, S-20). Not attributable to any single external source; the omissions listed on the page are a statement about the course's scope, not about importance.
+
+### S-75 {#s-75}
+
+**Claim.** Andrej Karpathy's 2023 video '\[1hr Talk\] Intro to Large Language Models' describes itself as 'a 1 hour general-audience introduction to Large Language Models: the core technical component behind systems like ChatGPT, Claude, and Bard'; its first chapter, 'LLM Inference', presents a runnable open model as a parameters file plus a small program that runs the network, and the description links that program ('What is in the run.c file? A bit more full-featured 1000-line version here', linking github.com/karpathy/llama2.c/blob/master/run.c); the description also states that 'the dreams and hallucinations do not get fixed with finetuning. Finetuning just "directs" the dreams into "helpful assistant dreams"', that if 'the LLM used browsing or retrieval and the answer made its way into the "working memory" of its context window, you can trust the LLM a bit more', and that a tool is used when the model 'emits special words, e.g. |BROWSER|' which 'the code "above" that is inferencing the LLM detects', sending the output to a tool and continuing generation, with 'finetuning datasets teach\[ing\] it how and when to browse, by example'.
+
+**Source.** Andrej Karpathy, "\[1hr Talk\] Intro to Large Language Models" (youtube.com/watch?v=zjkBMFhNj\_g, published 2023-11-22, listed duration 59:48), accessed 2026-09-15
+
+**Where.** Official video description (opening sentence; 'Few things I wish I said' paragraphs; run.c link) and chapter list (00:00:20 'LLM Inference')
+
+**Support.** direct; confidence high.
+
+**Caveat.** Description text and chapter list verified verbatim from the video page's own data on 2026-09-15. The talk's spoken 'two files' passage, with the Llama 2 70B example, the 140 GB parameter file, and 'about 500 lines of C', was located only in a third-party transcript and could not be checked against the linked slides (behind a login wall), so those figures are NOT stated on the site; the site cites the code-plus-parameters framing to the chapter and the linked ~1000-line runner. Pedagogical framing, attributed as such; the site states that the file count varies by product and that the framing is an intuition, not a universal rule.
+
+### S-76 {#s-76}
+
+**Claim.** Karpathy's classroom analogy for the training stages, in his own words (2025-01-30): background information or exposition in a textbook 'is equivalent to pretraining, where the model is reading the internet and accumulating background knowledge'; 'worked problems with solutions ... are demonstrations to be imitated. This is equivalent to supervised finetuning, where the model is finetuning on "ideal responses" for an Assistant, written by humans'; 'practice problems ... prompting the student to learn by trial & error ... This is equivalent to reinforcement learning.' The 2025 video 'Deep Dive into LLMs like ChatGPT' carries chapters 'supervised finetuning to reinforcement learning' (02:07:28) and 'reinforcement learning' (02:14:42), and its announcement summarizes the third stage as 'reinforcement learning: practice makes perfect'.
+
+**Source.** Andrej Karpathy, post on X, 2025-01-30 (x.com/karpathy/status/1885026028428681698); Andrej Karpathy, "Deep Dive into LLMs like ChatGPT" (youtube.com/watch?v=7xTGNNLPyMI, published 2025-02-05, listed duration 3:31:24), official chapter list; announcement post x.com/karpathy/status/1887211193099825254; all accessed 2026-09-15
+
+**Where.** The X post in full; the video's official chapter list; the announcement post's stage summary
+
+**Support.** direct; confidence high.
+
+**Caveat.** The analogy's wording is verified verbatim from Karpathy's own post; its placement inside the video is known only by chapter title (spoken wording not verified: no transcript of the 2025 video was obtainable on 2026-09-15). Presented on the site explicitly as a pedagogical analogy, with the statement that human learning and neural-network optimization are mechanistically different (CC2).
+
+### S-77 {#s-77}
+
+**Claim.** The 2025 video 'Deep Dive into LLMs like ChatGPT' describes itself as 'a general audience deep dive' covering 'the full training stack'; its official chapters run 'pretraining data (internet)' (00:01:00), 'tokenization' (00:07:47), 'neural network I/O', 'neural network internals', 'inference' (00:26:01), 'GPT-2: training and inference', 'Llama 3.1 base model inference', 'pretraining to post-training' (00:59:23), 'post-training data (conversations)', 'hallucinations, tool use, knowledge/working memory' (01:20:32), 'models need tokens to think' (01:46:56), 'supervised finetuning to reinforcement learning', 'reinforcement learning', 'DeepSeek-R1', 'reinforcement learning from human feedback (RLHF)', and 'grand summary'. The chapter on hallucinations, tool use, and knowledge/working memory contrasts knowledge held in the parameters with information present in the context window, which it calls working memory, and discusses abstention and tool use as remedies.
+
+**Source.** Andrej Karpathy, "Deep Dive into LLMs like ChatGPT" (youtube.com/watch?v=7xTGNNLPyMI, published 2025-02-05), official description and chapter list, accessed 2026-09-15
+
+**Where.** Official description; chapter list; chapter 01:20:32 'hallucinations, tool use, knowledge/working memory'
+
+**Support.** direct; confidence medium-high.
+
+**Caveat.** Description and chapter titles verified verbatim from the video page's own data on 2026-09-15; no transcript of the video was obtainable, so the chapter's spoken wording (including the on-screen contrast 'vague recollection' versus 'working memory' reported by several third-party notes) is not verified and is paraphrased on the site as 'hazy recollection' with the 'working memory' phrase taken from the official chapter title and from S-75's description. The 'I don't know' training-example detail is confirmed only by third-party notes; the site states abstention as a general possibility and attributes to Karpathy only the plain-language points confirmed in S-75. Labeled on the site as analogy, not mechanism (CC1, CC2).
+
+### S-78 {#s-78}
+
+**Claim.** The FineWeb dataset (Hugging Face) is an open, documented pretraining corpus derived from Common Crawl web snapshots; its dataset card lists the processing pipeline in order as URL filtering (removing malicious and adult sites), text extraction from the raw HTML with trafilatura, language filtering (keeping English by a fastText classifier score), quality filtering (Gopher, C4-style, and custom heuristics), MinHash deduplication per crawl, and PII formatting; the paper states that pretraining datasets for state-of-the-art open models 'are not publicly available and very little is known about how they were created', and that FineWeb 'is derived from 96 Common Crawl snapshots'.
+
+**Source.** Penedo et al., "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale" (arxiv.org/abs/2406.17557, v1 2024-06-25, v2 2024-10-31); Hugging Face dataset card huggingface.co/datasets/HuggingFaceFW/fineweb, accessed 2026-09-15
+
+**Where.** Paper abstract; dataset card sections 'Source Data' and 'Data processing steps' (numbered list)
+
+**Support.** direct; confidence high.
+
+**Caveat.** Used only as one open, concrete example of a pretraining-data pipeline (PR9-style labeling: the course states it is an illustration, not a description of any particular model's corpus). Dataset size figures are deliberately not stated on the site: the card gives different totals in sections updated at different times (15T tokens at v1.0.0, 2024-04-21; 'more than 18.5T' after v1.4.0, 2025-07-11). Verified against the arXiv abstract page and the raw README of the dataset card on 2026-09-15.
+
+### S-79 {#s-79}
+
+**Claim.** Stanford CS336, 'Language Modeling from Scratch' (Spring 2026; previous offerings Spring 2025 and 2024; instructors Tatsunori Hashimoto and Percy Liang), describes itself as leading students 'through every aspect of language model creation, including data collection and cleaning for pre-training, transformer model construction, model training, and evaluation before deployment'; its prerequisites state that 'a significant part of the course will involve making neural language models run quickly and efficiently on GPUs across multiple machines' and require Python proficiency, deep-learning and systems experience, calculus, linear algebra, probability, and machine learning; its assignments cover basics (tokenizer, architecture, optimizer), systems, scaling, data (converting raw Common Crawl dumps into pretraining data), and alignment and reasoning RL; the Spring 2026 page links a public YouTube lecture playlist.
+
+**Source.** Stanford CS336, "Language Modeling from Scratch" (cs336.stanford.edu; the stanford-cs336.github.io URLs redirect there), accessed 2026-09-15
+
+**Where.** Sections 'What is this course about?', 'Prerequisites', assignment list, and 'Logistics' (recordings link) on the Spring 2026 page; archived Spring 2025 page for the identical description
+
+**Support.** direct; confidence high.
+
+**Caveat.** Living university page, access-dated (PR9). Cited on the resources page as an advanced reference for the full engineering lifecycle and in the short story as the pointer for readers who want systems and GPU depth; the course does not adopt its implementation-heavy scope.
+
+### S-80 {#s-80}
+
+**Claim.** The University of Washington's CSE 163 (Intermediate Data Programming) 'Large Language Models' lesson, offered in Winter, Spring, and Autumn 2025, introduces the topic with 'two videos from Prof. Steve Seitz's YouTube Channel "Graphics in 5 Minutes"' (the videos 'Large Language Models from scratch' and 'Large Language Models: Part 2', published July 2022) and states that 'GPT in 60 Lines of Numpy by Jay Mody shows how one can replicate (the inference half of) a tiny ver\[s\]ion of GPT-2 in just 60 lines of Python'; the first video's own description reads 'A short cartoon that explains transformers and the tech behind LLMs' and lists chapters from autocomplete and n-grams through neural networks, gradient descent, and backpropagation; the second's lists next-word prediction, word embeddings, transformers, generating text, stacking attention layers, and training data. Steven Seitz is a Professor in UW's Paul G. Allen School of Computer Science & Engineering.
+
+**Source.** University of Washington, CSE 163 lesson "Large Language Models" (courses.cs.washington.edu/courses/cse163/25au/large-language-models/; also the 25sp and 25wi variants), accessed 2026-09-15; Steve Seitz, "Large Language Models from scratch" (youtube.com/watch?v=lnA9DMvHtfI) and "Large Language Models: Part 2" (youtube.com/watch?v=YDiSFS-yHwk), channel Graphics in 5 Minutes; UW faculty page cs.washington.edu/people/faculty/seitz/, accessed 2026-09-15
+
+**Where.** Lesson page, section 'How do LLMs work?'; video descriptions (via YouTube's oEmbed and RSS metadata and an archived copy of the first video's page); faculty page
+
+**Support.** direct; confidence high.
+
+**Caveat.** Living university pages and video listings, access-dated (PR9). The live YouTube watch pages blocked non-browser clients on 2026-09-15, so titles, dates, and descriptions were read from YouTube's oEmbed and RSS feeds and an archived page; no durations are stated on the site. The channel is 'Graphics in 5 Minutes', not a channel named after the professor.
+
+### S-81 {#s-81}
+
+**Claim.** Jay Mody's post 'GPT in 60 Lines of NumPy' (January 30, 2023) states: 'In this post, we'll implement a GPT from scratch in just 60 lines of numpy. We'll then load the trained GPT-2 model weights released by OpenAI into our implementation and generate some text', with the code released as picoGPT; the implementation loads pretrained weights and generates text, and training is discussed only conceptually.
+
+**Source.** Jay Mody, "GPT in 60 Lines of NumPy" (jaykmody.com/blog/gpt-from-scratch/, dated 2023-01-30, with edits dated February 2023), accessed 2026-09-15; code at github.com/jaymody/picoGPT
+
+**Where.** Opening paragraphs; 'Training' and 'What Next?' sections
+
+**Support.** direct; confidence high.
+
+**Caveat.** Personal blog post, access-dated. Recommended on the resources page only as a compact illustration of the inference computation after pretrained weights exist; the course states that it is inference with released weights, not training.
+
+### S-82 {#s-82}
+
+**Claim.** Karpathy's llama2.c repository README states: 'Train the Llama 2 LLM architecture in PyTorch then inference it with one simple 700-line C file (run.c)'; 'You need a model checkpoint'; and 'Once we have the model.bin file, we can inference in C.' The repository therefore demonstrates directly that transformer inference consists of runner code plus a model checkpoint.
+
+**Source.** Andrej Karpathy, llama2.c repository README (github.com/karpathy/llama2.c), accessed 2026-09-15
+
+**Where.** README opening section and the 'feel the magic' quick-start instructions
+
+**Support.** direct; confidence high.
+
+**Caveat.** Living repository, access-dated (PR9): the line count and file names change over time, so the site cites only the division of labor (a C inference file plus a required checkpoint) and states no line count. Used as direct technical support for the code-plus-parameters picture that S-75 attributes pedagogically to the 2023 talk.
+
+### S-83 {#s-83}
+
+**Claim.** Anthropic's current documentation on thinking states: 'When thinking is active, Claude works through the problem in its own words before answering ... That reasoning arrives in thinking content blocks ahead of the response, and Claude draws on it to produce the final answer'; 'the tokens Claude spends reasoning are billed as output tokens, even when the thinking text isn't returned to you, and they count toward max\_tokens alongside the response text'; reasoning depth is steered by an effort parameter (levels low, medium, high, xhigh, max) with thinking set to 'adaptive' on current models, while the earlier 'extended thinking' mode with a budget\_tokens value is documented as a deprecated manual mode; 'what you see is never the raw chain of thought: the text in a thinking block is a summary of Claude's reasoning'; and 'Interleaved thinking lets Claude think between tool calls, reasoning about each tool result before acting on it.' Anthropic's 2025 announcement of the feature describes it as 'serial test-time compute', in which the model 'uses multiple, sequential reasoning steps before producing its final output, adding more computational resources as it goes', and states on faithfulness that 'we don't know for certain that what's in the thought process truly represents what's going on in the model's mind'.
+
+**Source.** Anthropic, "Thinking" (platform.claude.com/docs/en/build-with-claude/thinking), "Effort" (platform.claude.com/docs/en/build-with-claude/effort), "Extended thinking" (platform.claude.com/docs/en/build-with-claude/extended-thinking), and "Steering thinking" (platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost), all accessed 2026-09-15; Anthropic, "Claude's extended thinking" (anthropic.com/news/visible-extended-thinking, published 2025-02-24), accessed 2026-09-15
+
+**Where.** Thinking page (opening; 'Thinking has a cost'; display/summary section; interleaved thinking); Effort page (parameter and levels table); Extended thinking page (deprecation warning); announcement (serial test-time compute; faithfulness paragraph)
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). Cited for one provider's description of reasoning before the answer, controls for how much, billing of reasoning tokens as output, summaries rather than raw reasoning, interleaving with tool calls, and the faithfulness caveat; the course generalizes only the shared shape across S-83, S-84, and S-85 and does not assume providers implement the mechanism identically. Parameter names and level lists change; the site names none of them beyond 'a reasoning-effort setting or a thinking level'. CC2 applies.
+
+### S-84 {#s-84}
+
+**Claim.** Google's current Gemini thinking documentation states: 'When you use a thinking model, Gemini reasons internally before responding'; 'Gemini models engage in dynamic thinking by default, automatically adjusting the amount of reasoning effort based on the complexity of the request. You can control this behavior using the thinking\_level parameter' (levels such as minimal, low, medium, and high, varying by model); 'Thinking models generate full thoughts to improve the quality of the final response, and then output summaries to provide insight into the thought process'; 'When thinking is turned on, response pricing is the sum of output tokens and thinking tokens'; and 'Pricing is based on the full thought tokens the model needs to generate, despite only the summary being output from the API.'
+
+**Source.** Google, "Gemini thinking" (ai.google.dev/gemini-api/docs/thinking, page states 'Last updated 2026-09-09 UTC'), accessed 2026-09-15
+
+**Where.** Opening section; thinking\_level section and model table; thought summaries; pricing and token-limit sections
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). Cited for one provider's description of reasoning before responding, a control for how much, and thinking tokens counted and billed; the page documents summaries rather than raw thoughts and does not make a faithfulness statement. Level names and model lists change.
+
+### S-85 {#s-85}
+
+**Claim.** OpenAI's current reasoning-models documentation states: 'Reasoning models use internal reasoning tokens before producing a response. This helps the model plan, use tools effectively, inspect alternatives, recover from ambiguity, and solve harder multi-step tasks'; 'The reasoning.effort parameter guides the model on how much to think when performing a task', with supported values that 'are model-dependent and can include none, minimal, low, medium, high, xhigh, and max'; 'While reasoning tokens are not visible via the API, they still occupy space in the model's context window and are billed as output tokens'; 'While we don't expose the raw reasoning tokens emitted by the model, you can view a summary of the model's reasoning'; and current models 'support interleaved thinking, where the model is able to generate visible output tokens before and in between thinking, and is able to think in between tool calls.'
+
+**Source.** OpenAI, "Reasoning models" (developers.openai.com/api/docs/guides/reasoning; the platform.openai.com URL redirects here), accessed 2026-09-15
+
+**Where.** Opening section; 'reasoning.effort' section; context-window and billing section; reasoning summaries; interleaved thinking and function calling
+
+**Support.** direct; confidence high.
+
+**Caveat.** Product-specific and access-dated (PR9). Cited for one provider's description of reasoning tokens generated before the response, an effort control, reasoning tokens occupying the context window and billed as output, summaries rather than raw reasoning, and interleaving with tool calls. Value lists and defaults are model-dependent and change; the page displays no date.
+
+### S-86 {#s-86}
+
+**Claim.** An embedding lookup is mathematically equivalent to multiplying a one-hot vector (all zeros except a single one at the token's index) by the embedding matrix E: the product selects the row E\[i\]. Implementations simply retrieve the row.
+
+**Source.** Mathematical identity
+
+**Where.** Linear algebra: for the standard basis vector e\_i, e\_i^T E equals the i-th row of E.
+
+**Support.** direct; confidence high.
+
+**Caveat.** Purely mathematical; stated on short-story.qmd §4 as an optional aside. Not attributed to any external source.
+
+:::
+

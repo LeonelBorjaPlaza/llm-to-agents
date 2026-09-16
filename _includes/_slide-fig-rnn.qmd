@@ -1,0 +1,26 @@
+```{=html}
+<figure id="sfig-rnn" class="course-figure">
+<svg viewBox="0 0 640 130" role="img" aria-label="A recurrent network passes a running state from token 1 to token 2 to token 3 and onward, so information from token 1 reaches token 5 only through four sequential steps" xmlns="http://www.w3.org/2000/svg">
+  <title>Recurrent sequence processing</title>
+  <g font-size="19" fill="#1c1c1c">
+    <rect x="20" y="20" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="65" y="50" text-anchor="middle">token 1</text>
+    <rect x="150" y="20" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="195" y="50" text-anchor="middle">token 2</text>
+    <rect x="280" y="20" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="325" y="50" text-anchor="middle">token 3</text>
+    <rect x="410" y="20" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="455" y="50" text-anchor="middle">token 4</text>
+    <rect x="540" y="20" width="90" height="46" rx="6" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="585" y="50" text-anchor="middle">token 5</text>
+    <g stroke="#5b3fa0" stroke-width="3" fill="#5b3fa0">
+      <line x1="112" y1="43" x2="136" y2="43"/><polygon points="134,36 148,43 134,50"/>
+      <line x1="242" y1="43" x2="266" y2="43"/><polygon points="264,36 278,43 264,50"/>
+      <line x1="372" y1="43" x2="396" y2="43"/><polygon points="394,36 408,43 394,50"/>
+      <line x1="502" y1="43" x2="526" y2="43"/><polygon points="524,36 538,43 524,50"/>
+    </g>
+    <text x="325" y="104" text-anchor="middle" font-size="14" fill="#4a4a4a">information from token 1 reaches token 5 only through 4 sequential steps</text>
+  </g>
+</svg>
+</figure>
+```

@@ -1,0 +1,23 @@
+```{=html}
+<figure id="sfig-runnable-model" class="course-figure">
+<svg viewBox="0 0 720 300" role="img" aria-label="A runnable model: code that implements the computation, plus a checkpoint of learned parameters, together perform inference" xmlns="http://www.w3.org/2000/svg">
+  <title>What a runnable model is</title>
+  <g font-size="22" fill="#1c1c1c">
+    <rect x="30" y="24" width="300" height="110" rx="8" fill="#eceef2" stroke="#4f5b6e" stroke-width="3"/>
+    <text x="180" y="62" text-anchor="middle" font-size="18" font-weight="600">architecture / runner code</text>
+    <text x="180" y="96" text-anchor="middle" font-size="19">how to compute:</text>
+    <text x="180" y="122" text-anchor="middle" font-size="16">sums, nonlinearities, attention</text>
+    <text x="360" y="90" text-anchor="middle" font-size="44" fill="#6c6c6c">+</text>
+    <rect x="390" y="24" width="300" height="110" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="540" y="62" text-anchor="middle" font-size="18" font-weight="600">learned parameters θ</text>
+    <text x="540" y="96" text-anchor="middle" font-size="19">learned values stored</text>
+    <text x="540" y="122" text-anchor="middle" font-size="19">in a checkpoint</text>
+    <line x1="360" y1="144" x2="360" y2="186" stroke="#6c6c6c" stroke-width="3"/>
+    <polygon points="350,184 370,184 360,200" fill="#6c6c6c"/>
+    <rect x="80" y="204" width="560" height="84" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="360" y="238" text-anchor="middle" font-weight="600">model inference</text>
+    <text x="360" y="270" text-anchor="middle" font-size="18">context in → next-token distribution out; θ unchanged</text>
+  </g>
+</svg>
+</figure>
+```

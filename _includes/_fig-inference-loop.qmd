@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-inference-loop" class="course-figure" aria-labelledby="fig-inference-loop-caption">
 <svg viewBox="0 0 720 300" role="img" aria-label="The generation loop: context, tokenizer, token IDs, embeddings, transformer blocks, logits, softmax, decoding, next token, which is appended to the context, and the loop repeats" xmlns="http://www.w3.org/2000/svg">
   <title>What happens when you type: the token-generation loop</title>
@@ -66,3 +67,4 @@
 </svg>
 <figcaption id="fig-inference-loop-caption">One generation step, and the loop it belongs to. The surrounding product supplies the context; the tokenizer turns it into token IDs; each ID selects an embedding; the transformer blocks update every position; the final position's vector becomes one score per vocabulary entry (the logits); softmax turns the scores into probabilities; a decoding rule selects a token; and the token is appended to the context for the next step. Nothing in the parameters changes, and implementations typically cache the keys and values already computed for earlier positions rather than recomputing them.</figcaption>
 </figure>
+```

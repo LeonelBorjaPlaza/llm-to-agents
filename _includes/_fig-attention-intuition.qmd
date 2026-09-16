@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-attention-intuition" class="course-figure" aria-labelledby="fig-attention-intuition-caption">
 <svg viewBox="0 0 720 350" role="img" aria-label="Attention at one position: the destination token 'it' assigns an illustrative weight to each permitted source position, the weights sum to one, and the destination receives a weighted combination of the sources' value vectors" xmlns="http://www.w3.org/2000/svg">
   <title>What one attention head computes</title>
@@ -55,3 +56,4 @@
 </svg>
 <figcaption id="fig-attention-intuition-caption">One attention head, for one destination position. The model computes a weight for each permitted source position (here every position up to and including "it"), the weights are nonnegative and sum to one, and the destination receives the weighted combination of the sources' value vectors, which becomes its updated representation. The weights are illustrative. They are local mixing weights inside one head at one layer, not a complete or causal explanation of the model's output; real models run many heads in parallel and stack many layers.</figcaption>
 </figure>
+```

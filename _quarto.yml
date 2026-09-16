@@ -50,15 +50,21 @@ website:
             text: Glossary
           - href: resources.qmd
             text: Resources
+          - href: sources.qmd
+            text: Sources
+          - href: slides/speaking-guide.qmd
+            text: Speaking guide
       - href: slides/llms-to-agents.qmd
-        text: Slides (prototype)
+        text: Presentation
 
 format:
   html:
-    theme: cosmo
-    css: assets/css/site.scss
+    theme: [cosmo, assets/css/site.scss]
     toc: true
     include-after-body: _includes/_glossary-preview.html
+
+filters:
+  - filters/course-links.lua
 
 execute:
   freeze: auto

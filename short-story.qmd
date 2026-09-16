@@ -402,9 +402,10 @@ reinforcement learning against such rewards can encourage useful
 intermediate reasoning before the final answer. In the published
 DeepSeek-R1 case, this was associated with better performance on
 reasoning tasks and with steadily longer intermediate reasoning traces;
-the model trained by reinforcement learning alone, R1-Zero, suffered
-from poor readability and language mixing, and the released R1 model
-used a multi-stage recipe that also included supervised stages. [S-49]
+R1-Zero, which applied reinforcement learning directly to the pretrained
+base model with no supervised fine-tuning step first, suffered from poor
+readability and language mixing, and the released R1 model used a
+multi-stage recipe that also included supervised stages. [S-49]
 This is one post-training route used in some reasoning-oriented models,
 not a stage every model goes through, and recipes differ between
 providers.
@@ -434,9 +435,10 @@ statement is narrow: on some difficult tasks, generating intermediate
 [reasoning tokens](glossary.qmd#reasoning-tokens) provides additional
 inference-time computation and can improve performance. The tokens are
 output, produced by the same next-token mechanism as any other output.
-They are not a transcript of the model's internal computation:
-providers return at most a summary of the reasoning rather than the raw
-tokens, and Anthropic's announcement of the feature states that what
+They are not a transcript of the model's internal computation. What a
+product shows of the reasoning is product-dependent: the three providers
+whose documentation the course cites return a summary rather than the
+raw tokens, and Anthropic's announcement of the feature states that what
 appears in the thought process is not guaranteed to represent what is
 going on inside the model. [S-49] [S-83] [S-84] [S-85] And they are not
 thought in the human sense.

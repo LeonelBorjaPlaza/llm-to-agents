@@ -1171,3 +1171,71 @@ substitute for browser QA, which remains pending for the home page, the
 Short Story and its thirteen figures at laptop and phone widths, the
 glossary previews, the video-first route, and the one-minute summary.
 
+## Task: Batch 6, live deck, speaking guide, and publication preparation (2026-09-15)
+
+### Checkpoint
+
+Verified the pre-batch state (13 of 14 checks passing; the prototype's
+CDN dependency the only failure), staged an explicit list of 36 project
+files (no `learn/.Rhistory`, no patches, no generated output), scanned
+the staged diff for credentials and private identifiers (none), and
+committed `cd65eb6 Checkpoint website before live deck production`.
+Everything below is uncommitted.
+
+### Deliverables
+
+`slides/llms-to-agents.qmd` (Reveal.js, 1280×720, 25 slides, no math
+plugin, no CDN references); `slides/speaking-guide.qmd` (HTML, one
+section per slide, timings summing to 38.0 estimated minutes, a
+running-late note); `assets/css/slides.scss` (palette, chips, cards,
+figure scaling, footers); nine slide figure variants
+`_includes/_slide-fig-*.qmd` (tiny network without caption, RNN row,
+transformer row, token lookup, training stages, attention with five
+tokens, three stores, inference loop, runnable model) with larger type;
+`scripts/check_slides_guide.py` (verify step 14 of 15);
+`.github/workflows/publish.yml` (manual trigger; Quarto 1.10.18; checks;
+Pages artifact upload and deploy); `docs/release-readiness.md`. The old
+`slides/_deck.scss` was removed. Navigation: "Presentation" replaces
+"Slides (prototype)"; "Speaking guide" sits under Reference; Home and
+README carry one working-draft notice.
+
+### Two site-wide defects found by browser QA and fixed
+
+1. Every SVG figure on the website was invisible: Pandoc split the raw
+   `<svg>` blocks at internal blank lines, wrapped the remainder in
+   paragraphs, and the browser closed the SVG early (the rendered HTML
+   read `</svg><p><desc>`). The ID-only figure check had passed. Fix: all
+   figure includes are wrapped in ```` ```{=html} ```` fences, and
+   `scripts/check_short_story_figures.py` now fails on a `<p>` inside an
+   `<svg>` or a leaked `<desc>`.
+2. The site stylesheet was never loaded: `_quarto.yml` passed
+   `assets/css/site.scss` through the `css:` option, which Quarto does
+   not link. Fix: `theme: [cosmo, assets/css/site.scss]`, which compiles
+   the file into the theme. Chips, callouts, check-understanding boxes,
+   claim-id styling, and tooltips are now styled on every page.
+
+### Browser QA performed (headless Chromium via Playwright)
+
+Tooling: a Playwright virtualenv in the session scratchpad, Chromium
+from Playwright's official distribution, and `alsa-lib` installed through
+the existing user-space Homebrew to satisfy the browser's one missing
+shared library. Checks: every slide screenshotted at 1280×720 with
+overflow, word-count, and minimum-font measurements (four overflows found
+and fixed by slide figure variants and shorter text; none remain); the
+site served at the root and under `/course-prefix/` (Home, Short Story,
+`learn/agents`, glossary, deck, guide: no failed requests, no 4xx/5xx,
+eight visible SVG figures on the Short Story); glossary previews on
+hover, on keyboard focus, hidden on mouse-leave and Escape, click
+navigating to the right anchor, at both paths; phone-width viewport with
+no horizontal overflow; PDF export of the deck through Reveal's print
+view (25 pages, one page rasterized and inspected). Screenshots are in
+the session scratchpad, not the repository.
+
+### Verification
+
+`bash scripts/verify.sh`: all 15 steps pass, including the static
+offline check of the new deck. `dist/course-preview.zip` (rendered site
+only) and `dist/llms-to-agents.pdf` were produced; `dist/` is ignored by
+Git. Not tested: opening the deck from disk with the network disabled;
+every PDF page; assistive technology; the workflow itself (no remote).
+

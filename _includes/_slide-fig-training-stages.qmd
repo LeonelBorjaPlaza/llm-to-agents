@@ -1,0 +1,24 @@
+```{=html}
+<figure id="sfig-training-stages" class="course-figure">
+<div class="training-stages" role="group" aria-label="Three training stages: pretraining, supervised fine-tuning, and preference- or reward-based post-training">
+<div class="stage-card sem-training">
+<h4>Pretraining</h4>
+<p><b>Data:</b> a very large curated corpus</p>
+<p><b>Objective:</b> predict the next token</p>
+<p><b>Changes:</b> the trainable parameters θ</p>
+</div>
+<div class="stage-card sem-training">
+<h4>Supervised fine-tuning</h4>
+<p><b>Data:</b> prompt → desired response</p>
+<p><b>Objective:</b> the same next-token loss, on the response</p>
+<p><b>Changes:</b> the same θ</p>
+</div>
+<div class="stage-card sem-training">
+<h4>Preference- or reward-based</h4>
+<p><b>Data:</b> comparisons, or checkable outcomes</p>
+<p><b>Objective:</b> further shape behavior with the signal</p>
+<p><b>Changes:</b> the same θ again</p>
+</div>
+</div>
+</figure>
+```

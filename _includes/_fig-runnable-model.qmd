@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-runnable-model" class="course-figure" aria-labelledby="fig-runnable-caption">
 <svg viewBox="0 0 720 340" role="img" aria-label="A runnable model: code that implements the computation, plus a checkpoint of learned parameters, together perform inference" xmlns="http://www.w3.org/2000/svg">
   <title>What a runnable model is</title>
@@ -26,3 +27,4 @@
 </svg>
 <figcaption id="fig-runnable-caption">Stripped of product infrastructure, a runnable open model is code that implements the network's computation plus a checkpoint holding the learned parameters. Inference runs the code with those parameters fixed. This framing follows Karpathy's 2023 general-audience talk; it is an intuition about what the object is, not a rule that every deployed product consists of exactly two files.</figcaption>
 </figure>
+```

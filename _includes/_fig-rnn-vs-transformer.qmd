@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-rnn-transformer" class="course-figure" aria-labelledby="fig-rnn-caption">
 <svg viewBox="0 0 640 420" role="img" aria-label="Recurrent processing passes a running state from token to token in sequence; a transformer lets each position read directly from permitted earlier positions through attention" xmlns="http://www.w3.org/2000/svg">
   <title>Recurrent sequence processing versus attention</title>
@@ -57,3 +58,4 @@
 </svg>
 <figcaption id="fig-rnn-caption">Top: a recurrent network carries a running state from each token to the next, so relating distant positions takes many sequential steps, and step by step is the only order available. Bottom: in a transformer, self-attention lets each position read directly from the positions it is permitted to use (in a causal language model, itself and earlier ones), and during training on a known sequence the positions within a layer are computed in parallel; generation still proceeds one token at a time. Direct connection is a property of the architecture; whether training learns to use it well for a given task is a separate question.</figcaption>
 </figure>
+```

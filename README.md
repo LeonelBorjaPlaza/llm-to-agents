@@ -11,10 +11,11 @@ wording, and every commit.
 
 ## Status
 
-**The website is complete as a standalone learning resource; the full live
-talk is not yet built.** The website is the primary product; the live
-talk is a carefully selected, lower-math path through it, with no required
-live equation or demonstration (see `CLAUDE.md`'s product-hierarchy note).
+**Working draft: the website, the live presentation, and its speaking
+guide all exist and render; wording and figures remain under review.**
+The website is the primary product; the live talk is a carefully selected,
+lower-math path through it, with no required live equation or
+demonstration (see `CLAUDE.md`'s product-hierarchy note).
 
 Currently present:
 
@@ -31,15 +32,16 @@ Currently present:
 - **Reference:** `milestones.qmd` (a selective timeline), `glossary.qmd`,
   and `resources.qmd` (a curated learning library, distinct from the
   evidence ledger in `sources/`);
-- three slides from an earlier prototype iteration of the talk design
-  (`slides/llms-to-agents.qmd`), left as a historical checkpoint;
+- **Presentation:** `slides/llms-to-agents.qmd` (a 25-slide Reveal.js
+  deck, about 38 minutes) and `slides/speaking-guide.qmd` (an HTML
+  presenter guide, one section per slide); the earlier three-slide
+  prototype is preserved only in Git history;
 - a source map and claim ledger (`sources/`) covering every cited claim;
 - a small local editing Skill (`.claude/skills/reader-first-course-editor/`)
   for prose polishing that preserves technical meaning and claim IDs.
 
-Not yet built: the full talk deck matching `docs/live-talk-storyboard.md`.
-See `docs/site-architecture.md` and `docs/decisions.md` for the design
-record.
+Known limitations are recorded in `docs/release-readiness.md`. See
+`docs/site-architecture.md` and `docs/decisions.md` for the design record.
 
 ## Building
 
@@ -52,6 +54,10 @@ cd /projects/from-tokens-to-agents/course-site
 quarto render      # build the site and deck to _site/
 quarto preview     # serve the site locally with live reload
 ```
+
+To publish, see `docs/release-readiness.md`: a manually triggered GitHub
+Actions workflow (`.github/workflows/publish.yml`) renders the site and
+deploys `_site/` through the GitHub Pages artifact flow.
 
 Output goes to `_site/` (gitignored). Open `_site/index.html` or
 `_site/slides/llms-to-agents.html` in a browser.
@@ -80,7 +86,7 @@ milestones.qmd           selective timeline (reference)
 glossary.qmd             term reference, alphabetical with stable anchors
 resources.qmd            curated learning library (reference)
 learn/                    seven main-path lessons and three optional deep dives
-slides/                   the Reveal.js deck (three slides, historical prototype)
+slides/                   the Reveal.js presentation and its HTML speaking guide
 _includes/                shared markup: interactive, agent loop, checklist, milestone rail, course figures
 assets/                   CSS and JavaScript (vanilla, no build step)
 sources/                  source map and machine-checkable claim ledger

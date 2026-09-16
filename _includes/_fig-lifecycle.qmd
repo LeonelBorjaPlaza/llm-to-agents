@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-lifecycle" class="course-figure" aria-labelledby="fig-lifecycle-caption">
 <ol class="lifecycle" aria-label="The lifecycle of a language model, from raw data to an agentic system">
 <li><span class="stage sem-data">raw data</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
@@ -20,3 +21,4 @@
 </div>
 <figcaption id="fig-lifecycle-caption">The whole route in one line: raw data is curated into a training corpus and tokenized; pretraining produces a base model; post-training produces the post-trained model that products build on. At use time, the surrounding system supplies the model's inference-time context, and software outside the model adds tools, external state, and retrieval, which brings information into that context; software that calls the model in a loop with those pieces is an agentic system. Colors mark the five kinds of thing involved: data, training, the model, context, and the software around it.</figcaption>
 </figure>
+```

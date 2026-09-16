@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-tiny-network" class="course-figure" aria-labelledby="fig-tiny-caption">
 <svg viewBox="0 0 680 230" role="img" aria-label="A basic neural-network building block: input numbers x pass through a weighted sum W x plus b, then a nonlinearity sigma, producing an output h" xmlns="http://www.w3.org/2000/svg">
   <title>A basic neural-network building block</title>
@@ -33,3 +34,4 @@
 </svg>
 <figcaption id="fig-tiny-caption">A basic neural-network building block: inputs $x$, a weighted sum $Wx + b$ whose weights $W$ and bias $b$ are learned parameters, a fixed nonlinear function $\sigma$, and the output $h$. Larger networks combine many learned transformations and nonlinear operations; this is the smallest example to keep in mind.</figcaption>
 </figure>
+```

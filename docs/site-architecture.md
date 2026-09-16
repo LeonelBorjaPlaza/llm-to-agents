@@ -35,8 +35,9 @@ The navbar exposes four tiers: **Start** (Home, The Short Story), **Learn** (the
 | `index.qmd` | **Built** |
 | `resources.qmd` | **Built**, and **re-curated** in the reference-layer batch (2026-09-15): 19 entries in five categories, distinct from the evidence ledger in `sources/`; checked by `scripts/check_resources.py` |
 | `milestones.qmd` | **Built** (reference-layer batch, 2026-09-15) — a selective 17-entry timeline with a static rail (`_includes/_milestone-rail.qmd`) reusable by the deck |
-| `slides/llms-to-agents.qmd` | **Built**, historical prototype under the superseded design; not rebuilt to the new storyboard in this batch |
-| A rebuilt full deck matching `docs/live-talk-storyboard.md` | Planned, not started |
+| `slides/llms-to-agents.qmd` | **Built** (Batch 6, 2026-09-15): the complete 25-slide live presentation, replacing the prototype at the same path; theme `assets/css/slides.scss`; slide-specific figure variants `_includes/_slide-fig-*.qmd`; reconciled with `slides/speaking-guide.qmd` by `scripts/check_slides_guide.py` |
+| `slides/speaking-guide.qmd` | **Built** (Batch 6): HTML presenter guide, one section per slide with objective, estimated time, spoken paragraphs, transition, deeper lesson, and a running-late note |
+| A rebuilt full deck matching `docs/live-talk-storyboard.md` | **Superseded**: the Batch 6 deck follows the current Short Story, not the storyboard's segment table |
 | `docs/practical-guide-spec.md`'s guide itself | Planned — this batch delivers the spec only, not the guide |
 
 ## Resource-library seed (carried forward, unverified specifics not asserted)
@@ -91,4 +92,20 @@ truth. `learn/using-models-well.qmd` gained a one-minute summary
 compact corpus subsection in §1; the main-path lessons link the first
 important occurrence of key terms to the glossary, with no wording
 changes.
+
+## Batch 6: live deck, guide, and publication preparation (2026-09-15)
+
+The deck is a Reveal.js document rendered by the same project, 1280×720,
+25 slides in six blocks (what are we building, 3 min; data, tokens,
+vectors, and the network, 8; RNNs, attention, transformers, pretraining,
+8; post-training and reasoning, 8; inference, context, tools, agents, 9;
+closing, 2). Figures are the course's includes or slide variants with
+larger type; captions are hidden on slides and carried by the guide.
+Two site-wide fixes landed in this batch: every SVG/HTML figure include
+is wrapped in a raw-HTML fence (Pandoc had been splitting SVGs at blank
+lines, so the figures were invisible on the website), and the site
+stylesheet is now part of the theme list in `_quarto.yml` (it had been
+passed through the `css:` option and was never linked). Publication is
+prepared, not performed: `.github/workflows/publish.yml`
+(`workflow_dispatch`) and `docs/release-readiness.md`.
 

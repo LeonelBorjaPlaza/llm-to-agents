@@ -244,3 +244,7 @@ a.glossary-term {
 @media (hover: none) {
   .glossary-tooltip { display: none !important; }
 }
+
+/* Long URLs (resources, guide, milestones) must wrap on narrow screens. */
+main a, .src a, .callout a { overflow-wrap: anywhere; }
+.sources-list { overflow-wrap: anywhere; }

@@ -11,14 +11,13 @@ Code under human review: Claude Code drafts and runs deterministic
 checks; a human reviewer approves substantive choices, final wording, and
 every commit.
 
-::: {.callout-important}
-## What is built, and what is not
+::: {.callout-note}
+## Working draft for review
 
-The website is complete as a standalone learning resource: the short
-story, the seven main-path lessons, the three optional deep dives, and
-the reference layer (milestones, glossary, resources). The full live
-talk is not yet built; the three slides linked below are a historical
-prototype from an earlier design.
+Feedback on clarity, examples, diagrams, and factual errors is welcome.
+[Suggest a correction](https://github.com/LeonelBorjaPlaza/llm-to-agents/issues)
+on the repository's issues page. The presentation has not yet been given
+to an audience.
 :::
 
 The course follows one route, and every page belongs to one stage of it:
@@ -106,12 +105,13 @@ rather than reproduces.
   read or watch next, by part of the course, with a caveat for each.
 :::
 
-## Slides
+## Presentation
 
-- [**Slides**](slides/llms-to-agents.qmd) — three slides from an earlier
-  prototype iteration of the talk design (logits and softmax, training and
-  maximum likelihood, sampling and temperature). Left as a historical
-  checkpoint; not rebuilt to the current talk design in this batch.
+- [**Presentation**](slides/llms-to-agents.qmd) — the live talk, about
+  38 minutes across 25 slides, from what a runnable model is to a coding
+  agent, built from the same figures and sources as the site.
+- [**Speaking guide**](slides/speaking-guide.qmd) — one section per
+  slide: objective, timing, what to say, and where the deeper lesson is.
 
 ## Sources
 

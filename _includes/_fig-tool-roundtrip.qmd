@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-tool-roundtrip" class="course-figure" aria-labelledby="fig-tool-roundtrip-caption">
 <svg viewBox="0 0 720 410" role="img" aria-label="A tool-call round trip in three lanes: the model generates a structured tool request; the surrounding software checks it and runs the tool; the tool's result is placed into the next context; the model then generates the answer" xmlns="http://www.w3.org/2000/svg">
   <title>One tool call, from request to answer</title>
@@ -48,3 +49,4 @@
 </svg>
 <figcaption id="fig-tool-roundtrip-caption">One tool call from request to answer. Purple boxes are generated output from the model; gray boxes are actions taken by the surrounding software and the tool; green boxes are context supplied to a model call. The model never runs anything itself: it generates the request in step 2 and the answer in step 6, and everything between is performed outside the model and returned as evidence.</figcaption>
 </figure>
+```

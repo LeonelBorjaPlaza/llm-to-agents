@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-training-stages" class="course-figure" aria-labelledby="fig-stages-caption">
 <div class="training-stages" role="group" aria-label="Three training stages compared: pretraining, supervised fine-tuning, and preference- or reward-based post-training">
 <div class="stage-card sem-training">
@@ -30,3 +31,4 @@
 </div>
 <figcaption id="fig-stages-caption">Every stage is training in the same mechanical sense: a loss or reward is computed on the model's output, gradients are computed, and an optimizer updates the same parameter collection θ. What differs is the data and the objective. Providers combine and vary these stages; the third column is a family of methods with different constraints, and not every deployed model passes through exactly these steps.</figcaption>
 </figure>
+```

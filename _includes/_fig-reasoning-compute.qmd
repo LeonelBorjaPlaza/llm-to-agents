@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-reasoning-compute" class="course-figure" aria-labelledby="fig-reasoning-compute-caption">
 <div class="fig-rows" role="group" aria-label="Three inference paths: an immediate response; more inference-time reasoning before the answer; reasoning interleaved with tool use">
 <div class="fig-row">
@@ -31,3 +32,4 @@
 </div>
 <figcaption id="fig-reasoning-compute-caption">Three ways one trained model can be used at inference time. In every row the parameters stay fixed. In the second row the model generates intermediate reasoning tokens before its answer, which is additional inference-time computation by the same next-token mechanism, not a change to the model and not human thought. In the third row the model's reasoning produces a tool request; the software outside the model executes it, and the observation returns to the context for further reasoning.</figcaption>
 </figure>
+```

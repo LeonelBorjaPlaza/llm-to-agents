@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-data-pipeline" class="course-figure" aria-labelledby="fig-data-pipeline-caption">
 <ol class="lifecycle is-compact" aria-label="Preparing training data: raw sources, text extraction, filtering, deduplication, a curated corpus, tokenization, token sequences">
 <li><span class="stage sem-data">raw sources: web pages, code, books</span><span class="arrow" aria-hidden="true"><span>→</span></span></li>
@@ -10,3 +11,4 @@
 </ol>
 <figcaption id="fig-data-pipeline-caption">Before any training, a corpus is built: source material is gathered from permitted sources, the main text is extracted from its raw form, documents are filtered by language and quality, duplicates are removed, and the surviving text is tokenized into the sequences the model will be trained on. The steps and their order vary between corpora; this is the general shape.</figcaption>
 </figure>
+```

@@ -1,0 +1,41 @@
+```{=html}
+<figure id="sfig-inference-loop" class="course-figure">
+<svg viewBox="0 0 720 290" role="img" aria-label="The generation loop: context, tokenizer, token IDs, embeddings, transformer blocks, logits, softmax, decoding, next token, which is appended to the context, and the loop repeats" xmlns="http://www.w3.org/2000/svg">
+  <title>The token-generation loop</title>
+  <g fill="#1c1c1c">
+    <rect x="20" y="30" width="120" height="62" rx="8" fill="#e5f3e6" stroke="#2b7a35" stroke-width="3"/>
+    <text x="80" y="56" text-anchor="middle" font-size="19" font-weight="600">context</text>
+    <text x="80" y="80" text-anchor="middle" font-size="12">the text so far</text>
+    <line x1="142" y1="61" x2="152" y2="61" stroke="#6c6c6c" stroke-width="3"/><polygon points="150,53 160,61 150,69" fill="#6c6c6c"/>
+    <rect x="160" y="30" width="120" height="62" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="220" y="67" text-anchor="middle" font-size="19">tokenizer</text>
+    <line x1="282" y1="61" x2="292" y2="61" stroke="#6c6c6c" stroke-width="3"/><polygon points="290,53 300,61 290,69" fill="#6c6c6c"/>
+    <rect x="300" y="30" width="120" height="62" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="360" y="67" text-anchor="middle" font-size="19">token IDs</text>
+    <line x1="422" y1="61" x2="432" y2="61" stroke="#6c6c6c" stroke-width="3"/><polygon points="430,53 440,61 430,69" fill="#6c6c6c"/>
+    <rect x="440" y="30" width="120" height="62" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="500" y="67" text-anchor="middle" font-size="19">embeddings</text>
+    <line x1="562" y1="61" x2="572" y2="61" stroke="#6c6c6c" stroke-width="3"/><polygon points="570,53 580,61 570,69" fill="#6c6c6c"/>
+    <rect x="580" y="30" width="120" height="62" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="640" y="56" text-anchor="middle" font-size="17">transformer</text>
+    <text x="640" y="80" text-anchor="middle" font-size="19">blocks</text>
+    <line x1="640" y1="94" x2="640" y2="146" stroke="#6c6c6c" stroke-width="3"/><polygon points="632,144 648,144 640,158" fill="#6c6c6c"/>
+    <rect x="580" y="160" width="120" height="62" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="640" y="197" text-anchor="middle" font-size="19">logits</text>
+    <line x1="578" y1="191" x2="568" y2="191" stroke="#6c6c6c" stroke-width="3"/><polygon points="570,183 560,191 570,199" fill="#6c6c6c"/>
+    <rect x="440" y="160" width="120" height="62" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
+    <text x="500" y="186" text-anchor="middle" font-size="19">softmax</text>
+    <text x="500" y="209" text-anchor="middle" font-size="14">probabilities</text>
+    <line x1="438" y1="191" x2="428" y2="191" stroke="#6c6c6c" stroke-width="3"/><polygon points="430,183 420,191 430,199" fill="#6c6c6c"/>
+    <rect x="300" y="160" width="120" height="62" rx="8" fill="#eceef2" stroke="#4f5b6e" stroke-width="3"/>
+    <text x="360" y="197" text-anchor="middle" font-size="19">decoding</text>
+    <line x1="298" y1="191" x2="288" y2="191" stroke="#6c6c6c" stroke-width="3"/><polygon points="290,183 280,191 290,199" fill="#6c6c6c"/>
+    <rect x="160" y="160" width="120" height="62" rx="8" fill="#e3f1f6" stroke="#0b6e8f" stroke-width="3"/>
+    <text x="220" y="197" text-anchor="middle" font-size="19">next token</text>
+    <path d="M 158 191 H 80 V 104" fill="none" stroke="#2b7a35" stroke-width="3"/>
+    <polygon points="72,106 88,106 80,94" fill="#2b7a35"/>
+    <text x="360" y="262" text-anchor="middle" font-size="17" fill="#4a4a4a">the new token is appended to the context and the loop runs again</text>
+  </g>
+</svg>
+</figure>
+```

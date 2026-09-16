@@ -57,7 +57,19 @@ def main():
     if rendered_order != expected_order:
         failures.append(f"figures render out of narrative order: {rendered_order}")
 
-    # 2. Every figure include is used by at least one source page.
+    # 2. No SVG was broken open by markdown parsing: a <p> inside an <svg>
+    #    (or a </svg> followed immediately by a <p><desc>) means Pandoc treated
+    #    part of the figure as prose and the browser closed the SVG early.
+    for page_path in glob.glob(os.path.join(site_dir, "**", "*.html"), recursive=True):
+        text = open(page_path, "r", encoding="utf-8", errors="replace").read()
+        for m in re.finditer(r"<svg.*?</svg>", text, re.S):
+            if re.search(r"<p[ >]", m.group(0)):
+                failures.append(f"{os.path.relpath(page_path, site_dir)}: an <svg> contains a <p> (figure broken by markdown parsing)")
+                break
+        if re.search(r"</svg>\s*<p>\s*<desc>", text):
+            failures.append(f"{os.path.relpath(page_path, site_dir)}: SVG description leaked into prose (figure broken by markdown parsing)")
+
+    # 3. Every figure include is used by at least one source page.
     sources = ""
     for pattern in ("*.qmd", "learn/*.qmd", "slides/*.qmd", "_includes/*.qmd"):
         for path in glob.glob(pattern):

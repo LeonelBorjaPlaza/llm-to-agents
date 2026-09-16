@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-token-vector" class="course-figure" aria-labelledby="fig-token-vector-caption">
 <svg viewBox="0 0 720 360" role="img" aria-label="A token is replaced by an ID, the ID selects one row of the embedding table, and that row is a vector of learned numbers; later, transformer blocks turn the same starting embedding into different contextual representations depending on the surrounding text" xmlns="http://www.w3.org/2000/svg">
   <title>From token ID to vector to contextual representation</title>
@@ -78,3 +79,4 @@
 </svg>
 <figcaption id="fig-token-vector-caption">Top: a token becomes an ID, the ID selects one row of the learned embedding table, and that row is the vector the network actually computes with. The ID is only an address; the values shown are illustrative. Bottom: the same starting embedding for " bank" enters the transformer blocks in two different sentences and comes out as two different context-dependent vectors, because the blocks update each position using the positions around it.</figcaption>
 </figure>
+```

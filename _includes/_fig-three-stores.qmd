@@ -1,3 +1,4 @@
+```{=html}
 <figure id="fig-three-stores" class="course-figure" aria-labelledby="fig-stores-caption">
 <svg viewBox="0 0 800 330" role="img" aria-label="Three different stores: parameters inside the model, changed only by training; the finite inference-time context supplied or managed for a model step; and external state, persisted outside the model and retrievable into a later context" xmlns="http://www.w3.org/2000/svg">
   <title>Parameters, context, and external state</title>
@@ -38,3 +39,4 @@
 </svg>
 <figcaption id="fig-stores-caption">Three things that are easy to run together under the word "memory". The parameters are inside the model and change only when it is trained. The context is the finite inference-time context supplied or managed for a model step. External state is whatever is persisted outside the model; it can be retrieved into a later context, which changes that step's inputs and not the parameters.</figcaption>
 </figure>
+```
