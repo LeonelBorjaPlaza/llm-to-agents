@@ -54,7 +54,7 @@ $presentation-title-slide-text-align: left;
   clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
 }
 .reveal .sem-legend {
-  display: flex; flex-wrap: wrap; gap: 0.2em 0.9em; font-size: 0.62em; color: #4a4a4a;
+  display: flex; flex-wrap: wrap; gap: 0.2em 0.9em; font-size: 0.7em; color: #4a4a4a;
   margin: 0.3em auto 0;
 }
 .reveal .sem-legend span::before {
@@ -77,10 +77,10 @@ $presentation-title-slide-text-align: left;
 }
 .reveal .lifecycle .stage.is-object { font-weight: 600; }
 .reveal .lifecycle .arrow { color: #6c6c6c; padding: 0 0.3em; font-size: 1em; }
-.reveal .lifecycle.is-compact .stage { font-size: 0.72em; padding: 0.18em 0.45em; }
-.reveal .fig-rows .fig-row { margin: 0.2em 0 0.45em; }
+.reveal .lifecycle.is-compact .stage { font-size: 0.84em; padding: 0.22em 0.5em; }
+.reveal .fig-rows .fig-row { margin: 0.25em 0 0.6em; }
 .reveal .fig-rows .row-label {
-  display: block; font-size: 0.55em; letter-spacing: 0.04em; text-transform: uppercase;
+  display: block; font-size: 0.62em; letter-spacing: 0.04em; text-transform: uppercase;
   color: #4a4a4a; margin-bottom: 0.05em;
 }
 
@@ -90,7 +90,7 @@ $presentation-title-slide-text-align: left;
 }
 .reveal .training-stages .stage-card {
   border: 2px solid var(--sem); background: var(--sem-tint); border-radius: 8px;
-  padding: 0.45em 0.6em; font-size: 0.72em;
+  padding: 0.55em 0.7em; font-size: 0.82em;
 }
 .reveal .training-stages .stage-card h4 { font-size: 1.05em; margin: 0 0 0.3em; color: var(--sem); }
 .reveal .training-stages .stage-card p { margin: 0.15em 0; }
@@ -101,16 +101,17 @@ $presentation-title-slide-text-align: left;
 }
 .reveal .step-grid .step {
   border: 2px solid var(--sem); background: var(--sem-tint); border-radius: 8px;
-  padding: 0.4em 0.6em; font-size: 0.7em; line-height: 1.3;
+  padding: 0.55em 0.75em; font-size: 0.88em; line-height: 1.32;
 }
-.reveal .step-grid .step b { display: block; color: var(--sem); font-size: 0.85em; margin-bottom: 0.1em; }
+.reveal .step-grid .step b { display: block; color: var(--sem); font-size: 0.82em; margin-bottom: 0.15em; }
+.reveal .step-grid { gap: 0.6em; margin: 0.5em 0; }
 
 // Token chips.
 .reveal .chips { margin: 0.3em 0; }
 .reveal .chips .chip {
   display: inline-block; border: 2px solid var(--sem); background: var(--sem-tint);
   border-radius: 6px; padding: 0.1em 0.45em; margin: 0.12em 0.1em;
-  font-family: "DejaVu Sans Mono", Menlo, Consolas, monospace; font-size: 0.8em;
+  font-family: "DejaVu Sans Mono", Menlo, Consolas, monospace; font-size: 0.9em;
 }
 .reveal .chips .sep { color: #6c6c6c; padding: 0 0.35em; }
 
@@ -123,7 +124,7 @@ $presentation-title-slide-text-align: left;
 .reveal .product-box .parts { display: flex; flex-wrap: wrap; gap: 0.4em; align-items: center; margin-top: 0.3em; }
 .reveal .product-box .part {
   border: 2px solid var(--sem); background: var(--sem-tint); border-radius: 8px;
-  padding: 0.25em 0.6em; font-size: 0.75em;
+  padding: 0.3em 0.7em; font-size: 0.85em;
 }
 .reveal .product-box .part.is-model { font-weight: 600; padding: 0.45em 0.9em; }
 
@@ -157,3 +158,10 @@ $presentation-title-slide-text-align: left;
 
 // Slides whose figure is the main content: allow a taller figure.
 .reveal section.figure-tall .course-figure svg { max-height: 440px; }
+
+// Backup slides sit after the closing slide and are not part of the
+// prepared route; a small label says so on the slide itself.
+.reveal section.backup .backup-label {
+  display: inline-block; font-size: 0.6em; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #4a4a4a; border: 1px solid #b8b8b8; border-radius: 4px; padding: 0.1em 0.5em; margin-bottom: 0.4em;
+}

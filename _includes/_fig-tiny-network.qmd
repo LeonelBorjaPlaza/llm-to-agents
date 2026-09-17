@@ -32,6 +32,6 @@
     <text x="340" y="200" text-anchor="middle" font-size="17" fill="#4a4a4a">in this toy unit, training changes W and b</text>
   </g>
 </svg>
-<figcaption id="fig-tiny-caption">A basic neural-network building block: inputs $x$, a weighted sum $Wx + b$ whose weights $W$ and bias $b$ are learned parameters, a fixed nonlinear function $\sigma$, and the output $h$. Larger networks combine many learned transformations and nonlinear operations; this is the smallest example to keep in mind.</figcaption>
+<figcaption id="fig-tiny-caption">A basic neural-network building block: inputs <i>x</i>, a weighted sum <i>Wx</i> + <i>b</i> whose weights <i>W</i> and bias <i>b</i> are learned parameters, a fixed nonlinear function σ, and the output <i>h</i>. Larger networks combine many learned transformations and nonlinear operations; this is the smallest example to keep in mind.</figcaption>
 </figure>
 ```

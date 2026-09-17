@@ -3,7 +3,7 @@ title: "From LLMs to Agents"
 subtitle: "What the model is, how it is built, and how it begins to act"
 ---
 
-This site supports a 35–40 minute conceptual talk and a standalone
+This site supports a 30-minute conceptual talk and a standalone
 learning resource for readers who are comfortable following mathematical
 ideas but may not use them every day, prepared as background for a
 later, more applied Claude Code workshop. It is co-produced with Claude
@@ -30,7 +30,7 @@ The course follows one route, and every page belongs to one stage of it:
 never attends the talk should be able to learn the material from the site
 alone, with the full mathematics, worked examples, and an interactive
 laboratory. The live talk is a carefully selected, lower-math path through
-this material: about 35–40 minutes, naming and defining every required
+this material: about 30 minutes, naming and defining every required
 term, but carrying no required live equation and no required live
 demonstration — both live in full on the site, which the talk points to
 rather than reproduces.
@@ -107,9 +107,10 @@ rather than reproduces.
 
 ## Presentation
 
-- [**Presentation**](slides/llms-to-agents.qmd) — the live talk, about
-  38 minutes across 25 slides, from what a runnable model is to a coding
-  agent, built from the same figures and sources as the site.
+- [**Presentation**](slides/llms-to-agents.qmd) — the 30-minute
+  presentation: 24 slides in the prepared route plus one backup slide,
+  from what a runnable model is to a coding agent, built from the same
+  figures and sources as the site.
 - [**Speaking guide**](slides/speaking-guide.qmd) — one section per
   slide: objective, timing, what to say, and where the deeper lesson is.
 

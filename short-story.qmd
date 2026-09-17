@@ -3,10 +3,6 @@ title: "The Short Story"
 subtitle: "How a system like ChatGPT is built, what exists once training is finished, and what happens to your text when you type, in about twenty minutes"
 ---
 
-*This page is the whole course in one pass. Each section teaches one
-mechanism and ends with an optional pointer to the lesson that develops
-it. Nothing here assumes anything else on the site.*
-
 ## The question
 
 If you type something into a system like ChatGPT, what exists on the
@@ -164,8 +160,9 @@ the network receives numbers it can transform and combine.
 
 {{< include _includes/_fig-token-to-vector.qmd >}}
 
-The row is only the starting point. The embedding for " bank" is the
-same wherever the token occurs, but the transformer's layers then update
+The row is only the starting point. The embedding for `␣bank` (the
+leading space is part of the token) is the same wherever the token
+occurs, but the transformer's layers then update
 each position using the positions around it, so that in "the river bank"
 and "the central bank" the same starting vector ends as two different
 [contextual representations](glossary.qmd#contextual-representation).
@@ -202,10 +199,14 @@ distant positions long. [S-16]
 {{< include _includes/_fig-rnn-vs-transformer.qmd >}}
 
 Attention gives a position a direct way to combine information from the
-other positions it is permitted to use. For each source position, the
-model computes a weight from learned transformations of the vectors
-involved. It then takes a weighted combination of the sources'
-representations and uses the result to update the destination's
+other positions it is permitted to use. It works in short steps. The
+model transforms the destination's representation into a query vector.
+It transforms each permitted source's representation into a key vector.
+Comparing the query with each key produces a score. Softmax converts
+those scores into nonnegative weights that sum to one. Each source also
+provides a value vector, a transformed representation carrying the
+information to be combined. The weighted combination of those values
+supplies the information used to update the destination's
 representation. [S-36] In "The animal crossed the street because it was
 tired", the representation at "it" can draw heavily on "animal" and
 lightly on the rest, in a single step, without relaying anything
@@ -213,9 +214,10 @@ through the positions in between.
 
 {{< include _includes/_fig-attention-intuition.qmd >}}
 
-The weights are nonnegative and sum to one across the permitted
-sources, and they are not written by anyone: they come out of matrices
-that training set. [S-36] An attention weight is a local mixing weight
+The three transformations, into queries, keys, and values, are learned
+matrices: parameters set by training. The attention weights are not
+parameters; they are computed afresh for each input from those
+transformed vectors. [S-36] An attention weight is a local mixing weight
 inside one head at one layer, not a causal explanation of the model's
 output, and real models run many heads in parallel and stack many
 layers, so no single weight tells you why the model said what it said.
@@ -242,8 +244,7 @@ blocks. [S-19] In the causal decoder models this course is about, a
 position may attend to itself and earlier positions, never later ones.
 [S-22]
 
-Hardware mattered too, and the statement should be restrained. Removing
-much of the recurrent sequential dependency made training substantially
+Removing much of the recurrent sequential dependency made training substantially
 more parallelizable, and the paper notes that its attention can be
 implemented with highly optimized matrix-multiplication code, the kind
 of computation that GPUs and later accelerators perform well. [S-23]
@@ -288,9 +289,12 @@ statistical knowledge of grammar, meaning, recurring facts, and
 conventions of argument, and language models trained only to predict
 text have been observed to perform tasks such as answering questions
 and translating without being trained for them. [S-44] [S-26] A base
-model is not a database: nothing in it is a retrievable record of the
-corpus, and a fact appears in its output only because predicting the
-text made reproducing that fact useful. [S-08] It is also not
+model is not a database that reliably retrieves records from its
+training corpus. It can nevertheless memorize and sometimes reproduce
+passages from that data: researchers have extracted verbatim training
+text from a public model, including sequences that appeared in only one
+training document. [S-87] Generation is not reliable lookup, and nothing
+in the objective checks truth. [S-08] The base model is also not
 specifically optimized to behave as a conversational assistant. Given an
 instruction, it may answer it, continue it, or produce more instructions
 like it, because all of those follow such text somewhere in the corpus.
@@ -381,9 +385,7 @@ first point in plain language, as a pedagogical intuition: fine-tuning
 does not remove a model's tendency to produce confident inventions, it
 "directs" that tendency toward helpful assistant behavior, and retrieved
 material in the context window changes what the answer can rest on.
-[S-75] [S-77] The course's more precise formulation is the one it
-repeats throughout: fluency is not evidence, and evidence beats
-confidence.
+[S-75] [S-77] Fluency is not evidence, and evidence beats confidence.
 
 ::: {.go-deeper}
 Go deeper: [How Pretraining Works](learn/training.qmd) §7 on prediction
@@ -391,74 +393,11 @@ versus verification; [Using Models Well](learn/using-models-well.qmd)
 §4–§6 on sources of truth and verification.
 :::
 
-## 9. Reasoning-oriented models: training, and thinking longer at inference
+## 9. What happens when you type
 
-Some reasoning-oriented models receive additional reinforcement learning
-on problems whose outcomes can be checked automatically, such as
-mathematics problems with known answers or code with tests. An
-automatically checkable or rule-based outcome can supply a reward
-without requiring a learned reward model for that reward component, and
-reinforcement learning against such rewards can encourage useful
-intermediate reasoning before the final answer. In the published
-DeepSeek-R1 case, this was associated with better performance on
-reasoning tasks and with steadily longer intermediate reasoning traces;
-R1-Zero, which applied reinforcement learning directly to the pretrained
-base model with no supervised fine-tuning step first, suffered from poor
-readability and language mixing, and the released R1 model used a
-multi-stage recipe that also included supervised stages. [S-49]
-This is one post-training route used in some reasoning-oriented models,
-not a stage every model goes through, and recipes differ between
-providers.
-
-Training is only half of what "a model that thinks longer" means. Once
-training is finished, the parameters remain fixed. A reasoning-oriented
-model can nevertheless spend more computation on a difficult request by
-generating additional intermediate reasoning tokens before producing the
-final answer. The next-token mechanism did not disappear: the
-intermediate reasoning is generated sequentially by the same model, and
-each intermediate token becomes part of the context that the following
-computation conditions on. That gives the model more sequential
-inference-time computation before it commits to an answer. It is not
-another training round, and the parameters do not change. [S-83]
-
-{{< include _includes/_fig-reasoning-compute.qmd >}}
-
-Many modern reasoning-oriented models can spend additional
-inference-time computation in this way before producing a final
-response, and providers expose the choice in different ways, such as a
-reasoning-effort setting or a thinking level. The current documentation
-of Anthropic, Google, and OpenAI, read on 2026-09-15, each describes its
-own models generating reasoning before the answer, a control for how
-much, and reasoning tokens that are counted and billed like output.
-[S-83] [S-84] [S-85] On what the generated reasoning is, the supported
-statement is narrow: on some difficult tasks, generating intermediate
-[reasoning tokens](glossary.qmd#reasoning-tokens) provides additional
-inference-time computation and can improve performance. The tokens are
-output, produced by the same next-token mechanism as any other output.
-They are not a transcript of the model's internal computation. What a
-product shows of the reasoning is product-dependent: the three providers
-whose documentation the course cites return a summary rather than the
-raw tokens, and Anthropic's announcement of the feature states that what
-appears in the thought process is not guaranteed to represent what is
-going on inside the model. [S-49] [S-83] [S-84] [S-85] And they are not
-thought in the human sense.
-
-Reasoning also connects to tools. A model can reason, generate a request
-for a tool, have the surrounding software execute it, receive the
-observation into its context, and continue reasoning with the new
-evidence before answering or requesting another tool; Anthropic's and
-OpenAI's current documentation both describe reasoning interleaved with
-tool calls in this way. [S-83] [S-85] The reasoning never executes
-anything itself; §12 walks through one such round trip.
-
-::: {.go-deeper}
-Go deeper: [Post-training](learn/posttraining.qmd) §7.
-:::
-
-## 10. What happens when you type
-
-With the post-trained model built and its parameters fixed, here is one
-request followed all the way through.
+When you send a request, the trained model generates its response one
+token at a time. With the post-trained model built and its parameters
+fixed, here is one request followed all the way through.
 
 1. You type text. The surrounding product assembles and manages the
    [context window](glossary.qmd#context-window) for this call: its
@@ -499,9 +438,75 @@ for the equation and an interactive; [How Pretraining Works](learn/training.qmd)
 §9 on why training and generation are different computations.
 :::
 
+## 10. Reasoning-oriented models: training, and thinking longer at inference
+
+A reasoning-oriented model can use additional generation steps before
+producing its final answer. Some such models receive additional reinforcement learning
+on problems whose outcomes can be checked automatically, such as
+mathematics problems with known answers or code with tests. An
+automatically checkable or rule-based outcome can supply a reward
+without requiring a learned reward model for that reward component, and
+reinforcement learning against such rewards can encourage useful
+intermediate reasoning before the final answer. In the published
+DeepSeek-R1 case, this was associated with better performance on
+reasoning tasks and with steadily longer intermediate reasoning traces;
+R1-Zero, which applied reinforcement learning directly to the pretrained
+base model with no supervised fine-tuning step first, suffered from poor
+readability and language mixing, and the released R1 model used a
+multi-stage recipe that also included supervised stages. [S-49]
+This is one post-training route used in some reasoning-oriented models,
+not a stage every model goes through, and recipes differ between
+providers.
+
+Training is only half of what "a model that thinks longer" means. Once
+training is finished, the parameters remain fixed. A reasoning-oriented
+model can nevertheless spend more computation on a difficult request by
+generating additional intermediate reasoning tokens before producing the
+final answer. The next-token mechanism did not disappear: the
+intermediate reasoning is generated sequentially by the same model, and
+each intermediate token becomes part of the context that the following
+computation conditions on. That gives the model more sequential
+inference-time computation before it commits to an answer. It is not
+another training round, and the parameters do not change. [S-83]
+
+{{< include _includes/_fig-reasoning-compute.qmd >}}
+
+Many modern reasoning-oriented models can spend additional
+inference-time computation in this way before producing a final
+response, and providers expose the choice in different ways, such as a
+reasoning-effort setting or a thinking level. The documentation of
+Anthropic, Google, and OpenAI, read on 2026-09-15, each describes its
+own models generating reasoning before the answer, a control for how
+much, and reasoning tokens that are counted and billed like output.
+[S-83] [S-84] [S-85] On some difficult tasks, generating intermediate
+[reasoning tokens](glossary.qmd#reasoning-tokens) provides additional
+inference-time computation and can improve performance. The tokens are
+output, produced by the same next-token mechanism as any other output.
+They are not a transcript of the model's internal computation. What a
+product exposes of intermediate reasoning varies by model and interface,
+and a displayed explanation should not be treated as a guaranteed
+faithful record of the underlying computation; Anthropic's announcement
+of its feature states that what appears in the thought process is not
+guaranteed to represent what is going on inside the model. [S-49] [S-83]
+[S-84] [S-85] And the tokens are not thought in the human sense.
+
+Reasoning also connects to tools. A model can reason, generate a request
+for a tool, have the surrounding software execute it, receive the
+observation into its context, and continue reasoning with the new
+evidence before answering or requesting another tool; Anthropic's and
+OpenAI's current documentation both describe reasoning interleaved with
+tool calls in this way. [S-83] [S-85] The reasoning never executes
+anything itself; §12 walks through one such round trip.
+
+::: {.go-deeper}
+Go deeper: [Post-training](learn/posttraining.qmd) §7.
+:::
+
 ## 11. Parameters, context, and external state
 
-A model can carry useful information in three very different places.
+The model can also use information supplied in the current context or
+returned by tools. A model can carry useful information in three very
+different places.
 Training encodes statistical information in the parameters, which are
 inside the model and change only when it is trained. A request puts
 information directly into the current context: for each model step, the

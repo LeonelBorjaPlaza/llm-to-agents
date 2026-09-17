@@ -7,7 +7,7 @@
 Feedback on clarity, examples, diagrams, and factual errors is welcome
 through the [issues page](https://github.com/LeonelBorjaPlaza/llm-to-agents/issues).
 
-A Quarto website and Reveal.js deck supporting a 35–40 minute conceptual talk
+A Quarto website and Reveal.js deck supporting a 30-minute conceptual talk
 and a standalone learning resource for readers who are comfortable following
 mathematical ideas but may not use them every day: *From LLMs to agents: what
 the model is, how it is built, and how it begins to act.*
@@ -39,9 +39,10 @@ Currently present:
 - **Reference:** `milestones.qmd` (a selective timeline), `glossary.qmd`,
   and `resources.qmd` (a curated learning library, distinct from the
   evidence ledger in `sources/`);
-- **Presentation:** `slides/llms-to-agents.qmd` (a 25-slide Reveal.js
-  deck, about 38 minutes) and `slides/speaking-guide.qmd` (an HTML
-  presenter guide, one section per slide); the earlier three-slide
+- **Presentation:** `slides/llms-to-agents.qmd` (a 30-minute Reveal.js
+  deck: 24 slides in the prepared route plus one backup slide) and
+  `slides/speaking-guide.qmd` (an HTML presenter guide, one section per
+  slide, 28 minutes of prepared material plus a 2-minute reserve); the earlier three-slide
   prototype is preserved only in Git history;
 - a source map and claim ledger (`sources/`) covering every cited claim;
 - a small local editing Skill (`.claude/skills/reader-first-course-editor/`)

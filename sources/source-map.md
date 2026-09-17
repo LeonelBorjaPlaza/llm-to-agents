@@ -345,6 +345,16 @@ The reader-first pass also added S-86, a mathematical identity (an
 embedding lookup equals a one-hot vector times the embedding matrix),
 which has no external source.
 
+**S51 — Carlini et al., *Extracting Training Data from Large Language
+Models*.** 30th USENIX Security Symposium (2021),
+<https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting>.
+New in the 30-minute release-candidate pass (2026-09-16). **Abstract
+verified verbatim on 2026-09-16.** Used only for the corrected
+memorization statement (S-87): a base model can memorize and sometimes
+reproduce training passages, including sequences present in a single
+training document, while not being a database that reliably retrieves
+records.
+
 The reference-layer batch also re-opened S26 (the *Building effective
 agents* article) on 2026-09-15 and recorded the dated note it now
 carries (S-73). No other new sources were consulted; the milestones
@@ -441,6 +451,7 @@ reuses existing rows only.
 | S-84 | Google: Gemini "reasons internally before responding"; dynamic thinking by default controlled by thinking_level; full thoughts generated, summaries output; pricing = output tokens + thinking tokens | S49 | Opening; thinking_level; summaries; pricing | direct | high | **Accessed 2026-09-15 (PR9)**; page dated 2026-09-09 |
 | S-85 | OpenAI: "internal reasoning tokens before producing a response"; reasoning.effort with model-dependent values; reasoning tokens occupy the context window and are billed as output; raw reasoning not exposed, summaries available; interleaved thinking between tool calls | S50 | Opening; reasoning.effort; context window and billing; summaries; interleaving | direct | high | **Accessed 2026-09-15 (PR9)**; no date on page |
 | S-86 | Embedding lookup equals multiplying a one-hot vector by E (selects row E[i]); implementations retrieve the row | Mathematical identity | linear algebra | direct | high | Optional aside on short-story.qmd §4 |
+| S-87 | Training-data extraction: "hundreds of verbatim text sequences" recovered from GPT-2, "even though each of the above sequences are included in just one document in the training data" | S51 | Abstract | direct | high | **Verified 2026-09-16.** Corrects the earlier "no retrievable record" overstatement on the Short Story |
 
 ## Open verification debt (carried forward from the implementation plan)
 

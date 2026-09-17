@@ -64,7 +64,7 @@ time at the end, not two rushed slides.
 
 {{< include ../_includes/_slide-fig-runnable-model.qmd >}}
 
-The code says how to compute. Training discovered the parameter values. Inference uses them without changing them.
+The code says how to compute. Training discovered the parameter values. Inference uses them without changing them. The application adds instructions, conversation management, tools, and other software around the trained model.
 
 ::: {.src}
 Karpathy, [Intro to Large Language Models](https://www.youtube.com/watch?v=zjkBMFhNj_g) (2023) ·
@@ -73,36 +73,9 @@ Karpathy, [llama2.c](https://github.com/karpathy/llama2.c) · lesson: [How Pretr
 
 ::: {.notes}
 Two things, not one: a program and a file of numbers. File count varies by
-product; the division of labour does not. "Everything it knows" is not the
-phrase; the learned information is distributed across the parameters.
-Cues: S-75, S-82.
-:::
-
-## A ChatGPT-like product is more than the model {#product}
-
-<div class="product-box">
-<div class="label">the product you type into</div>
-<div class="parts">
-<span class="part sem-context">system prompt</span>
-<span class="part sem-context">conversation and files</span>
-<span class="part sem-system">retrieval</span>
-<span class="part sem-system">tools</span>
-<span class="part is-model sem-model">the model: code + parameters θ</span>
-<span class="part sem-system">safety checks, interface, product logic</span>
-</div>
-</div>
-
-Everything around the model changes what the model is given or what is
-done with its output. None of it changes the model.
-
-::: {.src}
-Lesson: [Post-training](../learn/posttraining.qmd) §9 (model versus assistant)
-:::
-
-::: {.notes}
-Purple is the model. Green is context supplied to it. Grey is software that
-acts on its behalf. Two products can share one model and behave
-differently. Cue: S-31.
+product; the division of labour does not. The learned information is
+distributed across the parameters. Say the application sentence and move
+on; the product slide is backup. Cues: S-75, S-82, S-31.
 :::
 
 ## Before training, someone builds the corpus {#corpus}
@@ -128,11 +101,13 @@ Do not imply proprietary models use FineWeb. Cue: S-78.
 
 ## Text becomes tokens; a token ID is an address {#tokens}
 
+```{=html}
 <div class="chips">
 <span class="chip sem-data">The</span><span class="chip sem-data">␣bridge</span><span class="chip sem-data">␣was</span><span class="chip sem-data">␣closed</span><span class="chip sem-data">.</span>
 <span class="sep">→</span>
 <span class="chip sem-data">1032</span><span class="chip sem-data">2471</span><span class="chip sem-data">88</span><span class="chip sem-data">5109</span><span class="chip sem-data">12</span>
 </div>
+```
 
 The tokenizer cuts text into entries of a fixed vocabulary; each entry
 has an index. The split and the numbers above are illustrative.
@@ -156,7 +131,7 @@ The IDs are made up. Cue: S-28.
 Row 3912 of the embedding table is a list of learned numbers, not a
 definition. Training changed them because that improved prediction.
 
-Later layers make the vector depend on its context: " bank" starts the
+Later layers make the vector depend on its context: `␣bank` starts the
 same in "river bank" and "central bank" and ends different.
 
 ::: {.src}
@@ -193,7 +168,6 @@ Cue: S-12.
 
 {{< include ../_includes/_slide-fig-rnn.qmd >}}
 
-A 2003 model already learned word vectors and predicted the next word.
 Recurrent networks pass a running state one position at a time: distant
 positions connect only through every step between them, and training
 cannot compute positions in parallel.
@@ -205,15 +179,15 @@ lesson: [Why Transformers](../learn/why-transformers.qmd)
 
 ::: {.notes}
 Not "RNNs could not remember". The cost is a long path between distant
-positions and a sequential dependency during training. Cues: S-29, S-41,
-S-21, S-16.
+positions and a sequential dependency during training. Neural language
+models predate transformers (2003 model: website only). Cues: S-21, S-16.
 :::
 
 ## Attention: each position combines what it is allowed to see {#attention .figure-tall}
 
 {{< include ../_includes/_slide-fig-attention.qmd >}}
 
-A learned weight per permitted source; a weighted combination; an updated destination. The weights explain no more than that.
+Compare the destination with each permitted source to get a score. Softmax turns the scores into weights that sum to one. Combine the sources' vectors with those weights to update the destination. The weights explain no more than that.
 
 ::: {.src}
 Vaswani et al. (2017), §3.2 · Bahdanau, Cho, and Bengio, [Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473) (2015) ·
@@ -221,11 +195,13 @@ lesson: [How Self-Attention Moves Information](../learn/transformers-attention.q
 :::
 
 ::: {.notes}
-Walk the figure: "it" is the destination; the weights are illustrative;
-the combination becomes the new representation of "it". One head, one
-layer; many heads and layers in a real model. A weight is not a causal
-explanation. Attention predates the Transformer. Cues: S-36, S-37, S-45,
-S-68.
+Walk the figure: "it" is the destination; scores from comparing it with
+each source; softmax makes weights; the weighted combination becomes the
+new representation of "it". The comparison and value transformations are
+learned matrices; the weights are computed per input. One head, one
+layer; many in a real model. A weight is not a causal explanation.
+Attention predates the Transformer (Bahdanau 2015). Cues: S-36, S-37,
+S-45, S-68.
 :::
 
 ## The Transformer: attention plus feed-forward, without recurrence {#transformer}
@@ -244,13 +220,15 @@ lesson: [Why Transformers](../learn/why-transformers.qmd)
 
 ::: {.notes}
 Two computations per block: attention between positions, feed-forward per
-position. Parallel training fits matrix hardware such as GPUs, but that
-was one reason among several. Dense attention costs grow with the square
-of length. Cues: S-21, S-23, S-17, S-19, S-22, S-20.
+position. One sentence on hardware: parallel training over matrices is
+what GPUs do well. (Optional if asked: dense attention's cost grows with
+the square of length; details on the website.) Cues: S-21, S-23, S-17,
+S-19, S-22, S-20.
 :::
 
 ## Pretraining: the text supplies its own answers {#pretraining}
 
+```{=html}
 <ol class="lifecycle" aria-label="The pretraining loop">
 <li><span class="stage sem-data">token sequences</span><span class="arrow" aria-hidden="true">→</span></li>
 <li><span class="stage sem-model">predict the next token</span><span class="arrow" aria-hidden="true">→</span></li>
@@ -259,6 +237,7 @@ of length. Cues: S-21, S-23, S-17, S-19, S-22, S-20.
 <li><span class="stage sem-training">optimizer: update θ</span><span class="arrow" aria-hidden="true">→</span></li>
 <li><span class="stage sem-training is-object">repeat over the corpus</span></li>
 </ol>
+```
 
 The loss scores how little probability went to the token that actually
 came next. Backpropagation computes gradients. The optimizer changes the
@@ -289,15 +268,16 @@ instructions like it.
 :::
 
 ::: {.src}
-Radford et al. (2019) · Brown et al., [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165) (2020) ·
+Radford et al. (2019) · Brown et al. (2020) · Carlini et al., [Extracting Training Data from Large Language Models](https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting) (2021) ·
 lesson: [How Pretraining Works](../learn/training.qmd) §6–§7
 :::
 
 ::: {.notes}
 Prediction-only training yields task behaviour (question answering,
-translation) without being trained for it. Nothing checks truth. It is
-not specifically optimised to behave as an assistant. Cues: S-44, S-26,
-S-08.
+translation) without being trained for it. Not a database that reliably
+retrieves records, yet it can memorize and reproduce passages (Carlini et
+al. 2021). Nothing checks truth. Not specifically optimised to behave as
+an assistant. Cues: S-44, S-26, S-08, S-87.
 :::
 
 ## Post-training changes the same parameters with different data {#post-training}
@@ -318,8 +298,8 @@ lesson: [Post-training](../learn/posttraining.qmd)
 No new kind of network appears. Human-written demonstrations and
 comparisons in the 2022 recipe; published recipes also use model-generated
 data and feedback. A system prompt is context, not post-training.
-Optional analogy (labelled as analogy): exposition, worked examples,
-practice problems. Cues: S-55, S-46, S-47, S-48, S-49, S-76.
+(Classroom analogy: website only, not in the prepared route.) Cues:
+S-55, S-46, S-47, S-48, S-49.
 :::
 
 ## Why a fluent answer can still be wrong {#fluency}
@@ -343,6 +323,22 @@ lesson: [How Pretraining Works](../learn/training.qmd) §7, [Using Models Well](
 Post-training did not create unsupported answers; it changed the default
 form of the response. Retrieval is evidence, not automatic truth.
 "Fluency is not evidence." Cues: S-08, S-33, S-75.
+:::
+
+## What happens when you type {#inference-loop .figure-tall}
+
+{{< include ../_includes/_slide-fig-inference-loop.qmd >}}
+
+One token per pass, appended, then again. Earlier keys and values are cached. Nothing in θ changes.
+
+::: {.src}
+Shazeer, [Fast Transformer Decoding](https://arxiv.org/abs/1911.02150) (2019) · lesson: [Softmax, Sampling, and Temperature](../learn/softmax-sampling.qmd)
+:::
+
+::: {.notes}
+Point at the loop arrow. Decoding can be deterministic or stochastic;
+sampling is one reason repeated runs differ. Mention caching in one
+sentence only. Cues: S-31, S-05, S-07, S-43.
 :::
 
 ## Some models are trained to reason longer on checkable problems {#reasoning-training}
@@ -385,25 +381,10 @@ Anthropic, [Thinking](https://platform.claude.com/docs/en/build-with-claude/thin
 ::: {.notes}
 Two ideas: training reasoning behaviour (previous slide) and spending more
 inference-time computation (this slide). Each intermediate token becomes
-context for the next step. What is displayed depends on the product; the
-cited providers return summaries, and none is a faithful account of
-internal computation. Not human thought. Cues: S-83, S-84, S-85, S-49.
-:::
-
-## What happens when you type {#inference-loop .figure-tall}
-
-{{< include ../_includes/_slide-fig-inference-loop.qmd >}}
-
-One token per pass, appended, then again. Earlier keys and values are cached. Nothing in θ changes.
-
-::: {.src}
-Shazeer, [Fast Transformer Decoding](https://arxiv.org/abs/1911.02150) (2019) · lesson: [Softmax, Sampling, and Temperature](../learn/softmax-sampling.qmd)
-:::
-
-::: {.notes}
-Point at the loop arrow. Decoding can be deterministic or stochastic;
-sampling is one reason repeated runs differ. Mention caching in one
-sentence only. Cues: S-31, S-05, S-07, S-43.
+context for the next step. What a product exposes of the reasoning
+varies by model and interface; a displayed explanation is not a
+guaranteed faithful record of the computation. Not human thought. Cues:
+S-83, S-84, S-85, S-49.
 :::
 
 ## Parameters, context, and external state are different places {#three-stores .figure-tall}
@@ -418,14 +399,15 @@ Anthropic, [Context windows](https://platform.claude.com/docs/en/build-with-clau
 
 ::: {.notes}
 "Memory" is used for all three; a product that remembers your project
-stored something outside the model. Optional analogy (labelled): context
-as working memory. Cues: S-31, S-33, S-77.
+stored something outside the model. (Working-memory analogy: website
+only.) Cues: S-31, S-33.
 :::
 
 ## One tool call: the model asks, software acts {#tool-call}
 
 "What is the weather in Bogotá today?" The parameters cannot contain it.
 
+```{=html}
 <div class="step-grid">
 <div class="step sem-context"><b>1 · context</b>the request, plus a description of a weather tool</div>
 <div class="step sem-model"><b>2 · model output</b>a structured request: <code>weather(location="Bogotá")</code></div>
@@ -434,6 +416,7 @@ as working memory. Cues: S-31, S-33, S-77.
 <div class="step sem-context"><b>5 · next context</b>the result is placed in the model's context</div>
 <div class="step sem-model"><b>6 · model output</b>the answer, resting on the result</div>
 </div>
+```
 
 ::: {.src}
 Anthropic, [Tool use with Claude](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview) (docs, accessed 2026-09-15) · lesson: [From Assistant to Agent](../learn/agents.qmd) §2
@@ -447,6 +430,7 @@ model. The weather value is invented. Cue: S-51.
 
 ## Repeat the round trip under control: an agentic system {#agent-loop}
 
+```{=html}
 <ol class="lifecycle" aria-label="The agent loop">
 <li><span class="stage sem-context">objective + context + state</span><span class="arrow" aria-hidden="true">→</span></li>
 <li><span class="stage sem-model">model call</span><span class="arrow" aria-hidden="true">→</span></li>
@@ -455,6 +439,7 @@ model. The weather value is invented. Cue: S-51.
 <li><span class="stage sem-context">observation into context</span><span class="arrow" aria-hidden="true">→</span></li>
 <li><span class="stage sem-system is-object">continue, ask, or stop</span></li>
 </ol>
+```
 
 Workflow: the steps are written in advance. Agent: the model chooses the
 steps and tools, within limits. Either way, the same fixed model is called
@@ -472,6 +457,7 @@ Terminology is not standardised. Cues: S-50, S-56.
 
 ## A coding agent: inspect, edit, run checks, revise, stop {#coding-agent}
 
+```{=html}
 <ol class="lifecycle" aria-label="A coding agent's sequence">
 <li><span class="stage sem-system">inspect files</span><span class="arrow" aria-hidden="true">→</span></li>
 <li><span class="stage sem-model">edit</span><span class="arrow" aria-hidden="true">→</span></li>
@@ -480,6 +466,7 @@ Terminology is not standardised. Cues: S-50, S-56.
 <li><span class="stage sem-model">revise</span><span class="arrow" aria-hidden="true">→</span></li>
 <li><span class="stage sem-system is-object">stop</span></li>
 </ol>
+```
 
 Project instructions and skills are context loaded for the task, not
 retraining. Permissions live in the software. A passing test establishes
@@ -516,7 +503,7 @@ Slow down. Four consequences, one breath each. Cue: S-63.
 
 ## Where to learn more {#learn-more}
 
-- [The Short Story](../short-story.qmd): this talk with the mathematics, in about twenty minutes.
+- [The Short Story](../short-story.qmd): this talk with the mathematics, at your own pace.
 - Main path: [From Text to Numbers](../learn/how-created.qmd) · [Neurons, Layers, and Learning](../learn/neural-networks.qmd) · [Why Transformers](../learn/why-transformers.qmd) · [How Pretraining Works](../learn/training.qmd) · [Post-training](../learn/posttraining.qmd) · [From Assistant to Agent](../learn/agents.qmd) · [Using Models Well](../learn/using-models-well.qmd)
 - Reference: [Glossary](../glossary.qmd) · [Milestones](../milestones.qmd) · [Resources](../resources.qmd), including a video-first route.
 - The whole site: [leonelborjaplaza.github.io/llm-to-agents](https://leonelborjaplaza.github.io/llm-to-agents/), a working draft open to corrections.
@@ -524,4 +511,37 @@ Slow down. Four consequences, one breath each. Cue: S-63.
 ::: {.notes}
 Point to the Short Story first, then the video route on the resources
 page. Every claim on the site carries a citation.
+:::
+
+## A ChatGPT-like product is more than the model {#product .backup}
+
+::: {.backup-label}
+Backup slide, not in the prepared route
+:::
+
+```{=html}
+<div class="product-box">
+<div class="label">the product you type into</div>
+<div class="parts">
+<span class="part sem-context">system prompt</span>
+<span class="part sem-context">conversation and files</span>
+<span class="part sem-system">retrieval</span>
+<span class="part sem-system">tools</span>
+<span class="part is-model sem-model">the model: code + parameters θ</span>
+<span class="part sem-system">safety checks, interface, product logic</span>
+</div>
+</div>
+```
+
+Everything around the model changes what the model is given or what is
+done with its output. None of it changes the model.
+
+::: {.src}
+Lesson: [Post-training](../learn/posttraining.qmd) §9 (model versus assistant)
+:::
+
+::: {.notes}
+Purple is the model. Green is context supplied to it. Grey is software that
+acts on its behalf. Two products can share one model and behave
+differently. Cue: S-31.
 :::

@@ -1260,3 +1260,65 @@ deploy); live checks as recorded in `docs/release-readiness.md`. Editorial
 backlog recorded there: the Short Story could still be more intuitive,
 more naturally written, and simpler without losing precision.
 
+## Task: 30-minute release-candidate pass (2026-09-16, after commit 72850bf)
+
+Owner's instruction: one bounded pass to fit the talk into a 30-minute
+slot and apply a fixed list of corrections; no general style revision;
+one local commit; no push or publication.
+
+### Corrections applied
+
+- Timing: the guide was rewritten to 28.0 prepared minutes across 24
+  slides plus a 2-minute reserve (per-slide "Time: about N min (running
+  total M)" lines). The product slide became a backup slide after the
+  closing slide (`{#product .backup}`, on-slide label, "Time: backup");
+  the runnable-model slide gained one sentence on the software around the
+  model. `check_slides_guide.py` now recognizes `.backup`, requires
+  backup slides after the prepared route, sums prepared minutes to 28.0,
+  checks each running total, and requires the reserve and the 30-minute
+  slot to be stated.
+- Order: the inference-loop slide moved before reasoning-training in the
+  deck and guide; Short Story §9 and §10 swapped (with the required-order
+  list in `check_short_story_figures.py` updated), and their openings
+  rewritten so each section stands where it now sits.
+- Memorization: Carlini et al. (2021) verified and added as S-87; the
+  base-model slide footer, its notes, and Short Story §6 cite it.
+- Attention explanation completed (query, key, score, softmax, value,
+  weighted combination) in the Short Story and the attention slide;
+  figure label moved below the updated-representation box; value vectors
+  defined in the caption.
+- Selective wording: hardware sentence in Short Story §5 no longer says
+  "should be restrained"; the announcing intro paragraph removed; §8
+  closes on "Fluency is not evidence, and evidence beats confidence";
+  reasoning visibility qualified in the story, slide, and guide; R1-Zero
+  wording made explicit; the 2003 sentence removed from the recurrence
+  slide; notes trimmed.
+- Figures and CSS: tiny-network caption in HTML italics instead of TeX;
+  token-to-vector label and caption quote `␣bank` as code; slide chip,
+  card, legend, and step text enlarged; `.figure-tall` cap raised.
+- Public wording: Home, README, and the deck's closing slide say
+  30 minutes and "24 slides in the prepared route plus one backup slide".
+
+### Defect found during browser inspection
+
+The backup product slide rendered its last chip as inline text broken
+across two lines. Cause: the product box was a bare HTML `<div>` in the
+deck, and Pandoc's `markdown_in_html_blocks` behavior parsed the spans
+inside it as a paragraph. The same applied to the tokens chip row (a
+stray `<p>` inside `.chips`) and, harmlessly, to three lifecycle lists.
+All hand-written HTML blocks in the deck are now wrapped in `{=html}`
+fences, matching the figure includes. The tool-call step grid had been
+fenced earlier in the pass for the same reason (typographic quotes in
+code).
+
+### Verification
+
+`bash scripts/verify.sh`: all 16 steps pass. Deck QA in headless
+Chromium: 25 sections, no overflow, minimum 16.9 px footers, 28 px body;
+nine affected slides inspected from screenshots. Site QA: corrected
+figures and moved anchors confirmed, glossary previews and sub-path
+serving unchanged, 390 px without horizontal overflow, MathJax equations
+rendered on a lesson page. `dist/llms-to-agents.pdf` regenerated
+(25 pages). Not done: a timed rehearsal; inspection of every PDF page.
+Committed locally as one commit; not pushed. The live site still serves
+`72850bf` until the publish workflow is run.

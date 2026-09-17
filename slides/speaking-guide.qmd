@@ -1,6 +1,6 @@
 ---
 title: "Speaking Guide"
-subtitle: "One section per slide of the live presentation: what to say, how long, and where the deeper lesson is"
+subtitle: "One section per slide of the 30-minute presentation: what to say, how long, and where the deeper lesson is"
 format: html
 toc-depth: 2
 ---
@@ -9,29 +9,35 @@ toc-depth: 2
 section names the slide by its title and stable ID, states what the
 slide is for, gives an estimated speaking time and a running total, and
 then says, in ordinary spoken paragraphs, what to explain and how to use
-the visual. Timings are estimates for a 38-minute talk inside a 45-minute
-slot, not a rehearsed measurement. The slides' speaker notes carry only
-short cues; this page is the script.*
+the visual. The prepared route is 28 minutes of material plus a 2-minute
+reserve for pauses, transitions, and small overruns, inside a 30-minute
+slot. The reserve is not extra content and not a promised question
+period. All timings are planning estimates, not observed rehearsal
+results. Paragraphs marked "optional" are elaboration outside the
+prepared route. The slides' speaker notes carry only short cues; this
+page is the script.*
 
 ## Running late {#running-late}
 
-Protect the ending. The tools and agents block (slides 21 to 23) is the
-part the audience cannot reconstruct from general reading, so shorten
-earlier material first. In order, drop or compress: the spoken cat-and-dog
-example on the tokens slide (say only that IDs are addresses); the Bengio
-2003 sentence on the recurrence slide; the third statement on the base-model
-slide; the analogy on the post-training slide; and the "cached" sentence
-on the inference slide. If ten minutes have gone before the corpus slide,
-skip the product slide and say its one sentence on the runnable-model
-slide instead. Never skip the tool-call slide, the agent-loop slide, or
-the coding-agent slide.
+Protect the ending. The tools and agents block (the last five minutes of
+the route) is the part the audience cannot reconstruct from general
+reading, so shorten earlier material first. In order: on the tokens
+slide, say only that IDs are addresses and skip the cat-and-dog aside;
+on the base-model slide, read the three statements without expanding
+them; on the post-training slide, name the three routes without
+describing the second and third; on the transformer slide, skip the
+hardware sentence. If twelve minutes have gone before the pretraining
+slide, take the generation-loop slide in one minute by walking the
+figure once without the closing sentences. Never skip the tool-call
+slide, the agent-loop slide, or the coding-agent slide, and do not
+spend the reserve on the earlier blocks.
 
 ## From LLMs to Agents {#title-slide}
 
 **Objective:** open the room and set the register. **Time:** about 0.5
 min (running total 0.5).
 
-Say who you are in one sentence and what the next forty minutes are: a
+Say who you are in one sentence and what the next half hour is: a
 mechanical account of what a system like ChatGPT is, how it was built,
 and what happens when you type into it, with no mathematics required to
 follow and a website that carries the mathematics for anyone who wants
@@ -42,17 +48,16 @@ Transition: "Start with the question the whole talk answers."
 ## One question: what is on the other side of the text box? {#question}
 
 **Objective:** state the governing question and show the whole route
-once, in colour, before any term is defined. **Time:** about 1.5 min
-(running total 2.0).
+once, in colour, before any term is defined. **Time:** about 1.0 min
+(running total 1.5).
 
 Read the question aloud. Then trace the coloured route on the slide from
 left to right without explaining any stage yet: blue is data, orange is
 training, purple is the model itself, green is the context the model is
 given when it is used, and grey is the software around the model. Say
-that every slide from here on is one stop on this route, and that the
-audience will see the same picture again at the end.
+that every slide from here on is one stop on this route.
 
-Make one point now, because it organises everything: the orange stages,
+One point now, because it organises everything: the orange stages,
 pretraining and post-training, are both training. Both change the numbers
 inside the model. Everything after the purple "post-trained model" leaves
 those numbers alone; it changes what the model is given and what is done
@@ -65,89 +70,65 @@ Deeper: [The Short Story](../short-story.qmd).
 ## The route, in three parts {#route}
 
 **Objective:** give the audience three questions to hold. **Time:** about
-1.0 min (running total 3.0).
+0.5 min (running total 2.0).
 
-Read the three columns as three questions. How is a model built: text is
-prepared, cut into tokens, fed to a neural network, and training sets the
-network's numbers. What happens when we use it: your text becomes the
-model's context, it produces one token at a time, and its numbers stay
-fixed. How does software make an agentic system: tools, stored state, and
-a loop around the same fixed model. Promise, explicitly, that the third
-question gets real time at the end and will not be rushed.
+Read the three columns as three questions: how a model is built, what
+happens when we use it, and how software makes an agentic system.
+Promise that the third question gets real time at the end.
 
 Transition: "Before any of that, what is the finished object? Start at the
 end."
 
 ## A runnable model is code plus learned parameters {#runnable-model}
 
-**Objective:** make the finished object concrete before describing the
-process that produces it. **Time:** about 2.0 min (running total 5.0).
+**Objective:** make the finished object concrete, and separate it from
+the application around it. **Time:** about 1.5 min (running total 3.5).
 
 Point at the two top boxes. Stripped of the product around it, a runnable
 open language model is two things. On the left, code: a program that says
 how to compute, which sums to form, which nonlinear functions to apply,
 which attention steps to take. On the right, a checkpoint: a large file
 of learned numbers, the parameters. Andrej Karpathy's 2023 introduction
-opens with exactly this picture, using an open model as its example, and
-his `llama2.c` repository shows it literally: one C file that runs the
-Llama 2 architecture, which cannot generate anything until you give it a
-model checkpoint.
+opens with exactly this picture, and his `llama2.c` repository shows it
+literally: one C file that runs the Llama 2 architecture, which cannot
+generate anything until you give it a model checkpoint.
 
 Then the bottom box. Running the code with the parameters fixed, on some
 context, produces a probability distribution over the next token. That is
-inference, and it does not change the parameters. So the talk now has two
-halves: how the parameters get their values, and what the surrounding
-software does with the object once they have them.
+inference, and it does not change the parameters. Then the sentence on
+the slide: the application adds instructions, conversation management,
+tools, and other software around the trained model. Two products can
+share one model and behave differently.
 
 Do not say the file count is always two, and do not say the parameters
 are "everything the model knows". Say that the information the model
 learned during training is distributed across those numbers.
 
-Transition: "That is the model. The thing you type into is more than the
-model."
-
-Deeper: [How Pretraining Works](../learn/training.qmd) §8; Karpathy,
-*Intro to Large Language Models* (2023); the `llama2.c` README.
-
-## A ChatGPT-like product is more than the model {#product}
-
-**Objective:** separate the model from the product built around it.
-**Time:** about 1.0 min (running total 6.0).
-
-Point at the purple box in the middle: that is the model, the code plus
-parameters from the previous slide. Everything else in the grey product
-box is either green, meaning context that will be supplied to the model
-when it is called (a system prompt, the conversation, files), or grey,
-meaning software that acts around the model (retrieval, tools, safety
-checks, the interface). Two products can share the same model and behave
-differently, and a product can change tomorrow with no training run in
-between. Keep this distinction in your pocket; the last third of the talk
-lives in the grey box.
-
 Transition: "Now the first half: how the model is built. It starts with
 text."
 
-Deeper: [Post-training](../learn/posttraining.qmd) §9.
+Deeper: [How Pretraining Works](../learn/training.qmd) §8;
+[Post-training](../learn/posttraining.qmd) §9 on model versus assistant;
+Karpathy, *Intro to Large Language Models* (2023); the `llama2.c` README.
+The backup slide at the end of the deck shows the product-versus-model
+picture if a question calls for it.
 
 ## Before training, someone builds the corpus {#corpus}
 
 **Objective:** replace "trained on the internet" with a pipeline.
-**Time:** about 1.5 min (running total 7.5).
+**Time:** about 1.0 min (running total 4.5).
 
 Walk the chips left to right. Text is gathered from web pages, code,
 books, and other permitted sources. The main text is extracted from raw
-pages, which means stripping menus and markup. Documents are filtered by
-language and by quality rules. Duplicates are removed, because a page
-copied a thousand times would otherwise be learned a thousand times. Only
-then is the surviving text tokenized. Every step is a choice, and what
-goes in shapes what can be learned.
+pages. Documents are filtered by language and by quality rules.
+Duplicates are removed, because a page copied a thousand times would
+otherwise be learned a thousand times. Only then is the surviving text
+tokenized. What goes in shapes what can be learned.
 
-Give the one open example: Hugging Face's FineWeb is built from Common
-Crawl snapshots by exactly this kind of pipeline, and its recipe is
-published. Then the caution: complete corpora for closed models are often
-not disclosed, and the level of disclosure varies. Do not imply that
-proprietary models use FineWeb, and do not say any model trains on "the
-whole internet".
+One open example: Hugging Face's FineWeb is built from Common Crawl
+snapshots by this kind of pipeline, and its recipe is published. Complete
+corpora for closed models are often not disclosed. Do not imply that
+proprietary models use FineWeb.
 
 Transition: "The corpus is text. A network computes with numbers. So the
 text has to be converted."
@@ -158,20 +139,19 @@ al., *The FineWeb Datasets* (2024).
 ## Text becomes tokens; a token ID is an address {#tokens}
 
 **Objective:** define token and token ID, and kill the idea that an ID
-is a quantity. **Time:** about 1.5 min (running total 9.0).
+is a quantity. **Time:** about 1.0 min (running total 5.5).
 
 Point at the chips. The tokenizer cuts text into entries of a fixed
 vocabulary decided before training. A token is often a whole word, but it
 can be a fragment, a punctuation mark, or a word with its leading space
-attached; the split shown is illustrative, and different models split
-differently. Each vocabulary entry has an index, the token ID. The numbers
-on the slide are made up.
+attached; the split shown is illustrative. Each vocabulary entry has an
+index, the token ID; the numbers on the slide are made up.
 
 Then the point that matters: 5109 is not larger, later, or more than 88.
-It does not sit "101 units away" from anything. It only says which entry
-of the vocabulary this is. If the network did arithmetic on the ID itself,
-the result would be meaningless. So it does not, which raises the
-question the next slide answers.
+It only says which entry of the vocabulary this is. Optional aside: with
+made-up IDs, "cat" might be 812 and "dog" 913, and nothing about dog is
+101 units away from cat. If the network did arithmetic on the ID itself,
+the result would be meaningless. So it does not.
 
 Transition: "If the ID is only an address, what does the network actually
 compute with?"
@@ -182,21 +162,20 @@ et al. (2019) for the tokenizer facts.
 ## The ID selects a learned vector {#embeddings}
 
 **Objective:** explain why an ID becomes a vector, and what "learned"
-means here. **Time:** about 1.0 min (running total 10.0).
+means here. **Time:** about 1.0 min (running total 6.5).
 
 Trace the figure. The token "bank" becomes ID 3912. The ID selects one
 row of a table, the embedding table. That row is a list of numbers, and
 those numbers are parameters: they started arbitrary, and training
-changed them because changing them improved next-token prediction. By the
-end of training, tokens that occur in similar contexts tend to have
-similar rows. That is what the lookup buys the network: instead of an
-address, it receives numbers it can transform and combine. The values on
-the slide are illustrative; a row is not a definition.
+changed them because changing them improved next-token prediction. That
+is what the lookup buys the network: instead of an address, it receives
+numbers it can transform and combine. The values on the slide are
+illustrative; a row is not a definition.
 
-Add the one sentence that prepares the transformer: the row is only the
-starting point. Later layers of the network update each position using
-the positions around it, so " bank" starts the same in "river bank" and
-"central bank" and ends different.
+One sentence that prepares the transformer: the row is only the starting
+point. Later layers update each position using the positions around it,
+so the token for " bank" starts the same in "river bank" and "central
+bank" and ends different.
 
 Transition: "Numbers going into a network. What does the network do with
 them?"
@@ -207,74 +186,76 @@ Deeper: [Tokens, Embeddings, and the Context Window](../learn/tokens-context.qmd
 ## A neural network: learned transformations and nonlinear steps {#neural-network}
 
 **Objective:** make "neural network" mean something mechanical.
-**Time:** about 1.0 min (running total 11.0).
+**Time:** about 1.0 min (running total 7.5).
 
 Walk the four boxes. Incoming numbers, x. Multiply them by learned
 weights and add a learned bias: that is the box Wx + b, and W and b are
-parameters. Apply a fixed nonlinear function, sigma, to the result. Out
-comes h, a new list of numbers, ready to be the input of the next piece.
-If you read the formula aloud, read it as those four steps and say plainly
-that this is not "the equation for ChatGPT"; it is the smallest piece from
-which large networks are built. Large networks stack millions of these
-pieces in layers, and training sets the weights.
+parameters. Apply a fixed nonlinear function, sigma. Out comes h, a new
+list of numbers, ready to be the input of the next piece. If you read the
+formula aloud, read it as those four steps and say plainly that this is
+not "the equation for ChatGPT"; it is the smallest piece from which large
+networks are built. Large networks stack millions of these pieces in
+layers, and training sets the weights.
 
-Transition: "Networks like this were predicting language long before
-transformers."
+Transition: "Networks like this were predicting language before
+transformers. The question is how they handled a sequence."
 
 Deeper: [Neurons, Layers, and Learning](../learn/neural-networks.qmd),
 which works one unit through by hand.
 
 ## Neural language models came first; recurrence paid a price {#recurrence}
 
-**Objective:** place transformers in history and state the recurrent
-constraint mechanically. **Time:** about 1.5 min (running total 12.5).
+**Objective:** state the recurrent constraint mechanically. **Time:**
+about 1.0 min (running total 8.5).
 
-First the history, in one breath: a 2003 model already learned a vector
-for each word together with a network that predicted the next word.
-Transformers are not the beginning of neural networks or of neural
-language models.
-
-Then the figure. For sequences, recurrent networks, including LSTMs,
+Point at the figure. For sequences, recurrent networks, including LSTMs,
 became the established approach. They read one position at a time and
 pass a running state forward. So information from token 1 reaches token
 5 only through four sequential steps, and each step's computation depends
-on the previous one having finished. That has two costs: a long path
-between distant positions, and, during training, no way to compute the
-positions in parallel. Do not say "recurrent networks could not remember";
-say the path was long and the computation was sequential.
+on the previous one having finished. Two costs: a long path between
+distant positions, and, during training, no way to compute the positions
+in parallel. Do not say "recurrent networks could not remember"; say the
+path was long and the computation was sequential.
+
+Optional: neural language models predate transformers by many years; the
+website's milestones page has the history and the citations.
 
 Transition: "Attention is the mechanism that gave positions a direct
 path."
 
 Deeper: [Why Transformers](../learn/why-transformers.qmd) §1–§2; Vaswani
-et al. (2017) §1 for the sequential-dependency statement.
+et al. (2017) §1; [Milestones](../milestones.qmd) for the history.
 
 ## Attention: each position combines what it is allowed to see {#attention}
 
 **Objective:** explain what attention computes before the Transformer
-paper is named. **Time:** about 2.0 min (running total 14.5).
+paper is named. **Time:** about 1.75 min (running total 10.25).
 
 Point at "it", the destination. The sentence on the slide is "The
 bridge closed because it", shortened so that every token fits at
-projection size. For each source position that "it" is permitted to use,
-the model computes a weight from learned transformations of the vectors
-involved. The weights on the slide are illustrative, and they sum to one;
-here "bridge" gets most of the weight and "because" the next largest
-share.
-The model then takes the weighted combination of the sources' vectors and
-uses it to update the representation of "it". That is the whole
-mechanism: a learned, weighted mixing of other positions, in one step,
-with no relay through the positions in between.
+projection size. Three steps. First, the model compares the destination
+with each source position it is permitted to use, and each comparison
+gives a score. Second, softmax turns those scores into weights that are
+nonnegative and sum to one; the weights on the slide are illustrative,
+and here "bridge" gets most of the weight and "because" the next largest
+share. Third, the model combines the sources' vectors using those
+weights, and the combination updates the representation of "it". That is
+the whole mechanism: a learned, weighted mixing of other positions, in
+one step, with no relay through the positions in between.
 
-Two guard rails. First, the weights are not written by anyone; they come
-out of matrices that training set. Second, a weight is a local mixing
-number inside one head at one layer. Real models run many heads in
+Two guard rails. The transformations that produce the comparison and the
+combined vectors are learned matrices, set by training; the weights
+themselves are computed for each input. And a weight is a local mixing
+number inside one head at one layer; real models run many heads in
 parallel and stack many layers, so no single weight tells you why the
 model said what it said.
 
-Attention came before the Transformer: Bahdanau, Cho, and Bengio used a
-learned weighted selection of this kind for translation in work posted in
-2014 and presented at ICLR 2015.
+Optional elaboration, if someone asks for the names: the destination is
+transformed into a query vector, each source into a key vector, and
+query-key comparisons give the scores; each source also provides a value
+vector, and it is the values that are combined. Attention came before the
+Transformer: Bahdanau, Cho, and Bengio used a learned weighted selection
+of this kind for translation in work presented at ICLR 2015.
 
 Transition: "In 2017 one paper built the whole architecture around this
 mechanism."
@@ -288,11 +269,10 @@ caused another, or that one head has a fixed human-readable job.
 ## The Transformer: attention plus feed-forward, without recurrence {#transformer}
 
 **Objective:** name the paper, state what it changed, and keep training
-parallelism distinct from generation. **Time:** about 1.5 min (running
-total 16.0).
+parallelism distinct from generation. **Time:** about 1.25 min (running
+total 11.5).
 
-Name it: *Attention Is All You Need*, Vaswani and colleagues, 2017. At a
-time when recurrent networks were the established state of the art, it
+Name it: *Attention Is All You Need*, Vaswani and colleagues, 2017. It
 built a sequence architecture around two computations per block:
 attention, which moves information between positions, and a feed-forward
 step, which is the network piece from the earlier slide applied to each
@@ -303,17 +283,14 @@ Then the precision that matters. During training on a known sequence,
 the positions within a layer can be computed in parallel, because nothing
 waits for a previous position to finish. Generation is different: at use
 time the model still produces one token at a time. And the model is
-causal: a position never sees later tokens.
-
-On hardware, keep it restrained: parallel computation over matrices fits
-GPUs and later accelerators well, and that fit was one reason among
-several for the architecture's spread, alongside scale, data, and the
-software around it. Dense attention also has a cost that grows with the
-square of the sequence length.
+causal: a position never sees later tokens. One sentence on hardware:
+that parallel computation over matrices is exactly what GPUs do well,
+which is part of why the architecture spread.
 
 Transition: "Now the numbers get their values. Pretraining."
 
-Deeper: [Why Transformers](../learn/why-transformers.qmd) §3–§6.
+Deeper: [Why Transformers](../learn/why-transformers.qmd) §3–§6, including
+the cost of dense attention, which is not in the prepared route.
 
 Do not imply: that attention alone is the Transformer, or that GPU
 compatibility is the whole explanation.
@@ -321,7 +298,7 @@ compatibility is the whole explanation.
 ## Pretraining: the text supplies its own answers {#pretraining}
 
 **Objective:** state the training loop with the three jobs kept apart.
-**Time:** about 2.0 min (running total 18.0).
+**Time:** about 1.5 min (running total 13.0).
 
 Walk the chips. Token sequences from the corpus go in. At every position
 the model predicts the next token, and the text itself supplies the
@@ -333,11 +310,10 @@ gradients. The optimizer uses those gradients to change the parameters by
 a small step. Then the next batch, and the next, on a scale that is hard
 to picture.
 
-Say the three jobs explicitly, because they get confused: the loss
-measures, backpropagation computes gradients, the optimizer updates. The
-architecture and the optimization procedure are specified in code;
-training is the process that discovers the parameter values. The result
-is the base model.
+Say the three jobs explicitly: the loss measures, backpropagation
+computes gradients, the optimizer updates. The architecture and the
+optimization procedure are specified in code; training is the process
+that discovers the parameter values. The result is the base model.
 
 Transition: "What is a base model, and what is it not?"
 
@@ -346,25 +322,26 @@ Deeper: [How Pretraining Works](../learn/training.qmd) §1–§5.
 ## The base model is not a database and not yet an assistant {#base-model}
 
 **Objective:** prevent two misreadings of the base model. **Time:** about
-1.0 min (running total 19.0).
+1.0 min (running total 14.0).
 
 Three statements, one each. Because predicting text well requires
 capturing its regularities, the base model has broad statistical
 knowledge of grammar, meaning, recurring facts, and conventions of
 argument; models trained only to predict text have been observed to
 answer questions and translate without being trained for those tasks.
-Second, it can reproduce text it saw, but it stores no verified,
-searchable record of the corpus; a fact appears in its output only
-because predicting the text made reproducing that fact useful, and
-nothing in the objective checks truth. Third, it is not specifically
+Second, it is not a database that reliably retrieves records from its
+corpus, yet it can memorize and sometimes reproduce passages from that
+data: researchers have extracted verbatim training text from a public
+model, including sequences that appeared in only one training document.
+Nothing in the objective checks truth. Third, it is not specifically
 optimized to behave as an assistant: given an instruction, it may answer
-it, continue it, or produce more instructions like it, because all of
-those follow such text somewhere in the corpus.
+it, continue it, or produce more instructions like it.
 
 Transition: "Turning that into an assistant is more training, on the same
 numbers."
 
-Deeper: [How Pretraining Works](../learn/training.qmd) §6–§7.
+Deeper: [How Pretraining Works](../learn/training.qmd) §6–§7; Carlini et
+al. (2021).
 
 Do not imply: that the model cannot memorize or reproduce training text,
 or that it is a database you can query.
@@ -372,7 +349,7 @@ or that it is a database you can query.
 ## Post-training changes the same parameters with different data {#post-training}
 
 **Objective:** establish post-training as training, and name the three
-routes. **Time:** about 2.5 min (running total 21.5).
+routes. **Time:** about 1.5 min (running total 15.5).
 
 Point at the three cards and say the invariant first: every card is the
 same loss-gradient-optimizer machinery changing the same parameter
@@ -384,21 +361,16 @@ fine-tuning: curated conversations, a prompt and the response the
 builders want, trained with the same next-token loss on the response
 tokens, so that after training a request is treated as a request. Card
 three is a family: preference-based methods compare candidate responses
-and update the parameters toward the preferred one, either through a
-learned reward model and reinforcement learning, the route usually called
-RLHF, or directly from the comparison pairs; and reward-based methods use
-outcomes that can be scored. The influential 2022 recipe used
-human-written demonstrations and human comparisons; published recipes
-since also use model-generated data and feedback from models, rules, or
-automatic checks. Providers combine and vary all of this.
+and update the parameters toward the preferred one, through a learned
+reward model and reinforcement learning (the route usually called RLHF)
+or directly from the comparison pairs; reward-based methods use outcomes
+that can be scored. Providers combine and vary all of this, and published
+recipes also use model-generated data and feedback. A product's system
+prompt is not post-training: it is text in the context.
 
-Optional, if time allows, and labelled as an analogy: Karpathy organises
-these stages as reading exposition, studying worked examples, and doing
-practice problems against an answer key. It explains why later stages use
-more targeted data, and it is not a claim that models learn as people do.
-
-Close with the one thing that is not post-training: a product's system
-prompt is text in the context and changes nothing in the model.
+Optional: the website's post-training section carries a classroom
+analogy for the three stages (exposition, worked examples, practice
+problems), labelled as an analogy.
 
 Transition: "So why can a fluent assistant still be wrong?"
 
@@ -411,25 +383,22 @@ post-training data is written by human labelers.
 ## Why a fluent answer can still be wrong {#fluency}
 
 **Objective:** give the correct causal story for unsupported answers.
-**Time:** about 1.5 min (running total 23.0).
+**Time:** about 1.0 min (running total 16.5).
 
 Three statements. Pretraining rewards assigning probability to whatever
-came next in the text; nothing in it checks truth, so false or
-unsupported continuations are possible before any post-training.
-Post-training then makes instruction-following and question-answering
-the default, so a well-formed answer can outrun what the parameters
-actually contain; post-training did not create the possibility of
-unsupported answers, it changed the default form of the response.
-Finally, the remedies: recipes can teach abstention, so that "I don't
-know" becomes a likely response when knowledge is thin; and retrieval and
-tools can ground an answer in inspectable evidence placed in the context.
-That evidence still has to be evaluated, because retrieval can return
-irrelevant or wrong material.
+came next in the text; nothing in it checks truth, so unsupported
+continuations are possible before any post-training. Post-training
+makes instruction-following and question-answering the default, so a
+well-formed answer can outrun what the parameters contain; post-training
+did not create the possibility of unsupported answers, it changed the
+default form of the response. The remedies: recipes can teach
+abstention, and retrieval and tools can ground an answer in inspectable
+evidence placed in the context. That evidence still has to be evaluated.
 
 The sentence to leave in the room: fluency is not evidence.
 
-Transition: "One more kind of training, because it is easy to
-misdescribe."
+Transition: "When you send a request, the trained model generates its
+response one token at a time. Here is that loop."
 
 Deeper: [How Pretraining Works](../learn/training.qmd) §7;
 [Using Models Well](../learn/using-models-well.qmd) §4–§6.
@@ -437,69 +406,10 @@ Deeper: [How Pretraining Works](../learn/training.qmd) §7;
 Do not imply: that post-training caused hallucination, or that a retrieved
 document makes an answer automatically true.
 
-## Some models are trained to reason longer on checkable problems {#reasoning-training}
-
-**Objective:** describe reasoning-oriented training as one route.
-**Time:** about 1.5 min (running total 24.5).
-
-Some problems have outcomes that can be checked automatically: a
-mathematics problem with a known answer, code with tests. A checkable
-outcome can supply a reward without a learned reward model for that
-component, and reinforcement learning against such rewards can encourage
-useful intermediate reasoning before the final answer. The published case
-is DeepSeek-R1. Keep its two models apart: R1-Zero applied
-reinforcement learning directly to the already pretrained base model,
-with no supervised fine-tuning step first, and it produced steadily
-longer reasoning traces but suffered from poor readability and language
-mixing; the released R1 used a multi-stage recipe that also included
-supervised stages. This is one route used by some reasoning-oriented models, not a
-stage every model passes through, and other providers publish less.
-
-Transition: "That is training. 'Thinking longer' also means something at
-use time."
-
-Deeper: [Post-training](../learn/posttraining.qmd) §7; DeepSeek-AI
-(2025).
-
-## "Thinking longer" at inference spends computation, not training {#thinking-longer}
-
-**Objective:** explain inference-time reasoning mechanically and with its
-limits. **Time:** about 2.0 min (running total 26.5).
-
-Point at the three rows. Row one: prompt in, answer out. Row two: the
-same model, with the same fixed parameters, generates intermediate
-reasoning tokens before its answer. Each intermediate token becomes part
-of the context that the next step conditions on, so the model gets more
-sequential computation before it commits. Nothing was retrained; the
-next-token mechanism did not go away. Row three: the reasoning can produce
-a tool request, software runs the tool, the observation comes back into
-the context, and reasoning continues with new evidence. Hold that row; it
-returns in a few slides.
-
-Then the limits. Providers expose this differently, as effort levels or
-thinking levels, and what you see of the reasoning depends on the
-product: the three providers whose documentation the course cites return
-a summary rather than the raw tokens, and Anthropic's own announcement
-says the visible thought process is not guaranteed to represent what is
-going on inside the model.
-More reasoning is not a guarantee of a correct answer. And generated
-reasoning is output from the same mechanism as any other output, not
-thought in the human sense.
-
-Transition: "The model is built. Now the second half: what happens when
-you type."
-
-Deeper: [Post-training](../learn/posttraining.qmd) §7; Anthropic, Google,
-and OpenAI reasoning documentation, accessed 2026-09-15.
-
-Do not imply: that a displayed reasoning summary is a faithful account of
-every internal computation, or that all providers implement this the same
-way.
-
 ## What happens when you type {#inference-loop}
 
-**Objective:** follow one request through the loop. **Time:** about 2.0
-min (running total 28.5).
+**Objective:** follow one request through the generation loop. **Time:**
+about 2.0 min (running total 18.5).
 
 Trace the figure. The product assembles and manages the context: its
 system prompt, the conversation so far, any documents or tool results it
@@ -516,16 +426,73 @@ prompt and supplied documents are context, not retraining. And, briefly,
 implementations cache the keys and values already computed for earlier
 positions rather than recomputing them each step.
 
-Transition: "Three different places can carry information for the model.
-Keeping them apart explains most product behaviour."
+Transition: "A reasoning-oriented model can use additional generation
+steps before producing its final answer. First, how such models are
+trained."
 
 Deeper: [Softmax, Sampling, and Temperature](../learn/softmax-sampling.qmd);
 [How Pretraining Works](../learn/training.qmd) §9.
 
+## Some models are trained to reason longer on checkable problems {#reasoning-training}
+
+**Objective:** describe reasoning-oriented training as one route.
+**Time:** about 1.0 min (running total 19.5).
+
+Some problems have outcomes that can be checked automatically: a
+mathematics problem with a known answer, code with tests. A checkable
+outcome can supply a reward without a learned reward model, and
+reinforcement learning against such rewards can encourage useful
+intermediate reasoning before the final answer. DeepSeek-R1 is one
+published example. Keep its two models apart in one sentence each:
+R1-Zero applied reinforcement learning directly to the pretrained base
+model, with no supervised fine-tuning step first, and its reasoning
+traces grew longer during training; the released R1 used a multi-stage
+recipe that also included supervised stages. This is one route used by
+some reasoning-oriented models, not a stage every model passes through.
+
+Transition: "That is training. 'Thinking longer' also means something at
+use time."
+
+Deeper: [Post-training](../learn/posttraining.qmd) §7; DeepSeek-AI
+(2025).
+
+## "Thinking longer" at inference spends computation, not training {#thinking-longer}
+
+**Objective:** explain inference-time reasoning mechanically and with its
+limits. **Time:** about 1.5 min (running total 21.0).
+
+Point at the three rows. Row one: prompt in, answer out. Row two: the
+same model, with the same fixed parameters, generates intermediate
+reasoning tokens before its answer. Each intermediate token becomes part
+of the context that the next step conditions on, so the model gets more
+sequential computation before it commits. Nothing was retrained. Row
+three: the reasoning can produce a tool request, software runs the tool,
+the observation comes back into the context, and reasoning continues.
+Hold that row; it returns in three slides.
+
+Then the limits. Providers expose this differently, as effort levels or
+thinking levels. What a product shows of the intermediate reasoning
+varies by model and interface, and a displayed explanation should not be
+treated as a guaranteed faithful record of the underlying computation.
+More reasoning is not a guarantee of a correct answer, and generated
+reasoning is output from the same mechanism as any other output, not
+thought in the human sense.
+
+Transition: "The model can also use information supplied in the current
+context or returned by tools. Three different places can hold
+information for it."
+
+Deeper: [Post-training](../learn/posttraining.qmd) §7; Anthropic, Google,
+and OpenAI reasoning documentation, accessed 2026-09-15.
+
+Do not imply: that a displayed reasoning summary is a faithful account of
+every internal computation, or that all providers implement this the same
+way.
+
 ## Parameters, context, and external state are different places {#three-stores}
 
-**Objective:** separate the three stores. **Time:** about 1.5 min
-(running total 30.0).
+**Objective:** separate the three stores. **Time:** about 1.0 min
+(running total 22.0).
 
 Left box: parameters, inside the model, changed only by training. Middle
 box: the context, the tokens supplied for this step, assembled or managed
@@ -533,14 +500,10 @@ by the product. Right box: external state, files, databases, saved notes,
 kept by software outside the model and retrievable into a later context.
 Only the first is the model changing. A product that "remembers" your
 project across sessions stored something outside the model and supplied
-it again; no parameter was updated. All three get called "memory", which
-is why the word confuses people.
+it again; no parameter was updated. All three get called "memory".
 
-Optional and labelled as an analogy: Karpathy calls the context the
-model's working memory. The course extends that to parametric knowledge
-as imperfect long-term recall and explicit context as what is in front
-of the system right now. It is an intuition about why supplying a
-document works, not a claim about the network's anatomy.
+Optional: the website adds a working-memory analogy here, labelled as an
+analogy.
 
 Transition: "Now the grey box from the start: tools. One concrete
 example."
@@ -551,7 +514,7 @@ Deeper: [From Assistant to Agent](../learn/agents.qmd) §7;
 ## One tool call: the model asks, software acts {#tool-call}
 
 **Objective:** teach tool use with one round trip. **Time:** about 2.0
-min (running total 32.0).
+min (running total 24.0).
 
 Set the scene: someone asks, "What is the weather in Bogotá today?" The
 parameters cannot contain today's weather, and a model call by itself
@@ -582,7 +545,7 @@ weather is real.
 ## Repeat the round trip under control: an agentic system {#agent-loop}
 
 **Objective:** define the loop and the workflow-versus-agent distinction.
-**Time:** about 1.5 min (running total 33.5).
+**Time:** about 1.5 min (running total 25.5).
 
 Walk the chips as a loop. An objective, the current context, and the
 current state go to the model. The model returns a tool request or a
@@ -610,7 +573,7 @@ network appears at this stage.
 ## A coding agent: inspect, edit, run checks, revise, stop {#coding-agent}
 
 **Objective:** make the loop concrete and end with verification and
-permissions. **Time:** about 2.0 min (running total 35.5).
+permissions. **Time:** about 1.5 min (running total 27.0).
 
 Walk the chips with a story. A user says, "find why this script fails
 and fix it." The agent requests a listing of the files and the failing
@@ -622,12 +585,11 @@ loop continues from the evidence; if the specified checks pass, it reports
 and stops.
 
 Three closing points. Project instructions and skills are context loaded
-for the task; they are files read into the context, not retraining.
-Permissions live in the software: what runs automatically, what waits for
-approval, what is refused. And a passing test establishes only what that
-test checked; whether the right thing was built remains a human judgment.
-Claude Code is one current example of such a system; the mechanism is
-general.
+for the task, not retraining. Permissions live in the software: what runs
+automatically, what waits for approval, what is refused. And a passing
+test establishes only what that test checked; whether the right thing was
+built remains a human judgment. Claude Code is one current example of
+such a system; the mechanism is general.
 
 Transition: "That is the whole route. One picture to keep."
 
@@ -640,7 +602,7 @@ an agent a skill retrains it.
 ## The mental model {#mental-model}
 
 **Objective:** compress the talk into one statement and four
-consequences. **Time:** about 1.5 min (running total 37.0).
+consequences. **Time:** about 0.75 min (running total 27.75).
 
 Say it slowly. A language model is a learned next-token predictor: code
 plus parameters, set by pretraining and post-training. Once trained, the
@@ -661,17 +623,30 @@ Deeper: [Using Models Well](../learn/using-models-well.qmd).
 
 ## Where to learn more {#learn-more}
 
-**Objective:** send people to the right next page. **Time:** about 1.0
-min (running total 38.0).
+**Objective:** send people to the right next page. **Time:** about 0.25
+min (running total 28.0).
 
-Point to the Short Story first: the same route as this talk, with the
-mathematics, in about twenty minutes. Then the seven main-path lessons in
-order, the glossary for any term used today, the milestones page for the
-history, and the resources page, which begins with a video-first route
-for people who would rather watch than read. Every factual claim on the
-site carries a citation. Read the address aloud once, since it is the one
-thing the audience will want to write down:
-leonelborjaplaza.github.io/llm-to-agents. Leave the slide up for
-questions.
+Point to the Short Story first, then the lessons, the glossary, and the
+resources page's video-first route. Read the address aloud once, since it
+is the one thing the audience will want to write down:
+leonelborjaplaza.github.io/llm-to-agents. Leave the slide up. The
+remaining two minutes of the slot are the reserve for pauses and small
+overruns, not a promised question period.
 
 Deeper: [the site's home page](../index.qmd).
+
+## A ChatGPT-like product is more than the model {#product}
+
+**Objective:** backup slide, shown only if a question asks how the
+product differs from the model. **Time:** backup, not in the prepared
+route.
+
+Point at the purple box in the middle: that is the model, the code plus
+parameters. Everything else in the grey product box is either green,
+meaning context that will be supplied to the model when it is called (a
+system prompt, the conversation, files), or grey, meaning software that
+acts around the model (retrieval, tools, safety checks, the interface).
+Two products can share the same model and behave differently, and a
+product can change tomorrow with no training run in between.
+
+Deeper: [Post-training](../learn/posttraining.qmd) §9.

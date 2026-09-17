@@ -38,7 +38,7 @@
 
     <rect x="20" y="230" width="200" height="54" rx="8" fill="#ece7f7" stroke="#5b3fa0" stroke-width="3"/>
     <text x="120" y="252" text-anchor="middle" font-size="14">same starting embedding</text>
-    <text x="120" y="272" text-anchor="middle" font-size="14">for the token “ bank”</text>
+    <text x="120" y="272" text-anchor="middle" font-size="14">for the token ␣bank</text>
 
     <line x1="222" y1="257" x2="258" y2="226" stroke="#6c6c6c" stroke-width="2.5"/>
     <polygon points="252,219 268,218 260,232" fill="#6c6c6c"/>
@@ -77,6 +77,6 @@
     <text x="360" y="346" text-anchor="middle" font-size="14" fill="#4a4a4a">same ID and same initial embedding; different contextual representations</text>
   </g>
 </svg>
-<figcaption id="fig-token-vector-caption">Top: a token becomes an ID, the ID selects one row of the learned embedding table, and that row is the vector the network actually computes with. The ID is only an address; the values shown are illustrative. Bottom: the same starting embedding for " bank" enters the transformer blocks in two different sentences and comes out as two different context-dependent vectors, because the blocks update each position using the positions around it.</figcaption>
+<figcaption id="fig-token-vector-caption">Top: a token becomes an ID, the ID selects one row of the learned embedding table, and that row is the vector the network actually computes with. The ID is only an address; the values shown are illustrative. Bottom: the same starting embedding for the token <code>␣bank</code> (the leading space is part of the token) enters the transformer blocks in two different sentences and comes out as two different context-dependent vectors, because the blocks update each position using the positions around it.</figcaption>
 </figure>
 ```

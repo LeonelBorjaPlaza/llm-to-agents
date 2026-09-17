@@ -1,5 +1,80 @@
 # Release readiness (public review draft, deployed 2026-09-16)
 
+## 30-minute release candidate (2026-09-16, local commit, not deployed)
+
+One bounded correction pass, applied after the public review draft was
+deployed. **These corrections exist only in the local repository until
+`main` is pushed and the publish workflow is run; the live site still
+serves commit `72850bf`.**
+
+What changed:
+
+- Talk length: 30-minute slot, 28.0 minutes of prepared material across
+  24 slides plus a 2-minute reserve. The "ChatGPT-like product" slide is
+  now a backup slide (class `.backup`, labeled on the slide, placed after
+  the closing slide, "Time: backup" in the guide); the runnable-model
+  slide carries the product-around-the-model point in one sentence. The
+  guide's per-slide estimates and running totals were rewritten, and
+  `scripts/check_slides_guide.py` now parses backup slides and enforces
+  28 + 2 = 30.
+- Narrative order: "What happens when you type" (the inference loop) now
+  precedes reasoning-oriented models in the deck, the guide, and the
+  Short Story, so "thinking longer" is explained after the reader knows
+  what one generation step is.
+- Memorization: the base-model slide, its notes, and Short Story §6 now
+  say that a base model is not a reliable database but can memorize and
+  reproduce training passages, citing Carlini et al. (2021), new claim
+  row S-87 (87 rows total).
+- Attention: the Short Story and the attention slide give the complete
+  step sequence (query, key, score, softmax, value, weighted combination;
+  learned matrices versus computed weights); the intuition figure's
+  weights label no longer overlaps the updated-representation box and
+  its caption defines value vectors. The tiny-network caption no longer
+  contains TeX (raw HTML captions do not go through MathJax).
+- Reasoning visibility is qualified (what is shown depends on the product
+  and is not a guaranteed faithful record); R1-Zero is described as
+  reinforcement learning applied directly to the pretrained base model.
+- Slide legibility: chip, card, and legend text enlarged in
+  `assets/css/slides.scss`; the deck's hand-written HTML blocks (product
+  box, tokens chip row, three lifecycle lists, tool-call step grid) are
+  wrapped in raw-HTML fences because Pandoc otherwise parsed their
+  contents as markdown (the product chips were rendering as inline text
+  with broken borders, and straight quotes in code were being turned into
+  typographic quotes).
+- Public descriptions (Home, README, deck closing slide) say 30 minutes
+  and "24 slides in the prepared route plus one backup slide". The
+  ` bank` token is quoted as code (`␣bank`) wherever it appears.
+
+Observed results, 2026-09-16:
+
+- `bash scripts/verify.sh`: all 16 steps pass (87 claim IDs; 13 Short
+  Story figures in the new order; 24 prepared + 1 backup slide reconcile
+  with the guide at 28.0 + 2 = 30 minutes; Sources page in sync).
+- Headless Chromium, deck at 1280×720: 25 sections, none overflowing,
+  smallest text 16.9 px (source footers), body text 28 px; the tool-call,
+  post-training, thinking-longer, corpus, tokens, pretraining, agent-loop,
+  coding-agent, and backup product slides were inspected from
+  screenshots after the CSS and fence changes.
+- Headless Chromium, site: the Short Story renders the corrected
+  attention and tiny-network figures (caption shows HTML italics, no
+  literal TeX), the three moved section anchors exist, glossary previews
+  work on hover and keyboard focus, no failed requests at the root or
+  under a sub-path, no horizontal overflow at 390 px. A lesson page
+  renders 41 MathJax equations with no raw delimiters (MathJax loads from
+  its CDN on the website; the deck has no CDN dependency).
+- Backup PDF regenerated: `dist/llms-to-agents.pdf`, 25 pages (not
+  tracked; `dist/` is ignored).
+
+Remaining limitations:
+
+- The 28-minute estimate is unmeasured: no timed rehearsal has been
+  done. Per-slide estimates are the author's judgment.
+- Every PDF page was not inspected individually.
+- `CLAUDE.md` still describes the talk as 35–40 minutes; it is a
+  contributor instruction file and was outside this pass's scope.
+- The editorial backlog below (Short Story tone) is unchanged; no general
+  style revision was made.
+
 ## Deployment record
 
 - Repository: <https://github.com/LeonelBorjaPlaza/llm-to-agents>, public,
@@ -39,13 +114,15 @@ reading the pages or rehearsing the talk.
 ## Checked
 
 - Full `quarto render` succeeds with no warnings (Quarto 1.10.18).
-- Scripted suite (`bash scripts/verify.sh`, 15 steps): render, internal
-  links and anchors, source reconciliation (86 claim IDs, root pages and
+- Scripted suite (`bash scripts/verify.sh`, 16 steps): render, internal
+  links and anchors, source reconciliation (87 claim IDs, root pages and
   slides included), six numerical checks, glossary and resources checks,
   origin-root asset-path check, Short Story figure check (13 figures in
   order, no SVG broken by markdown parsing, every figure include used),
-  deck-to-guide reconciliation (25 slides, 38.0 estimated minutes), and
-  the static offline check of the new deck. All 15 pass.
+  deck-to-guide reconciliation (24 prepared slides plus 1 backup, 28.0
+  prepared minutes plus a 2-minute reserve), the Sources page check, and
+  the static offline check of the deck. All 16 pass (re-run 2026-09-16
+  after the 30-minute pass).
 - Deck rendered in headless Chromium at 1280×720: 25 slides, none
   overflowing the canvas, smallest visible text about 17 px (source
   footers) with body text at 28–30 px; every SVG figure visible.
@@ -60,7 +137,8 @@ reading the pages or rehearsing the talk.
   to the correct glossary anchor; at a 390 px viewport there is no
   horizontal overflow.
 - PDF fallback of the deck produced through Reveal's print view in
-  headless Chromium: `dist/llms-to-agents.pdf`, 25 pages.
+  headless Chromium: `dist/llms-to-agents.pdf`, 25 pages (regenerated
+  2026-09-16 after the 30-minute pass).
 - Local preview archive of the rendered public site:
   `dist/course-preview.zip` (rendered files only; `dist/` is ignored by
   Git).
@@ -95,7 +173,8 @@ with reviewers' feedback, not reasons to withhold the working draft.
 
 - A human has not read the rendered pages in a browser since the figure
   and stylesheet fixes, and the presentation has not been rehearsed or
-  given to an audience. The timing estimates are not measured.
+  given to an audience. The timing estimates, including the 28-minute
+  prepared total, are not measured.
 - Offline use: the deck was verified only statically (no external
   references) and by serving the `_site` folder over a local HTTP server.
   Opening the folder from disk with the network disabled was not tested.

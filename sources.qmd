@@ -11,7 +11,7 @@ inference, a confidence level, and any caveat. The machine-checked
 ledger is `sources/claims.csv` in the repository; `sources/source-map.md`
 describes each source in prose. This page is generated from the ledger.*
 
-86 claims.
+87 claims.
 
 ::: {.sources-list}
 
@@ -1044,6 +1044,18 @@ describes each source in prose. This page is generated from the ledger.*
 **Support.** direct; confidence high.
 
 **Caveat.** Purely mathematical; stated on short-story.qmd §4 as an optional aside. Not attributed to any external source.
+
+### S-87 {#s-87}
+
+**Claim.** Carlini et al. (2021) 'demonstrate that in such settings, an adversary can perform a training data extraction attack to recover individual training examples by querying the language model'; 'We demonstrate our attack on GPT-2, a language model trained on scrapes of the public Internet, and are able to extract hundreds of verbatim text sequences from the model's training data'; and 'Our attack is possible even though each of the above sequences are included in just one document in the training data.' A base model can therefore memorize and sometimes reproduce passages from its training data, even though it is not a database that reliably retrieves records from that corpus.
+
+**Source.** Carlini, N., Tramèr, F., Wallace, E., Jagielski, M., Herbert-Voss, A., Lee, K., Roberts, A., Brown, T., Song, D., Erlingsson, Ú., Oprea, A., and Raffel, C., "Extracting Training Data from Large Language Models", 30th USENIX Security Symposium (2021), usenix.org/conference/usenixsecurity21/presentation/carlini-extracting
+
+**Where.** Abstract (USENIX presentation page)
+
+**Support.** direct; confidence high.
+
+**Caveat.** Abstract verified verbatim on 2026-09-16 against the USENIX page (PDF linked there). Used on short-story.qmd §6 and the base-model slide to correct an earlier overstatement that nothing in a base model is a retrievable record of the corpus; the site now states that a base model is not a database that reliably retrieves records yet can memorize and sometimes reproduce passages, without restricting this to frequently repeated text. The distinction between generation and reliable lookup, and CC1's statement that the objective does not check truth, are unchanged.
 
 :::
 
