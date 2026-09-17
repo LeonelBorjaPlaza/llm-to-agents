@@ -70,8 +70,9 @@ Remaining limitations:
 - The 28-minute estimate is unmeasured: no timed rehearsal has been
   done. Per-slide estimates are the author's judgment.
 - Every PDF page was not inspected individually.
-- `CLAUDE.md` still describes the talk as 35–40 minutes; it is a
-  contributor instruction file and was outside this pass's scope.
+- `CLAUDE.md` described the talk as 35–40 minutes until the follow-up
+  commit that records the 30-minute slot; historical documents under
+  `docs/` keep the earlier targets as dated records.
 - The editorial backlog below (Short Story tone) is unchanged; no general
   style revision was made.
 

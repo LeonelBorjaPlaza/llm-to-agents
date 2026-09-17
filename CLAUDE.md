@@ -5,8 +5,10 @@ repository. Binding for all stages, not just the vertical slice.
 
 ## What this is
 
-A Quarto website + Reveal.js deck supporting a 35–40 minute conceptual talk
-and a standalone learning resource for readers who are comfortable
+A Quarto website + Reveal.js deck supporting a 30-minute conceptual talk
+(about 28 minutes of prepared delivery plus a 2-minute reserve; retargeted
+from 35–40 minutes on 2026-09-16, with optional technical depth kept on the
+website) and a standalone learning resource for readers who are comfortable
 following mathematical ideas but may not use them every day:
 *From LLMs to agents: what the model is, how it is built, and how it begins
 to act.*
